@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.application.baatna.bean.Message" table="MESSAGE">
+
+		<id column="MESSAGEID" name="messageId" type="java.lang.Long" />
+
+		<property column="MESSAGE" name="message" type="java.lang.String" />
+		<property column="STATUS" name="status" type="java.lang.Boolean" />
+		<property column="TIME_OF_MESSAGE" name="timeOfMessage" type="java.lang.String" />
+		<property column="WISHID" name="wishId" type="java.lang.Integer" />
+		<property column="FROMUSERID" name="fromUserId" type="java.lang.Integer" />
+		<property column="TOUSERID" name="toUserId" type="java.lang.Integer" />
+
+	</class>
+</hibernate-mapping>

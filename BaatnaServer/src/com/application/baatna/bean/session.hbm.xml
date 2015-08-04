@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.application.baatna.bean.Session" table="SESSION">
+
+		<id column="SESSIONID" name="sessionId" type="java.lang.Integer">
+			<generator class="native" />
+		</id>
+		<property column="ACCESS_TOKEN" name="accessToken" type="java.lang.String" />
+		<property column="PUSHID" name="pushId" type="java.lang.String" />
+		<component name="location" class="com.application.baatna.bean.Location">
+			<property name="latitude" column="LATITUDE" type="java.lang.Double" />
+			<property name="longitude" column="LONGITUDE" type="java.lang.Double" />
+		</component>
+		<property column="USERID" name="userId" type="java.lang.Integer" />
+
+
+	</class>
+</hibernate-mapping>

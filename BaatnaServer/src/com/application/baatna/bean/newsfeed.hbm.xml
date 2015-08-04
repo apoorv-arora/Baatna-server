@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.application.baatna.bean.NewsFeed" table="NEWSFEED">
+
+		<id column="FEEDID" name="feedId" type="java.lang.Integer">
+			<generator class="native" />
+		</id>
+		<property column="TYPE" name="type" type="java.lang.Integer" />
+		<property column="TIMESTAMP" name="timestamp" type="java.lang.Long" />
+		<property column="USER_ID_FIRST" name="userIdFirst" type="java.lang.Integer" />
+		<property column="USER_ID_SECOND" name="userIdSecond" type="java.lang.Integer" />
+		<property column="WISHID" name="wishId" type="java.lang.Integer" />
+		
+	</class>
+</hibernate-mapping>

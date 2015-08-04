@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.application.baatna.bean.Wish" table="WISH">
+
+		<id column="WISHID" name="wishId" type="java.lang.Integer">
+			<generator class="native" />
+		</id>
+		<property column="TITLE" name="title" type="java.lang.String" />
+		<property column="DESCRIPTION" name="description" type="java.lang.String" />
+		<property column="TIME_OF_POST" name="timeOfPost" type="java.lang.Long" />
+		<property column="USERID" name="userId" type="java.lang.Integer" />
+		<set name="acceptedUsers" table="USERWISH" lazy="false" cascade="all">
+			<key column="WISHID" />
+			<many-to-many entity-name="com.application.baatna.bean.User">
+			     <column name="USERID" />
+		    </many-to-many>
+		</set>
+		<set name="declinedUsers" table="USERWISH" lazy="false" cascade="all">
+			<key column="WISHID" />
+			<many-to-many entity-name="com.application.baatna.bean.User">
+			     <column name="USERID" />
+		    </many-to-many>
+		</set>
+	</class>
+
+</hibernate-mapping>
