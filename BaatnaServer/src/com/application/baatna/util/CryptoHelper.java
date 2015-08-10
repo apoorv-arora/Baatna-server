@@ -5,7 +5,7 @@ import java.security.MessageDigest;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.tomcat.util.codec.binary.Base64;
+import org.apache.xerces.impl.dv.util.Base64;
 
 public class CryptoHelper {
 	private static final String defaultToken = "1682ea8a33ed402";
@@ -13,14 +13,14 @@ public class CryptoHelper {
 
 	public String encrypt(String blobToEncrypt, String clientToken,
 			String clientSecret) throws Exception {
-		return Base64.encodeBase64String(buildCypher(Cipher.ENCRYPT_MODE,
+		return Base64.encode(buildCypher(Cipher.ENCRYPT_MODE,
 				clientToken, clientSecret).doFinal(blobToEncrypt.getBytes()));
 	}
 
 	public String decrypt(String blobToDecrypt, String clientToken,
 			String clientSecret) throws Exception {
 		return new String(buildCypher(Cipher.DECRYPT_MODE, clientToken,
-				clientSecret).doFinal(Base64.decodeBase64(blobToDecrypt)));
+				clientSecret).doFinal(Base64.decode(blobToDecrypt)));
 	}
 
 	private Cipher buildCypher(int mode, String clientToken, String clientSecret)
