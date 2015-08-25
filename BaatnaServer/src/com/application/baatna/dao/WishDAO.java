@@ -175,7 +175,7 @@ public class WishDAO {
 
 	}
 
-	public void sendPushToNearbyUsers() {
+	public void sendPushToNearbyUsers(String notification) {
 
 		UserDAO userDao = new UserDAO();
 		ArrayList<com.application.baatna.bean.Session> nearbyUsers = userDao
@@ -192,10 +192,11 @@ public class WishDAO {
 
 		Map<String, String> payload = new HashMap<String, String>();
 		payload.put("command", "something");
-
+		payload.put("Notification", notification);
+		
 		JSONObject object = new JSONObject();
 		try {
-			object.put("action", "mdm");
+			object.put("Notification", notification);
 			object.put("actionId", "id");
 			object.put("additionalParam", "value");
 		} catch (JSONException exp) {
@@ -216,7 +217,7 @@ public class WishDAO {
 		ccsClient.disconnect();
 
 	}
-
+	
 	public boolean updateWishedUsers(int userId, int type, int wishId) {
 
 		Session session = null;

@@ -83,7 +83,14 @@ public class WishPost {
 				// GET THE CURRENT LOCATION
 				// GET THE NEARBY USERS
 				// SEND PUSH TO NEARBY USERS
-				wishdao.sendPushToNearbyUsers();
+
+				String notificationString = "";
+				User user = userDao.getUserDetails(wish.getUserId()) ; 
+				if( user != null ) 
+					notificationString = user.getUserName();
+				notificationString = notificationString + " wants to borrow" +  wish.getTitle();
+				
+				wishdao.sendPushToNearbyUsers(notificationString);
 
 				return CommonLib.getResponseString("success", "",
 						CommonLib.RESPONSE_SUCCESS);
