@@ -130,6 +130,9 @@ public class Session {
 			try{
 				responseObject.put("access_token", accessToken);
 				responseObject.put("user_id", user.getUserId());
+				responseObject.put("email", user.getEmail());
+				responseObject.put("profile_pic", user.getProfilePic());
+				responseObject.put("username", user.getUserName());
 				if(user.getIsInstitutionVerified() == 1){
 					responseObject.put("HSLogin", true);
 					responseObject.put("INSTITUTION_NAME", user.getInstitutionName());

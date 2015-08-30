@@ -16,7 +16,7 @@
 		<property column="BIO" name="bio" type="java.lang.String" />
 		<property column="ISVERIFIED" name="isVerified" type="java.lang.Integer" />
 		<property column="FACEBOOKID" name="facebookId" type="java.lang.String" />
-		<property column="FACEBOOKDATA" name="facebookData" type="java.lang.String" />
+		<property column="FACEBOOKDATA" type="string" length="10000" name="facebookData" />
 		<property column="FACEBOOKTOKEN" name="facebookToken" type="java.lang.String" />
 		<property column="FACEBOOKPERMISSION" name="fbPermission" type="java.lang.String" />
 		<property column="ISINSTITUTIONVERIFIED" name="isInstitutionVerified" type="java.lang.Integer" />
