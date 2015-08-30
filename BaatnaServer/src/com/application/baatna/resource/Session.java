@@ -1,6 +1,7 @@
 package com.application.baatna.resource;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -15,6 +16,7 @@ import org.hibernate.engine.spi.SessionDelegatorBaseImpl;
 
 import com.application.baatna.bean.Location;
 import com.application.baatna.bean.User;
+import com.application.baatna.dao.FeedDAO;
 import com.application.baatna.dao.UserDAO;
 import com.application.baatna.types.EmailType;
 import com.application.baatna.util.CommonLib;
@@ -31,10 +33,16 @@ public class Session {
 	@POST
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
-	public JSONObject authorization(@FormParam("client_id") String clientId,
+	public JSONObject authorization(
+			@DefaultValue("images/default.jpg") @FormParam("profile_pic") String profilePic,
+			@FormParam("client_id") String clientId,
+			@FormParam("user_name") String userName,
 			@FormParam("email") String email,
 			@FormParam("app_type") String appType,
 			@FormParam("password") String password,
+			@FormParam("address") String address,
+			@FormParam("phone") String phone, 
+			@FormParam("bio") String bio,
 			@FormParam("registration_id") String regId,
 			@FormParam("latitude") double latitude,
 			@FormParam("longitude") double longitude,
@@ -77,8 +85,8 @@ public class Session {
 			user = userDao.getUserDetails(fbId);
 
 			if(user == null || user.getUserId() <= 0){
-				user = userDao.addUserDetails("", "", "",
-						email, "", "", "", fbId, fbData, fbToken, fb_permissions);
+				user = userDao.addUserDetails(profilePic, userName, password,
+						email, address, phone, bio, fbId, fbData, fbToken, fb_permissions);
 	
 				if (user != null) {
 					try {
@@ -89,6 +97,14 @@ public class Session {
 						e.printStackTrace();
 					} catch (Exception e2) {
 						e2.printStackTrace();
+					}
+					FeedDAO feedDao = new FeedDAO();
+					boolean returnFeedResult = feedDao.addFeedItem(FeedDAO.USER_JOINED, System.currentTimeMillis()
+							, user.getUserId(), -1, -1);
+					if(returnFeedResult) {
+						System.out.println("Success type 1");
+					} else {
+						System.out.println("Failure type 1");
 					}
 				}
 			}

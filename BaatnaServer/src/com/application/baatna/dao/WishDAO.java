@@ -16,7 +16,6 @@ import org.hibernate.Transaction;
 import org.jivesoftware.smack.XMPPException;
 
 import com.application.baatna.bean.User;
-import com.application.baatna.bean.UserWish;
 import com.application.baatna.bean.Wish;
 import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.DBUtil;

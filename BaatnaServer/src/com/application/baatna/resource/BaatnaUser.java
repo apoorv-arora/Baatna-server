@@ -86,6 +86,25 @@ public class BaatnaUser {
 		User userCreated;
 		// create the user if the user does not exist.
 		if (!userExists) {
+			String facebookPic = null;
+			if (fbData != null) {
+				JSONObject object = null;
+				try {
+					object = new JSONObject(fbData);
+					if (object.has("picture")) {
+						object = object.getJSONObject("picture");
+						if (object.has("data")) {
+							object = object.getJSONObject("data");
+							if (object.has("url"))
+								facebookPic = String.valueOf(object.get("url"));
+						}
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+			if(facebookPic != null)
+				profilePic = facebookPic;
 			userCreated = dao.addUserDetails(profilePic, userName, passWord,
 					email, address, phone, bio, fbId, fbData, fbToken, fb_permissions);
 

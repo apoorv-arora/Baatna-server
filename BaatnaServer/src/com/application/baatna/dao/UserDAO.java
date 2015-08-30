@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -22,11 +24,9 @@ public class UserDAO {
 	/**
 	 * Add user details to the DB for a newly signed up user. Updates User and
 	 * Session tables.
-	 * */
-	public User addUserDetails(String profilePic, String userName,
-			String passWord, String email, String address, String phone,
-			String bio, String fbId, String fbData, String fbToken,
-			String fbPermissions) {
+	 */
+	public User addUserDetails(String profilePic, String userName, String passWord, String email, String address,
+			String phone, String bio, String fbId, String fbData, String fbToken, String fbPermissions) {
 		User user;
 		Session session = null;
 		try {
@@ -45,7 +45,6 @@ public class UserDAO {
 			user.setFacebookData(fbData);
 			user.setFacebookToken(fbToken);
 			user.setFbPermission(fbPermissions);
-
 			session.save(user);
 
 			transaction.commit();
@@ -57,7 +56,7 @@ public class UserDAO {
 			user = null;
 			System.out.println("error");
 		} finally {
-			if(session != null && session.isOpen())
+			if (session != null && session.isOpen())
 				session.close();
 		}
 
@@ -68,7 +67,7 @@ public class UserDAO {
 	/**
 	 * Get user details based on the email\password combo. Used in case of
 	 * login. TODO: Add check for access Token from session
-	 * */
+	 */
 	public User getUserDetails(String email, String passWord) {
 
 		User user = null;
@@ -86,8 +85,7 @@ public class UserDAO {
 			query.setParameter("password", passWord);
 			java.util.List results = (java.util.List) query.list();
 
-			for (Iterator iterator = ((java.util.List) results).iterator(); iterator
-					.hasNext();) {
+			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
 				user = (User) iterator.next();
 			}
 
@@ -98,7 +96,7 @@ public class UserDAO {
 			System.out.println(e.getMessage());
 			System.out.println("error");
 		} finally {
-			if(session != null && session.isOpen())
+			if (session != null && session.isOpen())
 				session.close();
 		}
 
@@ -108,7 +106,7 @@ public class UserDAO {
 
 	/**
 	 * Get user details based on the facebook id
-	 * */
+	 */
 	public User getUserDetails(String facebookId) {
 
 		User user = null;
@@ -122,11 +120,10 @@ public class UserDAO {
 			String sql = "SELECT * FROM USER WHERE FACEBOOKID = :facebookId";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(User.class);
-			query.setParameter("email_id", facebookId);
+			query.setParameter("facebookId", facebookId);
 			java.util.List results = (java.util.List) query.list();
 
-			for (Iterator iterator = ((java.util.List) results).iterator(); iterator
-					.hasNext();) {
+			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
 				user = (User) iterator.next();
 			}
 
@@ -137,7 +134,7 @@ public class UserDAO {
 			System.out.println(e.getMessage());
 			System.out.println("error");
 		} finally {
-			if(session != null && session.isOpen())
+			if (session != null && session.isOpen())
 				session.close();
 		}
 
@@ -147,7 +144,7 @@ public class UserDAO {
 
 	/**
 	 * Get the user details based on the userId
-	 * */
+	 */
 	public User getUserDetails(int userId) {
 
 		User user = null;
@@ -163,8 +160,7 @@ public class UserDAO {
 			query.setParameter("userid", userId);
 			java.util.List results = (java.util.List) query.list();
 
-			for (Iterator iterator = ((java.util.List) results).iterator(); iterator
-					.hasNext();) {
+			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
 				user = (User) iterator.next();
 			}
 
@@ -175,7 +171,7 @@ public class UserDAO {
 			System.out.println(e.getMessage());
 			System.out.println("error");
 		} finally {
-			if(session != null && session.isOpen())
+			if (session != null && session.isOpen())
 				session.close();
 		}
 
@@ -185,7 +181,7 @@ public class UserDAO {
 
 	/**
 	 * Get session details for a particular userId and accessToken
-	 * */
+	 */
 	public com.application.baatna.bean.Session getSessionDetails(int userId, String accessToken) {
 		com.application.baatna.bean.Session loginSession = null;
 		Session session = null;
@@ -205,10 +201,8 @@ public class UserDAO {
 			query.setParameter("accessToken", accessToken);
 			java.util.List results = (java.util.List) query.list();
 
-			for (Iterator iterator = ((java.util.List) results).iterator(); iterator
-					.hasNext();) {
-				loginSession = (com.application.baatna.bean.Session) iterator
-						.next();
+			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
+				loginSession = (com.application.baatna.bean.Session) iterator.next();
 			}
 
 			transaction.commit();
@@ -217,18 +211,18 @@ public class UserDAO {
 		} catch (HibernateException e) {
 			System.out.println(e.getMessage());
 			System.out.println("error");
-		}finally {
-			if(session != null && session.isOpen())
+		} finally {
+			if (session != null && session.isOpen())
 				session.close();
 		}
 
 		return loginSession;
 
 	}
-	
+
 	/**
 	 * Utility method to generate an accessToken.
-	 * */
+	 */
 	public String generateAccessToken(int userId) {
 
 		String accessToken = "";
@@ -251,8 +245,7 @@ public class UserDAO {
 			accessToken = aT + "";
 			// setting access token for the user
 
-			String sql = "UPDATE SESSION SET ACCESS_TOKEN = " + accessToken
-					+ "  WHERE USERID = " + userId;
+			String sql = "UPDATE SESSION SET ACCESS_TOKEN = " + accessToken + "  WHERE USERID = " + userId;
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(User.class);
 			int result = query.executeUpdate();
@@ -265,8 +258,8 @@ public class UserDAO {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 			System.out.println("error");
-		}finally {
-			if(session != null && session.isOpen())
+		} finally {
+			if (session != null && session.isOpen())
 				session.close();
 		}
 
@@ -276,7 +269,7 @@ public class UserDAO {
 
 	/**
 	 * Delete an accessToken for a particular user
-	 * */
+	 */
 	public boolean nullifyAccessToken(int userId, String accessToken) {
 
 		Session session = null;
@@ -302,7 +295,7 @@ public class UserDAO {
 			System.out.println(e.getMessage());
 			System.out.println("error");
 		} finally {
-			if(session != null && session.isOpen())
+			if (session != null && session.isOpen())
 				session.close();
 		}
 
@@ -311,7 +304,7 @@ public class UserDAO {
 
 	/**
 	 * Removes the push notification Id
-	 * */
+	 */
 	public int nullifyPushId(int userId) {
 
 		Session session = null;
@@ -340,7 +333,7 @@ public class UserDAO {
 			System.out.println("error");
 			return -1;
 		} finally {
-			if(session != null && session.isOpen())
+			if (session != null && session.isOpen())
 				session.close();
 		}
 
@@ -367,8 +360,7 @@ public class UserDAO {
 			query.setParameter("email_id", email);
 			java.util.List results = (java.util.List) query.list();
 
-			for (Iterator iterator = ((java.util.List) results).iterator(); iterator
-					.hasNext();) {
+			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
 				user = (User) iterator.next();
 				i++;
 			}
@@ -385,7 +377,7 @@ public class UserDAO {
 			System.out.println(e.getMessage());
 			System.out.println("error");
 		} finally {
-			if(session != null && session.isOpen())
+			if (session != null && session.isOpen())
 				session.close();
 		}
 
@@ -413,10 +405,8 @@ public class UserDAO {
 			java.util.List results = (java.util.List) query.list();
 
 			if (results != null) {
-				for (Iterator iterator = ((java.util.List) results).iterator(); iterator
-						.hasNext();) {
-					user = (com.application.baatna.bean.Session) iterator
-							.next();
+				for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
+					user = (com.application.baatna.bean.Session) iterator.next();
 					i = user.getUserId();
 
 				}
@@ -434,7 +424,7 @@ public class UserDAO {
 			e.printStackTrace();
 			System.out.println("error");
 		} finally {
-			if(session != null && session.isOpen())
+			if (session != null && session.isOpen())
 				session.close();
 		}
 
@@ -457,8 +447,7 @@ public class UserDAO {
 			query.addEntity(com.application.baatna.bean.Session.class);
 			query.setParameter("access_token", accessToken);
 			java.util.List results = (java.util.List) query.list();
-			com.application.baatna.bean.Session currentSession = (com.application.baatna.bean.Session) results
-					.get(0);
+			com.application.baatna.bean.Session currentSession = (com.application.baatna.bean.Session) results.get(0);
 			// com.application.baatna.bean.Session mySession =
 			// (com.application.baatna.bean.Session)
 			// session.get(com.application.baatna.bean.Session.class,
@@ -467,7 +456,8 @@ public class UserDAO {
 			session.update(currentSession);
 
 			// String sql =
-			// "UPDATE SESSION SET PUSHID = :pushId WHERE ACCESS_TOKEN = :access_token";
+			// "UPDATE SESSION SET PUSHID = :pushId WHERE ACCESS_TOKEN =
+			// :access_token";
 			// SQLQuery query = session.createSQLQuery(sql);
 			// query.addEntity(com.application.baatna.bean.Session.class);
 			// query.setParameter("pushId", pushId);
@@ -483,7 +473,7 @@ public class UserDAO {
 			e.printStackTrace();
 			return false;
 		} finally {
-			if(session != null && session.isOpen())
+			if (session != null && session.isOpen())
 				session.close();
 		}
 
@@ -491,9 +481,8 @@ public class UserDAO {
 
 	}
 
-	public boolean editUserDetails(int userId, String userName,
-			String passWord, String email, String address, String phone,
-			String bio) {
+	public boolean editUserDetails(int userId, String userName, String passWord, String email, String address,
+			String phone, String bio) {
 
 		Session session = null;
 		try {
@@ -520,7 +509,7 @@ public class UserDAO {
 			System.out.println("error");
 			return false;
 		} finally {
-			if(session != null && session.isOpen())
+			if (session != null && session.isOpen())
 				session.close();
 		}
 
@@ -552,7 +541,7 @@ public class UserDAO {
 			System.out.println("error");
 			return false;
 		} finally {
-			if(session != null && session.isOpen())
+			if (session != null && session.isOpen())
 				session.close();
 		}
 
@@ -580,7 +569,7 @@ public class UserDAO {
 			System.out.println("error");
 			return false;
 		} finally {
-			if(session != null && session.isOpen())
+			if (session != null && session.isOpen())
 				session.close();
 		}
 
@@ -588,8 +577,7 @@ public class UserDAO {
 
 	}
 
-	public boolean addSession(int userId, String accessToken,
-			String registrationId, Location location) {
+	public boolean addSession(int userId, String accessToken, String registrationId, Location location) {
 		Session session = null;
 		try {
 			session = DBUtil.getSessionFactory().openSession();
@@ -614,7 +602,7 @@ public class UserDAO {
 			System.out.println("error");
 			return false;
 		} finally {
-			if(session != null && session.isOpen())
+			if (session != null && session.isOpen())
 				session.close();
 		}
 
@@ -623,7 +611,7 @@ public class UserDAO {
 
 	/**
 	 * Get nearby user's session, so as to provide location
-	 * */
+	 */
 	public ArrayList<com.application.baatna.bean.Session> getNearbyUsers() {
 
 		ArrayList<com.application.baatna.bean.Session> users = null;
@@ -640,8 +628,7 @@ public class UserDAO {
 			query.addEntity(com.application.baatna.bean.Session.class);
 			java.util.List results = (java.util.List) query.list();
 
-			for (Iterator iterator = ((java.util.List) results).iterator(); iterator
-					.hasNext();) {
+			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
 				users.add((com.application.baatna.bean.Session) iterator.next());
 			}
 
@@ -652,15 +639,15 @@ public class UserDAO {
 			System.out.println(e.getMessage());
 			System.out.println("error");
 		} finally {
-			if(session != null && session.isOpen())
+			if (session != null && session.isOpen())
 				session.close();
 		}
 		return users;
 	}
-	
+
 	/**
 	 * Get nearby users object
-	 * */
+	 */
 	public ArrayList<User> getNearbyUsers(Location location) {
 
 		ArrayList<User> users = null;
@@ -668,9 +655,7 @@ public class UserDAO {
 		return users;
 	}
 
-
-	public boolean updateInstitution(String institutionName, String studentId,
-			int userId, int isInstitutionVerified) {
+	public boolean updateInstitution(String institutionName, String studentId, int userId, int isInstitutionVerified) {
 
 		Session session = null;
 
@@ -699,17 +684,17 @@ public class UserDAO {
 			e.printStackTrace();
 
 		} finally {
-			if(session != null && session.isOpen())
+			if (session != null && session.isOpen())
 				session.close();
 		}
 
 		return false;
 
 	}
-	
+
 	public boolean validateInstitution(String institutionName) {
-		for(String name: CommonLib.getInstitutionsList()){
-			if(institutionName.equalsIgnoreCase(name)) {
+		for (String name : CommonLib.getInstitutionsList()) {
+			if (institutionName.equalsIgnoreCase(name)) {
 				return true;
 			}
 		}

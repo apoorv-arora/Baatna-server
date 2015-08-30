@@ -89,16 +89,7 @@ public class Feed {
 
 					int type = feedItem.getType();
 
-					if (type == 1) {
-
-						int userIdFirst = feedItem.getUserIdFirst();
-						User userFirst = userDao.getUserDetails(userIdFirst);
-
-						feedJsonObject.put("userFirst",
-								JsonUtil.getUserJson(userFirst));
-						feedJsonObject.put("type", 1);
-
-					} else if (type == 2) {
+					if (type == 2) {
 
 						int userIdFirst = feedItem.getUserIdFirst();
 						int wishId = feedItem.getWishId();
@@ -113,7 +104,7 @@ public class Feed {
 
 						feedJsonObject.put("wish", JsonUtil.getWishJson(wish));
 						feedJsonObject.put("type", 2);
-
+						feedItemJson.put(feedJsonObject);
 					} else if (type == 3) {
 
 						int userIdFirst = feedItem.getUserIdFirst();
@@ -133,8 +124,8 @@ public class Feed {
 
 						feedJsonObject.put("wish", JsonUtil.getWishJson(wish));
 						feedJsonObject.put("type", 3);
+						feedItemJson.put(feedJsonObject);
 					}
-					feedItemJson.put(feedJsonObject);
 				}
 			} catch (JSONException e) {
 				e.printStackTrace();
