@@ -36,7 +36,10 @@ public class Feed {
 			@FormParam("client_id") String clientId,
 			@FormParam("app_type") String appType,
 			@FormParam("latitude") double latitude,
-			@FormParam("longitude") double longitude) {
+			@FormParam("longitude") double longitude,
+			@FormParam("start") int start,
+			@FormParam("count") int count
+			) {
 		// check for client_id
 		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
 			return CommonLib.getResponseString("Invalid client id", "",
@@ -68,10 +71,7 @@ public class Feed {
 
 			// get the user feed
 			FeedDAO feedDao = new FeedDAO();
-			feedItems.addAll(feedDao.getNearbyUsers(location));
-			feedItems.addAll(feedDao.getUsersWithWishes(location));
-			feedItems.addAll(feedDao.getUsersWithWishesFulfilled(location));
-
+			feedItems.addAll(feedDao.getFeedItems(location, start, count));
 			// sort based on timestamp of the feed items
 			java.util.Collections.sort(feedItems, new Comparator<NewsFeed>() {
 				public int compare(NewsFeed s1, NewsFeed s2) {

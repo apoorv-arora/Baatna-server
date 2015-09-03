@@ -61,7 +61,7 @@ public class WishPost {
 		int userId = userDao.userActive(accessToken);
 
 		if (userId > 0) {
-			WishDAO wishdao = new WishDAO();
+			final WishDAO wishdao = new WishDAO();
 
 			Wish wish = wishdao.addWishPost(title, description,
 					System.currentTimeMillis(), userId);
@@ -90,7 +90,8 @@ public class WishPost {
 					notificationString = user.getUserName();
 				notificationString = notificationString + " wants to borrow" +  wish.getTitle();
 				
-				wishdao.sendPushToNearbyUsers(notificationString);
+				final String notif = notificationString;
+				wishdao.sendPushToNearbyUsers(notif);
 
 				return CommonLib.getResponseString("success", "",
 						CommonLib.RESPONSE_SUCCESS);
