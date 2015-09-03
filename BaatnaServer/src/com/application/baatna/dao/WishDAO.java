@@ -58,7 +58,7 @@ public class WishDAO {
 		return wish;
 	}
 
-	public ArrayList<Wish> getAllWishes(int userId) {
+	public ArrayList<Wish> getAllWishes(int userId, int start, int count) {
 		ArrayList<Wish> wishes;
 		Session session = null;
 		try {
@@ -70,10 +70,12 @@ public class WishDAO {
 			int i = 0;
 			wishes = new ArrayList<Wish>();
 
-			String sql = "SELECT * FROM WISH WHERE USERID = :userid";
+			String sql = "SELECT * FROM WISH WHERE USERID = :userid LIMIT :start , :count";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(Wish.class);
 			query.setParameter("userid", userId);
+			query.setParameter("start", start);
+			query.setParameter("count", count);
 
 			java.util.List results = (java.util.List) query.list();
 

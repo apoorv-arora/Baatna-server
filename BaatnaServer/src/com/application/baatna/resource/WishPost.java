@@ -108,7 +108,9 @@ public class WishPost {
 	@POST
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
-	public JSONObject viewWishes(@FormParam("access_token") String accessToken) {
+	public JSONObject viewWishes(@FormParam("access_token") String accessToken,
+			@FormParam("start") int start,
+			@FormParam("count") int count) {
 
 		UserDAO dao = new UserDAO();
 		int userId = dao.userActive(accessToken);
@@ -116,7 +118,7 @@ public class WishPost {
 		if (userId > 0) {
 
 			WishDAO wishdao = new WishDAO();
-			List<Wish> wishes = wishdao.getAllWishes(userId);
+			List<Wish> wishes = wishdao.getAllWishes(userId, start, count);
 			JSONObject returnObject = new JSONObject();
 			try {
 				JSONArray jsonArr = new JSONArray();
