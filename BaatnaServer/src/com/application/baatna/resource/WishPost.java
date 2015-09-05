@@ -119,6 +119,7 @@ public class WishPost {
 
 			WishDAO wishdao = new WishDAO();
 			List<Wish> wishes = wishdao.getAllWishes(userId, start, count);
+			int size = wishdao.getWishesCount(userId);
 			JSONObject returnObject = new JSONObject();
 			try {
 				JSONArray jsonArr = new JSONArray();
@@ -126,6 +127,7 @@ public class WishPost {
 					jsonArr.put(JsonUtil.getWishJson(wish));
 				}
 				returnObject.put("wishes", jsonArr);
+				returnObject.put("total", size);
 			} catch (JSONException e) {
 
 			}

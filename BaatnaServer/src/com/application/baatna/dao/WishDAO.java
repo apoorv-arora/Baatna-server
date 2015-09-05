@@ -328,5 +328,48 @@ public class WishDAO {
 		}
 		return users;
 	}
+	
+	public int getWishesCount(int userId) {
+		int size = 0;
+		ArrayList<Wish> wishes;
+		Session session = null;
+		try {
+			session = DBUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+
+			// finding user info
+			Wish wish = null;
+			wishes = new ArrayList<Wish>();
+
+			String sql = "SELECT * FROM WISH WHERE USERID = :userid";
+			SQLQuery query = session.createSQLQuery(sql);
+			query.addEntity(Wish.class);
+			query.setParameter("userid", userId);
+
+			java.util.List results = (java.util.List) query.list();
+			for (Iterator iterator = ((java.util.List) results).iterator(); iterator
+					.hasNext();) {
+
+				wish = (Wish) iterator.next();
+				wishes.add(wish);
+				size++;
+			}
+
+			transaction.commit();
+			session.close();
+		} catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+
+			System.out.println("error");
+			return 0;
+		} finally {
+			if(session != null && session.isOpen())
+				session.close();
+		}
+
+		return size;
+	}
+
 
 }
