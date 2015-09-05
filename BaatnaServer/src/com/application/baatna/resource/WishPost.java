@@ -9,6 +9,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -109,8 +110,8 @@ public class WishPost {
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
 	public JSONObject viewWishes(@FormParam("access_token") String accessToken,
-			@FormParam("start") int start,
-			@FormParam("count") int count) {
+			@QueryParam("start") int start,
+			@QueryParam("count") int count) {
 
 		UserDAO dao = new UserDAO();
 		int userId = dao.userActive(accessToken);
