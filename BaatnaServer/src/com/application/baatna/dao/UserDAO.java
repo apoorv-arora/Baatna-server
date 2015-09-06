@@ -448,23 +448,45 @@ public class UserDAO {
 			query.setParameter("access_token", accessToken);
 			java.util.List results = (java.util.List) query.list();
 			com.application.baatna.bean.Session currentSession = (com.application.baatna.bean.Session) results.get(0);
-			// com.application.baatna.bean.Session mySession =
-			// (com.application.baatna.bean.Session)
-			// session.get(com.application.baatna.bean.Session.class,
-			// currentSession);
 			currentSession.setPushId(pushId);
 			session.update(currentSession);
 
-			// String sql =
-			// "UPDATE SESSION SET PUSHID = :pushId WHERE ACCESS_TOKEN =
-			// :access_token";
-			// SQLQuery query = session.createSQLQuery(sql);
-			// query.addEntity(com.application.baatna.bean.Session.class);
-			// query.setParameter("pushId", pushId);
-			// query.setParameter("access_token", accessToken);
-			// query.setParameter("user_id", userId);
-			// int result = query.executeUpdate();
-			// CommonLib.BLog(""+result);
+			transaction.commit();
+			session.close();
+		} catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			System.out.println("error");
+			e.printStackTrace();
+			return false;
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
+
+		return true;
+
+	}
+
+	public boolean updateLocation(double lat, double lon, String accessToken) {
+
+		Session session = null;
+
+		try {
+
+			session = DBUtil.getSessionFactory().openSession();
+
+			Transaction transaction = session.beginTransaction();
+
+			String sql = "SELECT * FROM SESSION WHERE ACCESS_TOKEN = :access_token";
+			SQLQuery query = session.createSQLQuery(sql);
+			query.addEntity(com.application.baatna.bean.Session.class);
+			query.setParameter("access_token", accessToken);
+			java.util.List results = (java.util.List) query.list();
+			com.application.baatna.bean.Session currentSession = (com.application.baatna.bean.Session) results.get(0);
+			Location location = new Location(lat, lon);
+			currentSession.setLocation(location);
+			session.update(currentSession);
+
 			transaction.commit();
 			session.close();
 		} catch (HibernateException e) {

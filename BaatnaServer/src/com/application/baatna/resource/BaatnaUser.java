@@ -259,6 +259,27 @@ public class BaatnaUser {
 		return CommonLib.getResponseString("failure", "failure",
 				CommonLib.RESPONSE_FAILURE);
 	}
+	
+	@Path("/location")
+	@POST
+	@Produces("application/json")
+	@Consumes("application/x-www-form-urlencoded")
+	public JSONObject registerPushId(
+			@FormParam("access_token") String accessToken,
+			@FormParam("latitude") double lat,
+			@FormParam("longitude") double lon) {
+
+		UserDAO dao = new UserDAO();
+
+		 int userId = dao.userActive(accessToken);
+
+		if (userId > 0 && dao.updateLocation(lat, lon, accessToken))
+			return CommonLib.getResponseString("success", "success",
+					CommonLib.RESPONSE_SUCCESS);
+
+		return CommonLib.getResponseString("failure", "failure",
+				CommonLib.RESPONSE_FAILURE);
+	}
 
 	@Path("/nearbyusers")
 	@POST
