@@ -8,6 +8,7 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -37,8 +38,8 @@ public class Feed {
 			@FormParam("app_type") String appType,
 			@FormParam("latitude") double latitude,
 			@FormParam("longitude") double longitude,
-			@FormParam("start") int start,
-			@FormParam("count") int count
+			@QueryParam("start") int start,
+			@QueryParam("count") int count
 			) {
 		// check for client_id
 		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
@@ -72,6 +73,7 @@ public class Feed {
 			// get the user feed
 			FeedDAO feedDao = new FeedDAO();
 			feedItems.addAll(feedDao.getFeedItems(location, start, count));
+			int total = feedDao.getFeedItemsCount(location);
 			// sort based on timestamp of the feed items
 			java.util.Collections.sort(feedItems, new Comparator<NewsFeed>() {
 				public int compare(NewsFeed s1, NewsFeed s2) {
@@ -83,7 +85,6 @@ public class Feed {
 			JSONObject newsFeedJsonObject = new JSONObject();
 			JSONArray feedItemJson = new JSONArray();
 			try {
-				newsFeedJsonObject.put("newsFeed", feedItemJson);
 				for (NewsFeed feedItem : feedItems) {
 					JSONObject feedJsonObject = new JSONObject();
 
@@ -127,6 +128,8 @@ public class Feed {
 						feedItemJson.put(feedJsonObject);
 					}
 				}
+				newsFeedJsonObject.put("newsFeed", feedItemJson);
+				newsFeedJsonObject.put("total", total);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}

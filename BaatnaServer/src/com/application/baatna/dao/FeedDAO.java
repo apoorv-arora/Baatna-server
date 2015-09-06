@@ -190,7 +190,7 @@ public class FeedDAO {
 			session = DBUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
 
-			String sql = "SELECT * FROM NEWSFEED LIMIT :start , :count";
+			String sql = "SELECT * FROM NEWSFEED WHERE 1 LIMIT :start , :count";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(NewsFeed.class);
 			query.setParameter("start", start);
@@ -212,6 +212,39 @@ public class FeedDAO {
 				session.close();
 		}
 		return feedItems;
+	}
+
+	public int getFeedItemsCount(Location location) {
+		ArrayList<NewsFeed> feedItems = new ArrayList<NewsFeed>();
+		int count = 0;
+		Session session = null;
+		try {
+
+			session = DBUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+
+			String sql = "SELECT * FROM NEWSFEED WHERE 1";
+			SQLQuery query = session.createSQLQuery(sql);
+			query.addEntity(NewsFeed.class);
+			java.util.List results = (java.util.List) query.list();
+
+			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
+				feedItems.add((NewsFeed) iterator.next());
+				count++;
+			}
+
+			transaction.commit();
+			session.close();
+
+		} catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			System.out.println("error");
+			return 0;
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
+		return count;
 	}
 
 }
