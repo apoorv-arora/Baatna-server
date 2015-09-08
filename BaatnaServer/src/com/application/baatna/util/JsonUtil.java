@@ -22,7 +22,12 @@ public class JsonUtil {
 		userJsonObject.put("email", user.getEmail());
 		userJsonObject.put("phone", user.getPhone());
 		userJsonObject.put("profile_pic", user.getProfilePic());
-		userJsonObject.put("user_name", user.getUserName());
+		if(user.getUserName() == null || user.getUserName().equals("")) {
+			JSONObject data = new JSONObject(user.getFacebookData());
+			if(data.has("name"))
+				userJsonObject.put("user_name", String.valueOf(data.get("name")));
+		} else
+			userJsonObject.put("user_name", user.getUserName());
 		userJson.put("user", userJsonObject);
 		return userJson;
 	}

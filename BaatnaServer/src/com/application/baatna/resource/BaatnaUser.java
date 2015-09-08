@@ -414,5 +414,43 @@ public class BaatnaUser {
 		}
 		return object;
 	}
+	
+	@Path("/details")
+	@POST
+	@Produces("application/json")
+	@Consumes("application/x-www-form-urlencoded")
+	public JSONObject userDetails(
+			@FormParam("client_id") String clientId,
+			@FormParam("app_type") String appType,
+			@QueryParam("user_id") String userId) {
+
+		// check for client_id
+		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
+			return CommonLib.getResponseString("Invalid client id", "",
+					CommonLib.RESPONSE_INVALID_CLIENT_ID);
+
+		// check for app type
+		if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
+			return CommonLib.getResponseString("Invalid params", "",
+					CommonLib.RESPONSE_INVALID_APP_TYPE);
+
+		UserDAO dao = new UserDAO();
+		// check if user exists
+		User userExists = dao.getUserDetails(Integer.parseInt(userId));
+		// create the user if the user does not exist.
+		if (userExists != null) {
+			try {
+				return CommonLib.getResponseString(JsonUtil.getUserJson(userExists),
+						"Success",
+						CommonLib.RESPONSE_SUCCESS);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		} 
+		return CommonLib.getResponseString("",
+				"User already exists with the email",
+				CommonLib.RESPONSE_FAILURE);
+	}
+
 
 }
