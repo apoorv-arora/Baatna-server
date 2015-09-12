@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -18,6 +20,10 @@ import org.jivesoftware.smack.XMPPException;
 
 import com.application.baatna.bean.AllMessages;
 import com.application.baatna.bean.Message;
+import com.application.baatna.bean.User;
+import com.application.baatna.bean.UserCompactMessage;
+import com.application.baatna.bean.UserWish;
+import com.application.baatna.bean.Wish;
 import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.DBUtil;
 import com.application.baatna.util.GCM;
@@ -191,4 +197,65 @@ public class MessageDAO {
 		return allmessages;
 
 	}
+	
+	public ArrayList<UserCompactMessage> getAcceptedUsersForMessages(int userId) {
+
+		Session session = null;
+		ArrayList<UserCompactMessage> acceptedUsers = new ArrayList<UserCompactMessage>();
+		try {
+			session = DBUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+
+			String sql = "SELECT * FROM WISH";
+			SQLQuery query = session.createSQLQuery(sql);
+			query.addEntity(Wish.class);
+
+			java.util.List results = (java.util.List) query.list();
+
+			for (Iterator iterator = ((java.util.List) results).iterator(); iterator
+					.hasNext();) {
+				
+				Wish currentWish = (Wish) iterator.next();
+				//Find all users which have accepted the wish of this particular user
+				if(currentWish != null && currentWish.getUserId() == userId && currentWish.getAcceptedUsers() != null) {
+					for(User acceptedUser: currentWish.getAcceptedUsers()) {
+						UserCompactMessage compatMessage = new UserCompactMessage();
+						compatMessage.setUser(acceptedUser);
+						compatMessage.setWish(currentWish);
+						compatMessage.setType(CommonLib.CURRENT_USER_WISH_ACCEPTED);
+						acceptedUsers.add(compatMessage);
+					}
+				}
+				//Find all users which have provided a wish and is accepted by this particular user 
+				else if(currentWish != null && currentWish.getAcceptedUsers() != null) {
+					for(User user: currentWish.getAcceptedUsers()) {
+						if(user.getUserId() == userId) {
+							UserCompactMessage compatMessage = new UserCompactMessage();
+							compatMessage.setUser(user);
+							compatMessage.setWish(currentWish);
+							compatMessage.setType(CommonLib.WISH_ACCEPTED_CURRENT_USER);
+							acceptedUsers.add(compatMessage);
+						}
+					}
+				}
+				
+			}
+			
+			transaction.commit();
+			session.close();
+
+		} catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			System.out.println("error");
+			e.printStackTrace();
+
+		} finally {
+			if(session != null && session.isOpen())
+				session.close();
+		}
+		return acceptedUsers;
+	}
+	
+
+	
 }

@@ -19,6 +19,7 @@ import com.application.baatna.bean.Message;
 import com.application.baatna.bean.NewsFeed;
 import com.application.baatna.bean.Session;
 import com.application.baatna.bean.User;
+import com.application.baatna.bean.UserCompactMessage;
 import com.application.baatna.bean.Wish;
 import com.application.baatna.dao.FeedDAO;
 import com.application.baatna.dao.MessageDAO;
@@ -92,52 +93,56 @@ public class Messaging {
 
 	}
 
-//	@Path("/incoming_message")
-//	@POST
-//	@Produces(MediaType.TEXT_PLAIN)
-//	@Consumes("application/x-www-form-urlencoded")
-//	public String sendMessage(@FormParam("access_token") String accessToken, @FormParam("wishId") int wishId,
-//			@FormParam("to_userId") int toUserId, @FormParam("message") String message) throws XMPPException {
-//
-//		UserDAO userdao = new UserDAO();
-//
-//		int fromUserId = userdao.userActive(accessToken);
-//
-//		if (fromUserId > 0) {
-//
-//			MessageDAO messagedao = new MessageDAO();
-//			String messageId = "";
-//
-//			// getting toPushId of toUserId
-//
-//			String toPushId = userdao.getSessionDetails(toUserId, accessToken).getPushId();
-//
-//			// sending message touserId and toPushId
-//			// PushDAO pushdao = new PushDAO();
-//
-//			// pushdao.connectToGCM();
-//			//
-//			// messageId = pushdao.sendMessage(GOOGLE_SERVER_KEY, toPushId,
-//			// message);
-//
-//			if (!messageId.equals("FAILURE")) {
-//
-//				Date date = new Date();
-//				System.out.println(date.toString());
-//
-//				if (messagedao.addMessage(message, true, date.toString(), fromUserId, toUserId, wishId,
-//						Integer.parseInt(messageId)))
-//					return "SUCCESS";
-//
-//			}
-//
-//			return "FAILURE";
-//
-//		}
-//
-//		else
-//			return "FAILURE";
-//	}
+	// @Path("/incoming_message")
+	// @POST
+	// @Produces(MediaType.TEXT_PLAIN)
+	// @Consumes("application/x-www-form-urlencoded")
+	// public String sendMessage(@FormParam("access_token") String accessToken,
+	// @FormParam("wishId") int wishId,
+	// @FormParam("to_userId") int toUserId, @FormParam("message") String
+	// message) throws XMPPException {
+	//
+	// UserDAO userdao = new UserDAO();
+	//
+	// int fromUserId = userdao.userActive(accessToken);
+	//
+	// if (fromUserId > 0) {
+	//
+	// MessageDAO messagedao = new MessageDAO();
+	// String messageId = "";
+	//
+	// // getting toPushId of toUserId
+	//
+	// String toPushId = userdao.getSessionDetails(toUserId,
+	// accessToken).getPushId();
+	//
+	// // sending message touserId and toPushId
+	// // PushDAO pushdao = new PushDAO();
+	//
+	// // pushdao.connectToGCM();
+	// //
+	// // messageId = pushdao.sendMessage(GOOGLE_SERVER_KEY, toPushId,
+	// // message);
+	//
+	// if (!messageId.equals("FAILURE")) {
+	//
+	// Date date = new Date();
+	// System.out.println(date.toString());
+	//
+	// if (messagedao.addMessage(message, true, date.toString(), fromUserId,
+	// toUserId, wishId,
+	// Integer.parseInt(messageId)))
+	// return "SUCCESS";
+	//
+	// }
+	//
+	// return "FAILURE";
+	//
+	// }
+	//
+	// else
+	// return "FAILURE";
+	// }
 
 	@Path("/view_messages")
 	@POST
@@ -167,8 +172,7 @@ public class Messaging {
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
 	public JSONObject getNewsFeed(@FormParam("access_token") String accessToken,
-			@FormParam("client_id") String clientId, @FormParam("app_type") String appType,
-			@FormParam("latitude") double latitude, @FormParam("longitude") double longitude) {
+			@FormParam("client_id") String clientId, @FormParam("app_type") String appType) {
 		// check for client_id
 		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
 			return CommonLib.getResponseString("Invalid client id", "", CommonLib.RESPONSE_INVALID_CLIENT_ID);
@@ -183,90 +187,22 @@ public class Messaging {
 		int userId = userDao.userActive(accessToken);
 
 		if (userId > 0) {
-			ArrayList<NewsFeed> feedItems = new ArrayList<NewsFeed>();
-
-			// inflate type 1 - User joined near you
-			if (latitude == 0 && longitude == 0) {
-				Session session = userDao.getSessionDetails(userId, accessToken);
-				if (session != null && session.getLocation() != null) {
-					latitude = session.getLocation().getLatitude();
-					longitude = session.getLocation().getLongitude();
-				}
-			}
-			Location location = new Location(latitude, longitude);
-
-			// get the user feed
-			FeedDAO feedDao = new FeedDAO();
-			feedItems.addAll(feedDao.getNearbyUsers(location));
-			feedItems.addAll(feedDao.getUsersWithWishes(location));
-			feedItems.addAll(feedDao.getUsersWithWishesFulfilled(location));
-
-			// sort based on timestamp of the feed items
-			java.util.Collections.sort(feedItems, new Comparator<NewsFeed>() {
-				public int compare(NewsFeed s1, NewsFeed s2) {
-					return (int) (s1.getTimestamp() - s2.getTimestamp());
-				}
-			});
-
-			// construction of big fat json
-			JSONObject newsFeedJsonObject = new JSONObject();
-			JSONArray feedItemJson = new JSONArray();
+			// Iterate over all the wishes
+			MessageDAO messageDao = new MessageDAO();
+			JSONArray messageArr = new JSONArray();
+			JSONObject messageJson = new JSONObject();
+			ArrayList<UserCompactMessage> messages = messageDao.getAcceptedUsersForMessages(userId);
 			try {
-				newsFeedJsonObject.put("newsFeed", feedItemJson);
-				for (NewsFeed feedItem : feedItems) {
-					JSONObject feedJsonObject = new JSONObject();
-
-					int type = feedItem.getType();
-
-					if (type == 1) {
-
-						int userIdFirst = feedItem.getUserIdFirst();
-						User userFirst = userDao.getUserDetails(userIdFirst);
-
-						feedJsonObject.put("userFirst", JsonUtil.getUserJson(userFirst));
-						feedJsonObject.put("type", 1);
-
-					} else if (type == 2) {
-
-						int userIdFirst = feedItem.getUserIdFirst();
-						int wishId = feedItem.getWishId();
-
-						User userFirst = userDao.getUserDetails(userIdFirst);
-
-						WishDAO wishDao = new WishDAO();
-						Wish wish = wishDao.getWish(wishId);
-
-						feedJsonObject.put("userFirst", JsonUtil.getUserJson(userFirst));
-
-						feedJsonObject.put("wish", JsonUtil.getWishJson(wish));
-						feedJsonObject.put("type", 2);
-
-					} else if (type == 3) {
-
-						int userIdFirst = feedItem.getUserIdFirst();
-						int wishId = feedItem.getWishId();
-						int userIdSecond = feedItem.getUserIdSecond();
-
-						User userFirst = userDao.getUserDetails(userIdFirst);
-						User userSecond = userDao.getUserDetails(userIdSecond);
-
-						WishDAO wishDao = new WishDAO();
-						Wish wish = wishDao.getWish(wishId);
-
-						feedJsonObject.put("userFirst", JsonUtil.getUserJson(userFirst));
-						feedJsonObject.put("userSecond", JsonUtil.getUserJson(userSecond));
-
-						feedJsonObject.put("wish", JsonUtil.getWishJson(wish));
-						feedJsonObject.put("type", 3);
-					}
-					feedItemJson.put(feedJsonObject);
+				for (UserCompactMessage message : messages) {
+					messageArr.put(JsonUtil.getUserCompatJson(message));
 				}
+				messageJson.put("messages", messageArr);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			return CommonLib.getResponseString(newsFeedJsonObject, "", CommonLib.RESPONSE_SUCCESS);
-		} else
-			return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_FAILURE);
+			return CommonLib.getResponseString(messageJson, "", CommonLib.RESPONSE_SUCCESS);
+		}
+		return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_FAILURE);
 	}
 
 }

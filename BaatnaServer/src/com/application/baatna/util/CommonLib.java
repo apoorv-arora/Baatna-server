@@ -34,6 +34,9 @@ public class CommonLib {
 	
 	public static final int ACTION_ACCEPT_WISH = 1;
 	public static final int ACTION_DECLINE_WISH = 2;
+	
+	public static final int CURRENT_USER_WISH_ACCEPTED = 1;
+	public static final int WISH_ACCEPTED_CURRENT_USER = 2;
 
 	public static JSONObject getResponseString(Object responseJson,
 			String errorMessage, int status) {

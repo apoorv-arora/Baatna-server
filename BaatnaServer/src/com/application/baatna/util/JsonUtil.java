@@ -7,6 +7,7 @@ import com.application.baatna.bean.Categories;
 import com.application.baatna.bean.NewsFeed;
 import com.application.baatna.bean.Session;
 import com.application.baatna.bean.User;
+import com.application.baatna.bean.UserCompactMessage;
 import com.application.baatna.bean.Wish;
 
 public class JsonUtil {
@@ -84,6 +85,18 @@ public class JsonUtil {
 		sessionJsonObject.put("session_id", session.getSessionId());
 		sessionJson.put("session", sessionJsonObject);
 		return sessionJson;
+	}
+	
+	public static JSONObject getUserCompatJson(UserCompactMessage object) throws JSONException{
+		JSONObject userCompatJsonObject = new JSONObject();
+		JSONObject userCompatJson = new JSONObject();
+
+		userCompatJsonObject.put("wish", getWishJson(object.getWish()));
+		userCompatJsonObject.put("user", getUserJson(object.getUser()));
+		userCompatJsonObject.put("type", object.getType());
+		
+		userCompatJson.put("message", userCompatJsonObject);
+		return userCompatJson;
 	}
 	
 }
