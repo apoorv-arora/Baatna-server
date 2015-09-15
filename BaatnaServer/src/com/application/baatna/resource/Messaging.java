@@ -41,7 +41,8 @@ public class Messaging {
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
 	public JSONObject postWish(@FormParam("client_id") String clientId, @FormParam("app_type") String appType,
-			@FormParam("userId") String toUserId, @FormParam("message") String message,
+			@FormParam("userId") String toUserId, @FormParam("wishId") String wishId,
+			@FormParam("message") String message,
 			@FormParam("access_token") String accessToken) {
 
 		// null checks, invalid request
@@ -57,7 +58,7 @@ public class Messaging {
 			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_APP_TYPE);
 
 		UserDAO userDao = new UserDAO();
-
+		WishDAO wishDao = new WishDAO();
 		// access token validity
 		int userId = userDao.userActive(accessToken);
 
@@ -65,25 +66,26 @@ public class Messaging {
 			MessageDAO messageDao = new MessageDAO();
 
 			Message messageObj = messageDao.addMessage(message, false, "" + System.currentTimeMillis(), userId,
-					Integer.parseInt(toUserId), -1);
+					Integer.parseInt(toUserId), Integer.parseInt(wishId));
 
 			if (messageObj != null) {
 
 				User fromUser = userDao.getUserDetails(messageObj.getFromUserId());
 				User toUser = userDao.getUserDetails(messageObj.getToUserId());
-
+				Wish wish = wishDao.getWish(messageObj.getWishId());
 				JSONObject messageJson = new JSONObject();
 				try {
 					messageJson.put("to_user", JsonUtil.getUserJson(toUser));
 					messageJson.put("from_user", JsonUtil.getUserJson(fromUser));
+					messageJson.put("wish", JsonUtil.getWishJson(wish));
 					messageJson.put("message_id", messageObj.getMessageId());
-					messageJson.put("from_to", true);
+					messageJson.put("from_to", false);
 					messageJson.put("message", messageObj.getMessage());
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
 
-				messageDao.sendPushToNearbyUsers(messageJson);
+				messageDao.sendPushToNearbyUsers(messageJson, toUser.getUserId());
 
 				return CommonLib.getResponseString("success", "", CommonLib.RESPONSE_SUCCESS);
 			} else

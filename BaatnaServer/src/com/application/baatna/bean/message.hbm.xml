@@ -4,7 +4,9 @@
 <hibernate-mapping>
 	<class name="com.application.baatna.bean.Message" table="MESSAGE">
 
-		<id column="MESSAGEID" name="messageId" type="java.lang.Long" />
+		<id column="MESSAGEID" name="messageId" type="java.lang.Integer" >
+			<generator class="native" />
+		</id>
 
 		<property column="MESSAGE" name="message" type="java.lang.String" />
 		<property column="STATUS" name="status" type="java.lang.Boolean" />

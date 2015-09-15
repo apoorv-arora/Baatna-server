@@ -667,6 +667,40 @@ public class UserDAO {
 		return users;
 	}
 
+	public ArrayList<com.application.baatna.bean.Session> getNearbyUsers(int userId) {
+
+		ArrayList<com.application.baatna.bean.Session> users = null;
+
+		Session session = null;
+		try {
+
+			session = DBUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+			users = new ArrayList<com.application.baatna.bean.Session>();
+					
+			String sql = "SELECT * FROM SESSION WHERE USERID = :user_id LIMIT 50";
+			SQLQuery query = session.createSQLQuery(sql);
+			query.addEntity(com.application.baatna.bean.Session.class);
+			query.setParameter("user_id", userId);
+			java.util.List results = (java.util.List) query.list();
+
+			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
+				users.add((com.application.baatna.bean.Session) iterator.next());
+			}
+
+			transaction.commit();
+			session.close();
+
+		} catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			System.out.println("error");
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
+		return users;
+	}
+
 	/**
 	 * Get nearby users object
 	 */

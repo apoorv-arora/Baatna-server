@@ -36,7 +36,7 @@ public class MessageDAO {
 	public Message addMessage(String incomingMessage, boolean status,
 			String timeOfMessage, int fromUserId, int toUserId, int wishId) {
 		Session session = null;
-		Message message = null;
+		Message message;
 		try {
 
 			// 3. Get Session object
@@ -69,11 +69,11 @@ public class MessageDAO {
 		return message;
 	}
 	
-	public void sendPushToNearbyUsers(JSONObject notification) {
+	public void sendPushToNearbyUsers(JSONObject notification, int userId) {
 
 		UserDAO userDao = new UserDAO();
 		ArrayList<com.application.baatna.bean.Session> nearbyUsers = userDao
-				.getNearbyUsers();
+				.getNearbyUsers(userId);
 		GCM ccsClient = new GCM();
 		String userName = CommonLib.projectId + "@gcm.googleapis.com";
 		String password = CommonLib.apiKey;
@@ -104,6 +104,7 @@ public class MessageDAO {
 		Long timeToLive = 10000L;
 		Boolean delayWhileIdle = false;
 
+		//this will change
 		for (com.application.baatna.bean.Session nearbyUser : nearbyUsers) {
 			// send push notif to all
 			ccsClient.send(GCM.createJsonMessage(nearbyUser.getPushId(),
@@ -231,7 +232,8 @@ public class MessageDAO {
 					for(User user: currentWish.getAcceptedUsers()) {
 						if(user.getUserId() == userId) {
 							UserCompactMessage compatMessage = new UserCompactMessage();
-							compatMessage.setUser(user);
+							UserDAO userDao = new UserDAO();
+							compatMessage.setUser(userDao.getUserDetails(currentWish.getUserId()));
 							compatMessage.setWish(currentWish);
 							compatMessage.setType(CommonLib.WISH_ACCEPTED_CURRENT_USER);
 							acceptedUsers.add(compatMessage);

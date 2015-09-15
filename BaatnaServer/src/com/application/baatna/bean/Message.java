@@ -7,13 +7,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class Message implements Serializable {
 
+	private int messageId;
 	private String message;
 	private boolean status;
 	private String timeOfMessage;
 	private int fromUserId;
 	private int toUserId;
 	private int wishId;
-	private Long messageId;
 
 	public Message() {
 	}
@@ -58,11 +58,11 @@ public class Message implements Serializable {
 		this.toUserId = toUserId;
 	}
 
-	public Long getMessageId() {
+	public int getMessageId() {
 		return messageId;
 	}
 
-	public void setMessageId(Long messageId) {
+	public void setMessageId(int messageId) {
 		this.messageId = messageId;
 	}
 
