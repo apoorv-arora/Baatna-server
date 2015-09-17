@@ -57,6 +57,7 @@ public class JsonUtil {
 		
 		wishJsonObject.put("category_id", category.getCategoryId());
 		wishJsonObject.put("category_name", category.getCategory());
+		wishJsonObject.put("category_icon", category.getCategoryIcon());
 		
 		categoryJson.put("category", wishJsonObject);
 		

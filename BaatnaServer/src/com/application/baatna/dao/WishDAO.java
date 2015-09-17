@@ -219,6 +219,52 @@ public class WishDAO {
 
 	}
 	
+	public void sendPushToUsers(JSONObject notification, int userId) {
+
+		UserDAO userDao = new UserDAO();
+		ArrayList<com.application.baatna.bean.Session> nearbyUsers = userDao
+				.getNearbyUsers(userId);
+		GCM ccsClient = new GCM();
+		String userName = CommonLib.projectId + "@gcm.googleapis.com";
+		String password = CommonLib.apiKey;
+		try {
+			ccsClient.connect(userName, password);
+		} catch (XMPPException e) {
+			e.printStackTrace();
+		}
+		String messageId = ccsClient.getRandomMessageId();
+
+		Map<String, String> payload = new HashMap<String, String>();
+		payload.put("command", "something");
+		payload.put("Notification", String.valueOf(notification));
+		payload.put("type", "wish");
+		
+		JSONObject object = new JSONObject();
+		try {
+			object.put("Notification", notification);
+			object.put("actionId", "id");
+			object.put("additionalParam", "value");
+		} catch (JSONException exp) {
+			// String error = LogMessages.FETCH_ERROR + exp.getMessage();
+			// logger.log(Level.INFO, error);
+			exp.printStackTrace();
+		}
+		payload.put("value", object.toString());
+		payload.put("EmbeddedMessageId", messageId);
+		Long timeToLive = 10000L;
+		Boolean delayWhileIdle = false;
+
+		//this will change
+		for (com.application.baatna.bean.Session nearbyUser : nearbyUsers) {
+			// send push notif to all
+			ccsClient.send(GCM.createJsonMessage(nearbyUser.getPushId(),
+					messageId, payload, null, timeToLive, delayWhileIdle));
+		}
+		ccsClient.disconnect();
+
+	}
+
+	
 	public boolean updateWishedUsers(int userId, int type, int wishId) {
 
 		Session session = null;

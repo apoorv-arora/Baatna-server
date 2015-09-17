@@ -107,13 +107,13 @@ public class CommonLib {
 	
 	public static List<Categories> getCategoriesList() {
 		List<Categories> finalCategoryList = new ArrayList<Categories>();
-		finalCategoryList.add(new Categories(1, "Books and Sports"));
-		finalCategoryList.add(new Categories(2, "Games"));
-		finalCategoryList.add(new Categories(3, "Music"));
-		finalCategoryList.add(new Categories(4, "Travel and Holiday"));
-		finalCategoryList.add(new Categories(5, "Party"));
-		finalCategoryList.add(new Categories(6, "Baking and cooking"));
-		finalCategoryList.add(new Categories(7, "Home Improvement "));
+		finalCategoryList.add(new Categories(1, "Books and Sports", "Y"));
+		finalCategoryList.add(new Categories(2, "Games", "Z"));
+		finalCategoryList.add(new Categories(3, "Music", "a"));
+		finalCategoryList.add(new Categories(4, "Travel and Holiday", "b"));
+		finalCategoryList.add(new Categories(5, "Party", "c"));
+		finalCategoryList.add(new Categories(6, "Baking and cooking", "d"));
+		finalCategoryList.add(new Categories(7, "Home Improvement ", "e"));
 		return finalCategoryList;
 	}
 	

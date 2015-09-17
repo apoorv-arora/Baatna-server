@@ -247,7 +247,17 @@ public class WishPost {
 				} else {
 					System.out.println("Failure type 1");
 				}
-
+				JSONObject messageJson = new JSONObject();
+				try {
+					UserDAO userDao = new UserDAO();
+					messageJson.put("from_user", JsonUtil.getUserJson(userDao.getUserDetails(userId)));
+					messageJson.put("action_type", actionType);
+					messageJson.put("wish", JsonUtil.getWishJson(currentWish));
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				if(actionType == 1)
+					wishdao.sendPushToUsers(messageJson, currentWish.getUserId());
 				return CommonLib.getResponseString(String.valueOf(wishId),
 						"success", CommonLib.RESPONSE_SUCCESS);
 			}
