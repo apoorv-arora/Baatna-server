@@ -220,6 +220,42 @@ public class UserDAO {
 
 	}
 
+	public com.application.baatna.bean.Session getSession(int userId) {
+		com.application.baatna.bean.Session loginSession = null;
+		Session session = null;
+		try {
+
+			session = DBUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+			loginSession = new com.application.baatna.bean.Session();
+
+			// finding user info
+			System.out.println("Getting Record");
+
+			String sql = "SELECT * FROM SESSION WHERE USERID = :userid";
+			SQLQuery query = session.createSQLQuery(sql);
+			query.addEntity(User.class);
+			query.setParameter("userid", userId);
+			java.util.List results = (java.util.List) query.list();
+
+			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
+				loginSession = (com.application.baatna.bean.Session) iterator.next();
+			}
+
+			transaction.commit();
+			session.close();
+
+		} catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			System.out.println("error");
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
+
+		return loginSession;
+	}
+
 	/**
 	 * Utility method to generate an accessToken.
 	 */

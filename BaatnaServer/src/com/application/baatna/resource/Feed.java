@@ -106,6 +106,18 @@ public class Feed {
 
 						feedJsonObject.put("wish", JsonUtil.getWishJson(wish));
 						feedJsonObject.put("type", 2);
+						
+						try {
+							Session session = userDao.getSession(userIdFirst);
+							if ( session.getLocation() != null ) {
+								feedJsonObject.put("latitude", session.getLocation().getLatitude());
+								feedJsonObject.put("longitude", session.getLocation().getLongitude());
+							}
+						} 
+						catch(Exception e) {
+							e.printStackTrace();
+						}
+						
 						feedItemJson.put(feedJsonObject);
 					} else if (type == 3) {
 
@@ -126,6 +138,18 @@ public class Feed {
 
 						feedJsonObject.put("wish", JsonUtil.getWishJson(wish));
 						feedJsonObject.put("type", 3);
+						
+						try {
+							Session session = userDao.getSession(userFirst);
+							if ( session.getLocation() != null ) {
+								feedJsonObject.put("latitude", session.getLocation().getLatitude());
+								feedJsonObject.put("longitude", session.getLocation().getLongitude());
+							}
+						} 
+						catch(Exception e) {
+							e.printStackTrace();
+						}
+						
 						feedItemJson.put(feedJsonObject);
 					}
 				}

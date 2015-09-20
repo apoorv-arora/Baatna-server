@@ -117,7 +117,8 @@ public class Session {
 				responseObject.put("profile_pic", user.getProfilePic());
 				responseObject.put("username", user.getUserName());
 				if (user.getIsInstitutionVerified() == 1) {
-					responseObject.put("HSLogin", true);
+					responseObject.put("HSLogin", false);//flag which checks if the user is verified or not
+					responseObject.put("instutionLogin", true);//flag to disable the institution login
 					responseObject.put("INSTITUTION_NAME", user.getInstitutionName());
 					responseObject.put("STUDENT_ID", user.getStudentId());
 				}
