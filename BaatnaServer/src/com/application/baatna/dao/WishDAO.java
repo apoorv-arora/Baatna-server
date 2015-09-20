@@ -186,6 +186,10 @@ public class WishDAO {
 			if(session != null && session.isOpen())
 				session.close();
 		}
+		
+		//Delete this wish from feed
+		FeedDAO feedDao = new FeedDAO();
+		feedDao.deleteWish(wishId);
 
 		return true;
 

@@ -4,13 +4,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import com.application.baatna.bean.Location;
 import com.application.baatna.bean.NewsFeed;
-import com.application.baatna.bean.User;
+import com.application.baatna.bean.Wish;
+import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.DBUtil;
 
 public class FeedDAO {
@@ -246,6 +248,37 @@ public class FeedDAO {
 				session.close();
 		}
 		return count;
+	}
+
+	public boolean deleteWish(int wishId) {
+		Session session = null;
+		try {
+			session = DBUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+
+			String hql = "DELETE FROM NEWSFEED WHERE WISHID = :wish_id";
+			SQLQuery query = session.createSQLQuery(hql);
+			query.addEntity(NewsFeed.class);
+			query.setParameter("wish_id", wishId);
+			int result = query.executeUpdate();
+			CommonLib.BLog(result + "");
+			session.flush();	
+
+			transaction.commit();
+			session.close();
+
+		} catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+
+			System.out.println("error");
+			return false;
+		} finally {
+			if(session != null && session.isOpen())
+				session.close();
+		}
+
+		return true;
 	}
 
 }
