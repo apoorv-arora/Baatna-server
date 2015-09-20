@@ -73,7 +73,7 @@ public class Feed {
 			// get the user feed
 			FeedDAO feedDao = new FeedDAO();
 			feedItems.addAll(feedDao.getFeedItems(location, start, count, userId));
-			int total = feedDao.getFeedItemsCount(location);
+			int total = feedDao.getFeedItemsCount(location, userId);
 			// sort based on timestamp of the feed items
 			java.util.Collections.sort(feedItems, new Comparator<NewsFeed>() {
 				public int compare(NewsFeed s1, NewsFeed s2) {
@@ -91,7 +91,31 @@ public class Feed {
 
 					int type = feedItem.getType();
 
-					if (type == 2) {
+					if (type == 1) {
+
+						int userIdFirst = feedItem.getUserIdFirst();
+
+						User userFirst = userDao.getUserDetails(userIdFirst);
+
+						feedJsonObject.put("userFirst",
+								JsonUtil.getUserJson(userFirst));
+
+						feedJsonObject.put("type", 1);
+						
+						try {
+							Session session = userDao.getSession(userIdFirst);
+							if ( session.getLocation() != null ) {
+								feedJsonObject.put("latitude", session.getLocation().getLatitude());
+								feedJsonObject.put("longitude", session.getLocation().getLongitude());
+							}
+						} 
+						catch(Exception e) {
+							e.printStackTrace();
+						}
+						
+						feedItemJson.put(feedJsonObject);
+					} 
+					else if (type == 2) {
 
 						int userIdFirst = feedItem.getUserIdFirst();
 						int wishId = feedItem.getWishId();

@@ -217,7 +217,7 @@ public class FeedDAO {
 		return feedItems;
 	}
 
-	public int getFeedItemsCount(Location location) {
+	public int getFeedItemsCount(Location location,  int currentUserId) {
 		ArrayList<NewsFeed> feedItems = new ArrayList<NewsFeed>();
 		int count = 0;
 		Session session = null;
@@ -226,9 +226,10 @@ public class FeedDAO {
 			session = DBUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
 
-			String sql = "SELECT * FROM NEWSFEED WHERE 1";
+			String sql = "SELECT * FROM NEWSFEED WHERE USER_ID_FIRST <> :user_id";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(NewsFeed.class);
+			query.setParameter("user_id", currentUserId);
 			java.util.List results = (java.util.List) query.list();
 
 			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {

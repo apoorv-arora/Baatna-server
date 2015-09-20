@@ -87,7 +87,18 @@ public class Messaging {
 
 				messageDao.sendPushToNearbyUsers(messageJson, toUser.getUserId());
 
-				return CommonLib.getResponseString("success", "", CommonLib.RESPONSE_SUCCESS);
+				JSONObject messageJsonCustom = new JSONObject();
+				try {
+					messageJsonCustom.put("to_user", JsonUtil.getUserJson(toUser));
+					messageJsonCustom.put("from_user", JsonUtil.getUserJson(fromUser));
+					messageJsonCustom.put("wish", JsonUtil.getWishJson(wish));
+					messageJsonCustom.put("message_id", messageObj.getMessageId());
+					messageJsonCustom.put("from_to", true);
+					messageJsonCustom.put("message", messageObj.getMessage());
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				return CommonLib.getResponseString(messageJsonCustom, "", CommonLib.RESPONSE_SUCCESS);
 			} else
 				return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_FAILURE);
 		} else
