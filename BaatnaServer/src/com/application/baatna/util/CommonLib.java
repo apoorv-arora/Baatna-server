@@ -21,6 +21,9 @@ public class CommonLib {
 	public static final int RESPONSE_INVALID_APP_TYPE = 204;
 	public static final int RESPONSE_INVALID_CLIENT_ID = 205;
 	
+	public static final int STATUS_DELETED = 0;
+	public static final int STATUS_ACTIVE = 1;
+	
 	/**
 	 * Android API constants*/
 	public static String projectId = "531855430941";//"792616879007";

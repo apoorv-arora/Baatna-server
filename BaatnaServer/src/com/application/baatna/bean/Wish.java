@@ -14,6 +14,7 @@ public class Wish implements Serializable {
 	private long timeOfPost;
 	private int wishId;
 	private int userId;
+	private int status;
 	private Set<User> acceptedUsers = new HashSet<User>();
 	private Set<User> declinedUsers = new HashSet<User>();
 
@@ -74,6 +75,14 @@ public class Wish implements Serializable {
 
 	public void setDeclinedUsers(Set<User> declinedUsers) {
 		this.declinedUsers = declinedUsers;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 }

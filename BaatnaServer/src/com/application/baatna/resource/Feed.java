@@ -140,7 +140,7 @@ public class Feed {
 						feedJsonObject.put("type", 3);
 						
 						try {
-							Session session = userDao.getSession(userFirst);
+							Session session = userDao.getSession(userFirst.getUserId());
 							if ( session.getLocation() != null ) {
 								feedJsonObject.put("latitude", session.getLocation().getLatitude());
 								feedJsonObject.put("longitude", session.getLocation().getLongitude());

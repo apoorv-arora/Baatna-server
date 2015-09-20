@@ -15,6 +15,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.jivesoftware.smack.XMPPException;
 
+import com.application.baatna.bean.Location;
 import com.application.baatna.bean.User;
 import com.application.baatna.bean.Wish;
 import com.application.baatna.util.CommonLib;
@@ -40,6 +41,7 @@ public class WishDAO {
 			wish.setDescription(description);
 			wish.setTimeOfPost(timeOfPost);
 			wish.setUserId(userId);
+			wish.setStatus(CommonLib.STATUS_ACTIVE);
 
 			session.save(wish);
 			transaction.commit();
@@ -70,12 +72,13 @@ public class WishDAO {
 			int i = 0;
 			wishes = new ArrayList<Wish>();
 
-			String sql = "SELECT * FROM WISH WHERE USERID = :userid LIMIT :start , :count";
+			String sql = "SELECT * FROM WISH WHERE USERID = :userid AND STATUS = :status LIMIT :start , :count";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(Wish.class);
 			query.setParameter("userid", userId);
 			query.setParameter("start", start);
 			query.setParameter("count", count);
+			query.setParameter("status", CommonLib.STATUS_ACTIVE);
 
 			java.util.List results = (java.util.List) query.list();
 
@@ -114,10 +117,11 @@ public class WishDAO {
 
 			// finding user info
 
-			String sql = "SELECT * FROM WISH WHERE WISHID = :wishId";
+			String sql = "SELECT * FROM WISH WHERE WISHID = :wishId AND STATUS =:status";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(Wish.class);
 			query.setParameter("wishId", wishId);
+			query.setParameter("status", CommonLib.STATUS_ACTIVE);
 
 			java.util.List results = (java.util.List) query.list();
 
@@ -152,12 +156,23 @@ public class WishDAO {
 			session = DBUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
 
-			String hql = "DELETE FROM Wish WHERE wishId = :wish_id";
-			Query query = session.createQuery(hql);
+//			String hql = "DELETE FROM Wish WHERE wishId = :wish_id";
+//			Query query = session.createQuery(hql);
+//			query.setParameter("wish_id", wishId);
+//			int result = query.executeUpdate();
+//			CommonLib.BLog(result + "");
+//			session.flush();
+			
+			//Archive the wish and not deleting the wish helps in Data analysis
+			String sql = "SELECT * FROM Wish WHERE wishId = :wish_id";
+			SQLQuery query = session.createSQLQuery(sql);
+			query.addEntity(Wish.class);
 			query.setParameter("wish_id", wishId);
-			int result = query.executeUpdate();
-			CommonLib.BLog(result + "");
-			session.flush();
+			java.util.List results = (java.util.List) query.list();
+			Wish currentSession = (Wish) results.get(0);
+			currentSession.setStatus(CommonLib.STATUS_DELETED);
+			session.update(currentSession);
+
 			transaction.commit();
 			session.close();
 
@@ -273,10 +288,11 @@ public class WishDAO {
 			session = DBUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
 
-			String sql = "SELECT * FROM WISH WHERE WISHID = :wishId";
+			String sql = "SELECT * FROM WISH WHERE WISHID = :wishId AND STATUS = :status";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(Wish.class);
 			query.setParameter("wishId", wishId);
+			query.setParameter("status", CommonLib.STATUS_ACTIVE);
 
 			java.util.List results = (java.util.List) query.list();
 
@@ -341,10 +357,11 @@ public class WishDAO {
 			session = DBUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
 
-			String sql = "SELECT * FROM WISH WHERE WISHID = :wishId";
+			String sql = "SELECT * FROM WISH WHERE WISHID = :wishId AND STATUS = :status";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(Wish.class);
 			query.setParameter("wishId", wishId);
+			query.setParameter("status", CommonLib.STATUS_ACTIVE);
 
 			java.util.List results = (java.util.List) query.list();
 
@@ -387,10 +404,11 @@ public class WishDAO {
 			Wish wish = null;
 			wishes = new ArrayList<Wish>();
 
-			String sql = "SELECT * FROM WISH WHERE USERID = :userid";
+			String sql = "SELECT * FROM WISH WHERE USERID = :userid AND STATUS = :status";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(Wish.class);
 			query.setParameter("userid", userId);
+			query.setParameter("status", CommonLib.STATUS_ACTIVE);
 
 			java.util.List results = (java.util.List) query.list();
 			for (Iterator iterator = ((java.util.List) results).iterator(); iterator
