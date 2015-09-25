@@ -24,6 +24,11 @@ public class CommonLib {
 	public static final int STATUS_DELETED = 0;
 	public static final int STATUS_ACTIVE = 1;
 	
+	public static final int MESSAGE_STATUS_INACTIVE = 0;
+	public static final int MESSAGE_STATUS_ARCHIVE_FROM = 1;
+	public static final int MESSAGE_STATUS_ARCHIVE_TO = 2;
+	public static final int MESSAGE_STATUS_ACTIVE = 3;
+	
 	/**
 	 * Android API constants*/
 	public static String projectId = "531855430941";//"792616879007";

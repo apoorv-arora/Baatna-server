@@ -92,7 +92,7 @@ public class WishPost {
 				notificationString = notificationString + " wants to borrow" +  wish.getTitle();
 				
 				final String notif = notificationString;
-				wishdao.sendPushToNearbyUsers(notif);
+				wishdao.sendPushToNearbyUsers(notif, userId);
 
 				return CommonLib.getResponseString("success", "",
 						CommonLib.RESPONSE_SUCCESS);

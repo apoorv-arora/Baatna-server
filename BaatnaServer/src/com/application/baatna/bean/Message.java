@@ -14,6 +14,7 @@ public class Message implements Serializable {
 	private int fromUserId;
 	private int toUserId;
 	private int wishId;
+	private int statusFlag;
 
 	public Message() {
 	}
@@ -72,6 +73,14 @@ public class Message implements Serializable {
 
 	public void setWishId(int wishId) {
 		this.wishId = wishId;
+	}
+
+	public int getStatusFlag() {
+		return statusFlag;
+	}
+
+	public void setStatusFlag(int statusFlag) {
+		this.statusFlag = statusFlag;
 	}
 
 }

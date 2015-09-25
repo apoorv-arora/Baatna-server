@@ -14,6 +14,7 @@
 		<property column="WISHID" name="wishId" type="java.lang.Integer" />
 		<property column="FROMUSERID" name="fromUserId" type="java.lang.Integer" />
 		<property column="TOUSERID" name="toUserId" type="java.lang.Integer" />
+		<property column="STATUSFLAG" name="statusFlag" type="java.lang.Integer" />
 
 	</class>
 </hibernate-mapping>

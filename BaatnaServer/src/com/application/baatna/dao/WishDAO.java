@@ -195,11 +195,11 @@ public class WishDAO {
 
 	}
 
-	public void sendPushToNearbyUsers(String notification) {
+	public void sendPushToNearbyUsers(String notification, int userId) {
 
 		UserDAO userDao = new UserDAO();
 		ArrayList<com.application.baatna.bean.Session> nearbyUsers = userDao
-				.getNearbyUsers();
+				.getUsersNotEquals(userId);
 		GCM ccsClient = new GCM();
 		String userName = CommonLib.projectId + "@gcm.googleapis.com";
 		String password = CommonLib.apiKey;
@@ -438,6 +438,53 @@ public class WishDAO {
 
 		return size;
 	}
+	
+	public boolean deleteAcceptedUserInWish(int wishId, int userId) {
 
+		Session session = null;
+		try {
+			session = DBUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+
+			//Archive the wish and not deleting the wish helps in Data analysis
+			String sql = "SELECT * FROM Wish WHERE wishId = :wish_id";
+			SQLQuery query = session.createSQLQuery(sql);
+			query.addEntity(Wish.class);
+			query.setParameter("wish_id", wishId);
+			java.util.List results = (java.util.List) query.list();
+			Wish currentSession = (Wish) results.get(0);
+			User userToDelete = null;
+			for(User user: currentSession.getAcceptedUsers()) {
+				if( user.getUserId() == userId ) {
+					userToDelete = user;
+					break;
+				}
+			}
+			if(userToDelete != null) {
+				currentSession.getAcceptedUsers().remove(userToDelete);
+				session.update(currentSession);
+			}
+
+			transaction.commit();
+			session.close();
+
+		} catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+
+			System.out.println("error");
+			return false;
+		} finally {
+			if(session != null && session.isOpen())
+				session.close();
+		}
+		
+		//Delete this wish from feed
+		FeedDAO feedDao = new FeedDAO();
+		feedDao.deleteWish(wishId);
+
+		return true;
+
+	}
 
 }

@@ -27,6 +27,7 @@ import com.application.baatna.bean.Wish;
 import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.DBUtil;
 import com.application.baatna.util.GCM;
+import com.mysql.jdbc.Messages;
 
 public class MessageDAO {
 
@@ -257,6 +258,66 @@ public class MessageDAO {
 		}
 		return acceptedUsers;
 	}
+	
+	/**
+	 * @param userId User which has sent the deletion request
+	 * @param wishId Wish which is to be deleted
+	 * */
+	public boolean deleteMessage(int wishId, int userId) { 
+
+		Session session = null;
+		try {
+			session = DBUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+
+			//Archive the wish and not deleting the wish helps in Data analysis
+			String sql = "SELECT * FROM MESSAGE WHERE WISHID = :wish_id";
+			SQLQuery query = session.createSQLQuery(sql);
+			query.addEntity(Message.class);
+			query.setParameter("wish_id", wishId);
+			java.util.List results = (java.util.List) query.list();
+			for(Message message: (ArrayList<Message>) results) {
+				boolean changed = false;
+				if( message.getFromUserId() == userId ) {
+					//set from archive flag to true
+					changed = true;
+					if(message.getStatusFlag() == CommonLib.MESSAGE_STATUS_ARCHIVE_TO)
+						message.setStatusFlag(CommonLib.MESSAGE_STATUS_INACTIVE);
+					else
+						message.setStatusFlag(CommonLib.MESSAGE_STATUS_ARCHIVE_FROM);
+				} else if (message.getToUserId() == userId) {
+					//set to archive flag to true
+					changed = true;
+					if(message.getStatusFlag() == CommonLib.MESSAGE_STATUS_ARCHIVE_FROM)
+						message.setStatusFlag(CommonLib.MESSAGE_STATUS_INACTIVE);
+					else
+						message.setStatusFlag(CommonLib.MESSAGE_STATUS_ARCHIVE_TO);
+				}
+				if(changed)
+					session.update(message);
+			}
+			transaction.commit();
+			session.close();
+
+		} catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+
+			System.out.println("error");
+			return false;
+		} finally {
+			if(session != null && session.isOpen())
+				session.close();
+		}
+		
+		//Delete this user from accepted users
+		WishDAO wishDao = new WishDAO();
+		wishDao.deleteAcceptedUserInWish(wishId, userId);
+
+		return true;
+
+	}
+
 	
 
 	

@@ -166,5 +166,35 @@ public class Messaging {
 		}
 		return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_FAILURE);
 	}
+	
+	@Path("/delete")
+	@POST
+	@Produces("application/json")
+	@Consumes("application/x-www-form-urlencoded")
+	public JSONObject deleteWishes(
+			@FormParam("access_token") String accessToken,
+			@FormParam("wishId") int wishId,
+			@FormParam("userId") int otherUserId) {
+
+		UserDAO dao = new UserDAO();
+		int userId = dao.userActive(accessToken);
+		boolean value = false;
+
+		if (userId > 0) {
+
+			MessageDAO messageDao = new MessageDAO();
+			value = messageDao.deleteMessage(wishId, userId);
+
+			if (value)
+				return CommonLib.getResponseString(String.valueOf(wishId),
+						"success", CommonLib.RESPONSE_SUCCESS);
+
+		}
+
+		return CommonLib.getResponseString("failure", "failure",
+				CommonLib.RESPONSE_FAILURE);
+
+	}
+
 
 }
