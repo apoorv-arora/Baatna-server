@@ -24,6 +24,7 @@ import com.application.baatna.dao.UserDAO;
 import com.application.baatna.dao.WishDAO;
 import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.JsonUtil;
+import com.application.baatna.util.facebook.Friends;
 
 @Path("/newsfeed")
 public class Feed {
@@ -32,24 +33,17 @@ public class Feed {
 	@POST
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
-	public JSONObject getNewsFeed(
-			@FormParam("access_token") String accessToken,
-			@FormParam("client_id") String clientId,
-			@FormParam("app_type") String appType,
-			@FormParam("latitude") double latitude,
-			@FormParam("longitude") double longitude,
-			@QueryParam("start") int start,
-			@QueryParam("count") int count
-			) {
+	public JSONObject getNewsFeed(@FormParam("access_token") String accessToken,
+			@FormParam("client_id") String clientId, @FormParam("app_type") String appType,
+			@FormParam("latitude") double latitude, @FormParam("longitude") double longitude,
+			@QueryParam("start") int start, @QueryParam("count") int count) {
 		// check for client_id
 		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
-			return CommonLib.getResponseString("Invalid client id", "",
-					CommonLib.RESPONSE_INVALID_CLIENT_ID);
+			return CommonLib.getResponseString("Invalid client id", "", CommonLib.RESPONSE_INVALID_CLIENT_ID);
 
 		// check for app type
 		if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
-			return CommonLib.getResponseString("Invalid params", "",
-					CommonLib.RESPONSE_INVALID_APP_TYPE);
+			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_APP_TYPE);
 
 		UserDAO userDao = new UserDAO();
 
@@ -61,8 +55,7 @@ public class Feed {
 
 			// inflate type 1 - User joined near you
 			if (latitude == 0 && longitude == 0) {
-				Session session = userDao
-						.getSessionDetails(userId, accessToken);
+				Session session = userDao.getSessionDetails(userId, accessToken);
 				if (session != null && session.getLocation() != null) {
 					latitude = session.getLocation().getLatitude();
 					longitude = session.getLocation().getLongitude();
@@ -70,6 +63,7 @@ public class Feed {
 			}
 			Location location = new Location(latitude, longitude);
 
+			User currentUser = userDao.getUserDetails(userId);
 			// get the user feed
 			FeedDAO feedDao = new FeedDAO();
 			feedItems.addAll(feedDao.getFeedItems(location, start, count, userId));
@@ -97,52 +91,67 @@ public class Feed {
 
 						User userFirst = userDao.getUserDetails(userIdFirst);
 
-						feedJsonObject.put("userFirst",
-								JsonUtil.getUserJson(userFirst));
-
-						feedJsonObject.put("type", 1);
+						boolean shouldAdd = true;
 						
-						try {
-							Session session = userDao.getSession(userIdFirst);
-							if ( session.getLocation() != null ) {
-								feedJsonObject.put("latitude", session.getLocation().getLatitude());
-								feedJsonObject.put("longitude", session.getLocation().getLongitude());
-							}
-						} 
-						catch(Exception e) {
-							e.printStackTrace();
+						if( CommonLib.isFacebookCheckValid ) {
+							shouldAdd = Friends.isFriendOnFacebook(currentUser.getFacebookId(),
+									userFirst.getFacebookId(), currentUser.getFacebookToken());
 						}
 						
-						feedItemJson.put(feedJsonObject);
-					} 
-					else if (type == 2) {
+						if ( shouldAdd ) {
+							feedJsonObject.put("userFirst", JsonUtil.getUserJson(userFirst));
+
+							feedJsonObject.put("type", 1);
+							try {
+								Session session = userDao.getSession(userIdFirst);
+								if (session.getLocation() != null) {
+									feedJsonObject.put("latitude", session.getLocation().getLatitude());
+									feedJsonObject.put("longitude", session.getLocation().getLongitude());
+								}
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+
+							feedItemJson.put(feedJsonObject);
+						} else
+							total--;
+
+					} else if (type == 2) {
 
 						int userIdFirst = feedItem.getUserIdFirst();
 						int wishId = feedItem.getWishId();
 
 						User userFirst = userDao.getUserDetails(userIdFirst);
 
-						WishDAO wishDao = new WishDAO();
-						Wish wish = wishDao.getWish(wishId);
-
-						feedJsonObject.put("userFirst",
-								JsonUtil.getUserJson(userFirst));
-
-						feedJsonObject.put("wish", JsonUtil.getWishJson(wish));
-						feedJsonObject.put("type", 2);
+						boolean shouldAdd = true;
 						
-						try {
-							Session session = userDao.getSession(userIdFirst);
-							if ( session.getLocation() != null ) {
-								feedJsonObject.put("latitude", session.getLocation().getLatitude());
-								feedJsonObject.put("longitude", session.getLocation().getLongitude());
-							}
-						} 
-						catch(Exception e) {
-							e.printStackTrace();
+						if( CommonLib.isFacebookCheckValid ) {
+							shouldAdd = Friends.isFriendOnFacebook(currentUser.getFacebookId(),
+									userFirst.getFacebookId(), currentUser.getFacebookToken());
 						}
 						
-						feedItemJson.put(feedJsonObject);
+						if (shouldAdd) {
+							WishDAO wishDao = new WishDAO();
+							Wish wish = wishDao.getWish(wishId);
+
+							feedJsonObject.put("userFirst", JsonUtil.getUserJson(userFirst));
+
+							feedJsonObject.put("wish", JsonUtil.getWishJson(wish));
+							feedJsonObject.put("type", 2);
+
+							try {
+								Session session = userDao.getSession(userIdFirst);
+								if (session.getLocation() != null) {
+									feedJsonObject.put("latitude", session.getLocation().getLatitude());
+									feedJsonObject.put("longitude", session.getLocation().getLongitude());
+								}
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+
+							feedItemJson.put(feedJsonObject);
+						} else
+							total--;
 					} else if (type == 3) {
 
 						int userIdFirst = feedItem.getUserIdFirst();
@@ -152,29 +161,41 @@ public class Feed {
 						User userFirst = userDao.getUserDetails(userIdFirst);
 						User userSecond = userDao.getUserDetails(userIdSecond);
 
-						WishDAO wishDao = new WishDAO();
-						Wish wish = wishDao.getWish(wishId);
-
-						feedJsonObject.put("userFirst",
-								JsonUtil.getUserJson(userFirst));
-						feedJsonObject.put("userSecond",
-								JsonUtil.getUserJson(userSecond));
-
-						feedJsonObject.put("wish", JsonUtil.getWishJson(wish));
-						feedJsonObject.put("type", 3);
+						boolean shouldAdd = true;
 						
-						try {
-							Session session = userDao.getSession(userFirst.getUserId());
-							if ( session.getLocation() != null ) {
-								feedJsonObject.put("latitude", session.getLocation().getLatitude());
-								feedJsonObject.put("longitude", session.getLocation().getLongitude());
+						if( CommonLib.isFacebookCheckValid ) {
+							shouldAdd = Friends.isFriendOnFacebook(currentUser.getFacebookId(),
+									userFirst.getFacebookId(), currentUser.getFacebookToken());
+							if(!shouldAdd) {
+								shouldAdd = Friends.isFriendOnFacebook(currentUser.getFacebookId(),
+										userSecond.getFacebookId(), currentUser.getFacebookToken()); 
 							}
-						} 
-						catch(Exception e) {
-							e.printStackTrace();
 						}
 						
-						feedItemJson.put(feedJsonObject);
+						if (shouldAdd) {
+							
+							WishDAO wishDao = new WishDAO();
+							Wish wish = wishDao.getWish(wishId);
+
+							feedJsonObject.put("userFirst", JsonUtil.getUserJson(userFirst));
+							feedJsonObject.put("userSecond", JsonUtil.getUserJson(userSecond));
+
+							feedJsonObject.put("wish", JsonUtil.getWishJson(wish));
+							feedJsonObject.put("type", 3);
+
+							try {
+								Session session = userDao.getSession(userFirst.getUserId());
+								if (session.getLocation() != null) {
+									feedJsonObject.put("latitude", session.getLocation().getLatitude());
+									feedJsonObject.put("longitude", session.getLocation().getLongitude());
+								}
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+
+							feedItemJson.put(feedJsonObject);
+						} else 
+							total--;
 					}
 				}
 				newsFeedJsonObject.put("newsFeed", feedItemJson);
@@ -182,11 +203,9 @@ public class Feed {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			return CommonLib.getResponseString(newsFeedJsonObject, "",
-					CommonLib.RESPONSE_SUCCESS);
+			return CommonLib.getResponseString(newsFeedJsonObject, "", CommonLib.RESPONSE_SUCCESS);
 		} else
-			return CommonLib.getResponseString("failure", "",
-					CommonLib.RESPONSE_FAILURE);
+			return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_FAILURE);
 	}
 
 }

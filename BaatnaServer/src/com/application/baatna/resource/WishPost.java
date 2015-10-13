@@ -306,5 +306,46 @@ public class WishPost {
 				CommonLib.RESPONSE_FAILURE);
 
 	}
+	
+	@Path("/updateStatus")
+	@POST
+	@Produces("application/json")
+	@Consumes("application/x-www-form-urlencoded")
+	public JSONObject updateWishStatus(@FormParam("client_id") String clientId,
+			@FormParam("app_type") String appType,
+			@FormParam("access_token") String accessToken,
+			@FormParam("wishId") int wishId, @FormParam("action") int actionType) {
+
+		// null checks, invalid request
+		if (clientId == null || appType == null)
+			return CommonLib.getResponseString("Invalid params", "",
+					CommonLib.RESPONSE_INVALID_PARAMS);
+
+		// check for client_id
+		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
+			return CommonLib.getResponseString("Invalid client id", "",
+					CommonLib.RESPONSE_INVALID_CLIENT_ID);
+
+		// check for app type
+		if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
+			return CommonLib.getResponseString("Invalid params", "",
+					CommonLib.RESPONSE_INVALID_APP_TYPE);
+
+		UserDAO dao = new UserDAO();
+		int userId = dao.userActive(accessToken);
+
+		if (userId > 0) {
+
+			WishDAO wishdao = new WishDAO();
+			boolean value = false;
+			value = wishdao.updateWishStatus(userId, actionType, wishId, actionType);
+
+			return CommonLib.getResponseString(String.valueOf(wishId),
+					"success", CommonLib.RESPONSE_SUCCESS);
+		}
+		return CommonLib.getResponseString("failure", "failure",
+				CommonLib.RESPONSE_FAILURE);
+
+	}
 
 }

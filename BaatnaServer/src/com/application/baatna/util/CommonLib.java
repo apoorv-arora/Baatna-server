@@ -5,11 +5,14 @@ import java.util.List;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.dom4j.Branch;
 
 import com.application.baatna.bean.Categories;
+import com.application.baatna.bean.Institution;
 
 public class CommonLib {
 
+	public static boolean isFacebookCheckValid = true;
 	public static final String ANDROID_CLIENT_ID = "bt_android_client";
 	public static final String ANDROID_APP_TYPE = "bt_android";
 	public static String SERVER_WITHOUT_VERSION = "http://192.168.0.104:8080/BaatnaServer/rest/";
@@ -23,6 +26,10 @@ public class CommonLib {
 	
 	public static final int STATUS_DELETED = 0;
 	public static final int STATUS_ACTIVE = 1;
+	public static final int STATUS_ACCEPTED = 2;
+	public static final int STATUS_OFFERED = 3;
+	public static final int STATUS_RECEIVED = 4;
+	public static final int STATUS_FULLFILLED = 5;
 	
 	public static final int MESSAGE_STATUS_INACTIVE = 0;
 	public static final int MESSAGE_STATUS_ARCHIVE_FROM = 1;
@@ -42,6 +49,9 @@ public class CommonLib {
 	
 	public static final int ACTION_ACCEPT_WISH = 1;
 	public static final int ACTION_DECLINE_WISH = 2;
+	
+	public static final int ACTION_WISH_OFFERED = 3;
+	public static final int ACTION_WISH_RECEIVED = 4;
 	
 	public static final int CURRENT_USER_WISH_ACCEPTED = 1;
 	public static final int WISH_ACCEPTED_CURRENT_USER = 2;
@@ -125,11 +135,41 @@ public class CommonLib {
 		return finalCategoryList;
 	}
 	
-	public static List<String> getInstitutionsList() {
+	public static List<Institution> getInstitutionsList() {
+		List<Institution> finalCategoryList = new ArrayList<Institution>();
+
+		ArrayList<String> branches = new ArrayList<String>();
+		branches.add("IT");
+		branches.add("COE");
+		branches.add("BT");
+		
+		//NSIT
+		Institution nsit = new Institution();
+		nsit.setInstitutionName("NSIT");
+		nsit.setBranches(branches);
+		
+		//DCE
+		Institution dce = new Institution();
+		dce.setInstitutionName("DCE");
+		dce.setBranches(branches);
+		
+		//IIT
+		Institution iit = new Institution();
+		iit.setInstitutionName("IIT");
+		iit.setBranches(branches);
+		
+		finalCategoryList.add(nsit);
+		finalCategoryList.add(dce);
+		finalCategoryList.add(iit);
+		
+		return finalCategoryList;
+	}
+	
+	public static List<String> getBranches() {
 		List<String> finalCategoryList = new ArrayList<String>();
-		finalCategoryList.add("NSIT");
-		finalCategoryList.add("DCE");
-		finalCategoryList.add("IIT");
+		finalCategoryList.add("IT");
+		finalCategoryList.add("COE");
+		finalCategoryList.add("BT");
 		return finalCategoryList;
 	}
 

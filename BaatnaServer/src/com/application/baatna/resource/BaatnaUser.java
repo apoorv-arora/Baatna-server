@@ -23,6 +23,7 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import com.application.baatna.bean.Institution;
 import com.application.baatna.bean.User;
 import com.application.baatna.dao.FeedDAO;
 import com.application.baatna.dao.UserDAO;
@@ -334,8 +335,10 @@ public class BaatnaUser {
 			@FormParam("client_id") String clientId,
 			@FormParam("app_type") String appType,
 			@FormParam("access_token") String accessToken,
-			@FormParam("institution_id") String institutionId,
-			@FormParam("student_id") String studentId) {
+			@FormParam("institution_name") String institutionId,
+			@FormParam("branch_name") String branchName,
+			@FormParam("year") int year,
+			@FormParam("phone_number") String phoneNumber){
 
 		// check for client_id
 		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
@@ -358,7 +361,7 @@ public class BaatnaUser {
 				return CommonLib.getResponseString("failure", "Invalid institution name",
 						CommonLib.RESPONSE_FAILURE);
 			
-			boolean returnValue = userDao.updateInstitution(institutionId, studentId, userId, 1);
+			boolean returnValue = userDao.updateInstitution(institutionId, "", userId, 1, branchName, year, phoneNumber);
 			if(returnValue) {
 				return CommonLib.getResponseString("success", "",
 						CommonLib.RESPONSE_SUCCESS);
@@ -382,11 +385,11 @@ public class BaatnaUser {
 
 		if (userId > 0) {
 
-			List<String> categories = CommonLib.getInstitutionsList();
+			List<Institution> categories = CommonLib.getInstitutionsList();
 			JSONObject returnObject = new JSONObject();
 			try{
 				JSONArray categoriesArr = new JSONArray();
-				for(String category: categories) {
+				for(Institution category: categories) {
 					categoriesArr.put(JsonUtil.getInstitutionJson(category));
 				}
 				returnObject.put("institutions", categoriesArr);

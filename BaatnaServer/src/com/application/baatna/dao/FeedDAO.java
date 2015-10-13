@@ -218,7 +218,6 @@ public class FeedDAO {
 	}
 
 	public int getFeedItemsCount(Location location,  int currentUserId) {
-		ArrayList<NewsFeed> feedItems = new ArrayList<NewsFeed>();
 		int count = 0;
 		Session session = null;
 		try {
@@ -233,7 +232,7 @@ public class FeedDAO {
 			java.util.List results = (java.util.List) query.list();
 
 			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
-				feedItems.add((NewsFeed) iterator.next());
+				iterator.next();
 				count++;
 			}
 

@@ -1,10 +1,11 @@
 package com.application.baatna.util;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import com.application.baatna.bean.Categories;
-import com.application.baatna.bean.NewsFeed;
+import com.application.baatna.bean.Institution;
 import com.application.baatna.bean.Session;
 import com.application.baatna.bean.User;
 import com.application.baatna.bean.UserCompactMessage;
@@ -23,6 +24,8 @@ public class JsonUtil {
 		userJsonObject.put("email", user.getEmail());
 		userJsonObject.put("phone", user.getPhone());
 		userJsonObject.put("profile_pic", user.getProfilePic());
+		userJsonObject.put("fbId", user.getFacebookId());
+		userJsonObject.put("contact", user.getPhone());
 		if(user.getUserName() == null || user.getUserName().equals("")) {
 			JSONObject data = new JSONObject(user.getFacebookData());
 			if(data.has("name"))
@@ -43,6 +46,13 @@ public class JsonUtil {
 		wishJsonObject.put("user_id", wish.getUserId());
 		wishJsonObject.put("time_post", wish.getTimeOfPost());
 		wishJsonObject.put("wish_id", wish.getWishId());
+		wishJsonObject.put("status", wish.getStatus());
+		
+		JSONArray userArr = new JSONArray();
+		for( User acceptedUser: wish.getAcceptedUsers() ) {
+			userArr.put(JsonUtil.getUserJson(acceptedUser));
+		}
+		wishJsonObject.put("accepted_users", userArr);
 		
 		categoryJson.put("wish", wishJsonObject);
 		return categoryJson;
@@ -64,12 +74,17 @@ public class JsonUtil {
 		return categoryJson;
 	}
 	
-	public static JSONObject getInstitutionJson(String name) throws JSONException {
+	public static JSONObject getInstitutionJson(Institution name) throws JSONException {
 		JSONObject categoryJson = new JSONObject();
 		
 		JSONObject wishJsonObject = new JSONObject();
 		
-		wishJsonObject.put("name", name);
+		wishJsonObject.put("name", name.getInstitutionName());
+		JSONArray branchArr = new JSONArray();
+		for(String branch: name.getBranches()) {
+			branchArr.put(branch);
+		}
+		wishJsonObject.put("branches", branchArr);
 		
 		categoryJson.put("institution", wishJsonObject);
 		

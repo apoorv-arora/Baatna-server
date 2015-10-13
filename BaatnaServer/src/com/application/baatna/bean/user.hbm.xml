@@ -21,6 +21,9 @@
 		<property column="FACEBOOKPERMISSION" name="fbPermission" type="java.lang.String" />
 		<property column="ISINSTITUTIONVERIFIED" name="isInstitutionVerified" type="java.lang.Integer" />
 		<property column="INSTITUTIONNAME" name="institutionName" type="java.lang.String" />
+		<property column="BranchName" name="branchName" type="java.lang.String" />
+		<property column="PhoneNumber" name="phoneNumber" type="java.lang.String" />
+		<property column="Year" name="year" type="java.lang.Integer" />
 		<property column="STUDENTID" name="studentId" type="java.lang.String" />
 		<set name="acceptedWishes" table="USERWISH" lazy="false" cascade="all">
 			<key column="USERID" />

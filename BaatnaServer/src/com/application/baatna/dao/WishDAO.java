@@ -9,13 +9,11 @@ import java.util.Set;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.jivesoftware.smack.XMPPException;
 
-import com.application.baatna.bean.Location;
 import com.application.baatna.bean.User;
 import com.application.baatna.bean.Wish;
 import com.application.baatna.util.CommonLib;
@@ -322,8 +320,11 @@ public class WishDAO {
 			}
 
 			if (type == CommonLib.ACTION_ACCEPT_WISH) {
-				if(wish.getAcceptedUsers() != null)
+				if(wish.getAcceptedUsers() != null) {
 					wish.getAcceptedUsers().add(user);
+					if(wish.getStatus() == CommonLib.STATUS_ACTIVE)
+						wish.setStatus(CommonLib.STATUS_ACCEPTED);
+				}
 				else 
 					System.out.println("List not initialized");
 			}
@@ -462,6 +463,10 @@ public class WishDAO {
 			}
 			if(userToDelete != null) {
 				currentSession.getAcceptedUsers().remove(userToDelete);
+				if(currentSession.getAcceptedUsers().size() == 0 && currentSession.getStatus() == CommonLib.STATUS_ACCEPTED) {
+					currentSession.setStatus(CommonLib.STATUS_ACTIVE);
+				}
+				
 				session.update(currentSession);
 			}
 
@@ -486,5 +491,60 @@ public class WishDAO {
 		return true;
 
 	}
+	
+	public boolean updateWishStatus(int userId, int type, int wishId, int offered) {
+
+		Session session = null;
+		Wish wish = null;
+		try {
+			session = DBUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+
+			String sql = "SELECT * FROM WISH WHERE WISHID = :wishId";
+			SQLQuery query = session.createSQLQuery(sql);
+			query.addEntity(Wish.class);
+			query.setParameter("wishId", wishId);
+
+			java.util.List results = (java.util.List) query.list();
+
+			for (Iterator iterator = ((java.util.List) results).iterator(); iterator
+					.hasNext();) {
+
+				wish = (Wish) iterator.next();
+
+			}
+
+			if(offered == CommonLib.ACTION_WISH_OFFERED) {
+				if(wish.getStatus() == CommonLib.STATUS_RECEIVED)
+					wish.setStatus(CommonLib.STATUS_FULLFILLED);
+				else
+					wish.setStatus(CommonLib.STATUS_OFFERED);
+			} else if(offered == CommonLib.ACTION_WISH_RECEIVED) {
+				if(wish.getStatus() == CommonLib.STATUS_OFFERED)
+					wish.setStatus(CommonLib.STATUS_FULLFILLED);
+				else
+					wish.setStatus(CommonLib.STATUS_RECEIVED);
+			}
+
+			session.update(wish);
+
+			transaction.commit();
+			session.close();
+			return true;
+
+		} catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			System.out.println("error");
+			e.printStackTrace();
+
+		} finally {
+			if(session != null && session.isOpen())
+				session.close();
+		}
+		return false;
+	}
+
+	
+	
 
 }

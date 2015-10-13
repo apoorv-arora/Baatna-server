@@ -11,10 +11,12 @@ import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import com.application.baatna.bean.Institution;
 import com.application.baatna.bean.Location;
 import com.application.baatna.bean.User;
 import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.DBUtil;
+import com.application.baatna.util.facebook.Friends;
 
 public class UserDAO {
 
@@ -713,17 +715,18 @@ public class UserDAO {
 			session = DBUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
 			users = new ArrayList<com.application.baatna.bean.Session>();
-					
-			String sql = "SELECT * FROM SESSION WHERE USERID <> :user_id LIMIT 50";
+			
+			String sql = "SELECT * FROM SESSION WHERE USERID <> :user_id LIMIT 900";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(com.application.baatna.bean.Session.class);
 			query.setParameter("user_id", userId);
-			java.util.List results = (java.util.List) query.list();
+			java.util.List results2 = (java.util.List) query.list();
 
-			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
-				users.add((com.application.baatna.bean.Session) iterator.next());
+			for (Iterator iterator = ((java.util.List) results2).iterator(); iterator.hasNext();) {
+				com.application.baatna.bean.Session currentSesion = ( com.application.baatna.bean.Session ) iterator.next();
+				users.add(currentSesion);
 			}
-
+			
 			transaction.commit();
 			session.close();
 
@@ -782,7 +785,9 @@ public class UserDAO {
 		return users;
 	}
 
-	public boolean updateInstitution(String institutionName, String studentId, int userId, int isInstitutionVerified) {
+	public boolean updateInstitution(
+			String institutionName, String studentId, int userId, int isInstitutionVerified
+			, String branchName, int year, String phoneNumber) {
 
 		Session session = null;
 
@@ -800,6 +805,9 @@ public class UserDAO {
 			User currentSession = (User) results.get(0);
 			currentSession.setInstitutionName(institutionName);
 			currentSession.setStudentId(studentId);
+			currentSession.setPhoneNumber(phoneNumber);
+			currentSession.setYear(year);
+			currentSession.setBranchName(branchName);
 			currentSession.setIsInstitutionVerified(isInstitutionVerified);
 			session.update(currentSession);
 			transaction.commit();
@@ -820,8 +828,8 @@ public class UserDAO {
 	}
 
 	public boolean validateInstitution(String institutionName) {
-		for (String name : CommonLib.getInstitutionsList()) {
-			if (institutionName.equalsIgnoreCase(name)) {
+		for (Institution name : CommonLib.getInstitutionsList()) {
+			if (institutionName.equalsIgnoreCase(name.getInstitutionName())) {
 				return true;
 			}
 		}

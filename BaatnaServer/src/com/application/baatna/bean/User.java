@@ -20,6 +20,9 @@ public class User implements Serializable {
 	private String fbPermission;
 	private int isInstitutionVerified;
 	private String institutionName;
+	private String branchName;
+	private String phoneNumber;
+	private int year;
 	private String studentId;
 	
 	private Set<Wish> acceptedWishes = new HashSet<Wish>();
@@ -171,5 +174,28 @@ public class User implements Serializable {
 	public void setDeclinedWishes(Set<Wish> declinedWishes) {
 		this.declinedWishes = declinedWishes;
 	}
-	
+
+	public String getBranchName() {
+		return branchName;
+	}
+
+	public void setBranchName(String branchName) {
+		this.branchName = branchName;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	public int getYear() {
+		return year;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
+	}
 }
