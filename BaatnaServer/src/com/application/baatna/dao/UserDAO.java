@@ -683,7 +683,7 @@ public class UserDAO {
 			Transaction transaction = session.beginTransaction();
 			users = new ArrayList<com.application.baatna.bean.Session>();
 
-			String sql = "SELECT * FROM SESSION LIMIT 50";
+			String sql = "SELECT * FROM SESSION LIMIT 900";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(com.application.baatna.bean.Session.class);
 			java.util.List results = (java.util.List) query.list();
