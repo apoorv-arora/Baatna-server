@@ -17,7 +17,8 @@ public class AppConfig {
 	@POST
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
-	public JSONObject userSignup(@FormParam("client_id") String clientId, @FormParam("app_type") String appType) {
+	public JSONObject appUpdate(@FormParam("client_id") String clientId, @FormParam("app_type") String appType,
+			@FormParam("app_version") String version) {
 		boolean clientTypeAndroid = false;
 		// check for client_id
 		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID)) {
@@ -32,7 +33,10 @@ public class AppConfig {
 			clientTypeAndroid = true;
 
 		if (clientTypeAndroid) {
-			return CommonLib.getResponseString(CommonLib.ANDROID_APP_VERSION, "", CommonLib.RESPONSE_SUCCESS);
+			if (CommonLib.ANDROID_APP_VERSION.equals(version))
+				return CommonLib.getResponseString(true, "", CommonLib.RESPONSE_SUCCESS);
+			else
+				return CommonLib.getResponseString(false, "", CommonLib.RESPONSE_SUCCESS);
 		} else
 			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_FAILURE);
 	}
