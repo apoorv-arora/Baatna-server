@@ -28,10 +28,16 @@ public class JsonUtil {
 		userJsonObject.put("contact", user.getPhone());
 		if(user.getUserName() == null || user.getUserName().equals("")) {
 			JSONObject data = new JSONObject(user.getFacebookData());
-			if(data.has("name"))
-				userJsonObject.put("user_name", String.valueOf(data.get("name")));
-		} else
-			userJsonObject.put("user_name", user.getUserName());
+			if(data.has("name")) {
+				String name = String.valueOf(data.get("name"));
+				name = name.split(" ")[0];
+				userJsonObject.put("user_name", name );
+			}
+		} else {
+			String name = user.getUserName();
+			name = name.split(" ")[0];
+			userJsonObject.put("user_name", name);
+		}
 		userJson.put("user", userJsonObject);
 		return userJson;
 	}

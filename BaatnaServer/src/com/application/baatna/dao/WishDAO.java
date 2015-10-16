@@ -115,11 +115,13 @@ public class WishDAO {
 
 			// finding user info
 
-			String sql = "SELECT * FROM WISH WHERE WISHID = :wishId AND STATUS =:status";
+			String sql = "SELECT * FROM WISH WHERE WISHID = :wishId ";//AND STATUS IN :status, :status2
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(Wish.class);
 			query.setParameter("wishId", wishId);
-			query.setParameter("status", CommonLib.STATUS_ACTIVE);
+//			query.setParameter("status", CommonLib.STATUS_ACTIVE);
+//			query.setParameter("status", CommonLib.STATUS_ACCEPTED);
+//			query.setParameter("status", CommonLib.STATUS_FULLFILLED);
 
 			java.util.List results = (java.util.List) query.list();
 
@@ -193,7 +195,7 @@ public class WishDAO {
 
 	}
 
-	public void sendPushToNearbyUsers(String notification, int userId) {
+	public void sendPushToNearbyUsers(JSONObject notification, int userId) {
 
 		UserDAO userDao = new UserDAO();
 		ArrayList<com.application.baatna.bean.Session> nearbyUsers = userDao
@@ -210,7 +212,8 @@ public class WishDAO {
 
 		Map<String, String> payload = new HashMap<String, String>();
 		payload.put("command", "something");
-		payload.put("Notification", notification);
+		payload.put("Notification", String.valueOf(notification));
+		payload.put("type", "newWish");
 		
 		JSONObject object = new JSONObject();
 		try {
@@ -290,11 +293,10 @@ public class WishDAO {
 			session = DBUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
 
-			String sql = "SELECT * FROM WISH WHERE WISHID = :wishId AND STATUS = :status";
+			String sql = "SELECT * FROM WISH WHERE WISHID = :wishId";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(Wish.class);
 			query.setParameter("wishId", wishId);
-			query.setParameter("status", CommonLib.STATUS_ACTIVE);
 
 			java.util.List results = (java.util.List) query.list();
 

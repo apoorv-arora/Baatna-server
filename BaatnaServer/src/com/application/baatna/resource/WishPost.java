@@ -87,12 +87,32 @@ public class WishPost {
 
 				String notificationString = "";
 				User user = userDao.getUserDetails(wish.getUserId()) ; 
-				if( user != null ) 
-					notificationString = user.getUserName();
+				if( user != null )  {
+					if( user.getUserName() == null || user.getUserName().equals("") ) {
+						try { 
+							JSONObject data = new JSONObject(user.getFacebookData());
+							if(data.has("name")) {
+								String name = String.valueOf(data.get("name"));
+								name = name.split(" ")[0];
+								notificationString = name ;
+							}
+						} catch(JSONException e) {
+							e.printStackTrace();
+						}
+					} else
+						notificationString = user.getUserName();
+				}
 				notificationString = notificationString + " wants to borrow" +  wish.getTitle();
 				
-				final String notif = notificationString;
-				wishdao.sendPushToNearbyUsers(notif, userId);
+				JSONObject wishJson = new JSONObject();
+				try {
+					wishJson.put("user", JsonUtil.getUserJson(user));
+					wishJson.put("wish", JsonUtil.getWishJson(wish));
+					wishJson.put("message", notificationString);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				wishdao.sendPushToNearbyUsers(wishJson, userId);
 
 				return CommonLib.getResponseString("success", "",
 						CommonLib.RESPONSE_SUCCESS);
