@@ -38,6 +38,8 @@ public class CommonLib {
 	public static final int MESSAGE_STATUS_ARCHIVE_TO = 2;
 	public static final int MESSAGE_STATUS_ACTIVE = 3;
 	
+	public static final int INVALID_COUPON = 0;
+	
 	/**
 	 * Android API constants*/
 	public static String projectId = "531855430941";//"792616879007";

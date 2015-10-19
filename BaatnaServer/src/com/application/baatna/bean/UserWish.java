@@ -6,21 +6,11 @@ public class UserWish implements Serializable {
 //	private long id;
 	private int wishId;
 	private int userId;
+	private int couponId = 0;
 
 	public UserWish() {
 	}
 	
-
-//	public long getId() {
-//		return id;
-//	}
-//
-//
-//	public void setId(long id) {
-//		this.id = id;
-//	}
-
-
 	public int getWishId() {
 		return wishId;
 	}
@@ -35,6 +25,14 @@ public class UserWish implements Serializable {
 
 	public void setUserId(int userId) {
 		this.userId = userId;
+	}
+
+	public int getCouponId() {
+		return couponId;
+	}
+
+	public void setCouponId(int couponId) {
+		this.couponId = couponId;
 	}
 	
 }

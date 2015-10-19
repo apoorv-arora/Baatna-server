@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.application.baatna.bean.Coupon" table="Coupon">
+
+		<id column="Id" name="id" type="java.lang.Integer">
+			<generator class="native" />
+		</id>
+		<property column="Validity" name="validity" type="java.lang.String" />
+		<property column="Name" name="name" type="java.lang.String" />
+		<property column="Terms" name="terms" type="java.lang.String" />
+		<property column="Count" name="count" type="java.lang.Integer" />
+		<property column="Image" name="image" type="java.lang.String" />
+
+	</class>
+</hibernate-mapping>

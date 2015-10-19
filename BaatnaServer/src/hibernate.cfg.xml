@@ -21,5 +21,6 @@
 		<mapping resource="com/application/baatna/bean/categories.hbm.xml" />
 		<mapping resource="com/application/baatna/bean/newsfeed.hbm.xml" />
 		<mapping resource="com/application/baatna/bean/userwish.hbm.xml" />
+		<mapping resource="com/application/baatna/bean/coupon.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>

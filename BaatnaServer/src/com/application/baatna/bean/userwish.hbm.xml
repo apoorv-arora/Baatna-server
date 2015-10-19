@@ -7,7 +7,7 @@
 			<key-property name="userId" column="USERID" type="java.lang.Integer" />
 			<key-property name="wishId" column="WISHID" type="java.lang.Integer" />
 		</composite-id>
-
+		<property column="CouponId" name="couponId" type="java.lang.Integer" />
 		<!--  <id column="MAPID" name="id" unsaved-value="-1">
 			<generator class="native" />
 		</id>

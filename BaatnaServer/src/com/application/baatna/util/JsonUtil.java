@@ -5,6 +5,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import com.application.baatna.bean.Categories;
+import com.application.baatna.bean.Coupon;
 import com.application.baatna.bean.Institution;
 import com.application.baatna.bean.Session;
 import com.application.baatna.bean.User;
@@ -119,6 +120,21 @@ public class JsonUtil {
 		
 		userCompatJson.put("message", userCompatJsonObject);
 		return userCompatJson;
+	}
+	
+	public static JSONObject getCouponDetails(Coupon object) throws JSONException{
+		JSONObject couponJsonObject = new JSONObject();
+		JSONObject couponJson = new JSONObject();
+
+		couponJsonObject.put("id", object.getId());
+		couponJsonObject.put("count", object.getCount());
+		couponJsonObject.put("image", object.getImage());
+		couponJsonObject.put("name", object.getName());
+		couponJsonObject.put("terms", object.getTerms());
+		couponJsonObject.put("validity", object.getValidity());
+		
+		couponJson.put("couponJson", couponJsonObject);
+		return couponJson;
 	}
 	
 }
