@@ -159,6 +159,42 @@ public class WishPost {
 				CommonLib.RESPONSE_FAILURE);
 
 	}
+	
+	@Path("/get")
+	@POST
+	@Produces("application/json")
+	@Consumes("application/x-www-form-urlencoded")
+	public JSONObject getWishes(@FormParam("access_token") String accessToken,
+			@QueryParam("type") int type,
+			@QueryParam("start") int start,
+			@QueryParam("count") int count) {
+
+		UserDAO dao = new UserDAO();
+		int userId = dao.userActive(accessToken);
+
+		if (userId > 0) {
+
+			WishDAO wishdao = new WishDAO();
+			List<Wish> wishes = wishdao.getAllWishesBasedOnType(userId, start, count, type);
+			int size = wishdao.getAllWishesCountBasedOnType(userId, type);
+			JSONObject returnObject = new JSONObject();
+			try {
+				JSONArray jsonArr = new JSONArray();
+				for (Wish wish : wishes) {
+					jsonArr.put(JsonUtil.getWishJson(wish));
+				}
+				returnObject.put("wishes", jsonArr);
+				returnObject.put("total", size);
+			} catch (JSONException e) {
+
+			}
+			return CommonLib.getResponseString(returnObject, "success",
+					CommonLib.RESPONSE_SUCCESS);
+		}
+		return CommonLib.getResponseString("failure", "failure",
+				CommonLib.RESPONSE_FAILURE);
+
+	}
 
 	@Path("/delete")
 	@POST

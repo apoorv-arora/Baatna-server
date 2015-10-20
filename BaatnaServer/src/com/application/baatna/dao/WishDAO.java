@@ -15,6 +15,7 @@ import org.hibernate.Transaction;
 import org.jivesoftware.smack.XMPPException;
 
 import com.application.baatna.bean.User;
+import com.application.baatna.bean.UserWish;
 import com.application.baatna.bean.Wish;
 import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.DBUtil;
@@ -105,6 +106,159 @@ public class WishDAO {
 
 		return wishes;
 	}
+	
+	public ArrayList<Wish> getAllWishesBasedOnType(int userId, int start, int count, int type) {
+		ArrayList<Wish> wishes;
+		Session session = null;
+		try {
+			session = DBUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+
+			// finding user info
+			Wish wish = null;
+			int i = 0;
+			wishes = new ArrayList<Wish>();
+			
+			if(type == CommonLib.WISH_OFFERED) {
+				String sql = "SELECT * FROM USERWISH WHERE USERID = :userid LIMIT :start , :count";
+				SQLQuery query = session.createSQLQuery(sql);
+				query.addEntity(UserWish.class);
+				query.setParameter("userid", userId);
+				query.setParameter("start", start);
+				query.setParameter("count", count);
+
+				java.util.List results = (java.util.List) query.list();
+
+				for (Iterator iterator = ((java.util.List) results).iterator(); iterator
+						.hasNext();) {
+
+					UserWish userWish = (UserWish) iterator.next();
+					
+					int wishId = userWish.getWishId();
+					String sqlWish = "SELECT * FROM WISH WHERE WISHID = :wishid";
+					SQLQuery queryWish = session.createSQLQuery(sqlWish);
+					queryWish.addEntity(Wish.class);
+					queryWish.setParameter("wishid", wishId);
+					java.util.List resultsWish = (java.util.List) queryWish.list();
+					
+					for (Iterator iteratorWish = ((java.util.List) resultsWish).iterator(); iteratorWish
+							.hasNext();) {
+						Wish wishFound = (Wish)iteratorWish.next();
+						wishes.add(wishFound);
+					}
+				}
+			} else if( type == CommonLib.WISH_OWN ) {
+				String sql = "SELECT * FROM WISH WHERE USERID = :userid AND STATUS = :status LIMIT :start , :count";
+				SQLQuery query = session.createSQLQuery(sql);
+				query.addEntity(Wish.class);
+				query.setParameter("userid", userId);
+				query.setParameter("start", start);
+				query.setParameter("count", count);
+				query.setParameter("status", CommonLib.STATUS_ACTIVE);
+
+				java.util.List results = (java.util.List) query.list();
+
+				for (Iterator iterator = ((java.util.List) results).iterator(); iterator
+						.hasNext();) {
+
+					wish = (Wish) iterator.next();
+					wishes.add(wish);
+					i++;
+
+				}
+			}
+
+			transaction.commit();
+			session.close();
+
+		} catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+
+			System.out.println("error");
+			return null;
+		} finally {
+			if(session != null && session.isOpen())
+				session.close();
+		}
+
+		return wishes;
+	}
+	
+	public int getAllWishesCountBasedOnType(int userId, int type) {
+		ArrayList<Wish> wishes;
+		Session session = null;
+		try {
+			session = DBUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+
+			// finding user info
+			Wish wish = null;
+			int i = 0;
+			wishes = new ArrayList<Wish>();
+			
+			if(type == CommonLib.WISH_OFFERED) {
+				String sql = "SELECT * FROM USERWISH WHERE USERID = :userid";
+				SQLQuery query = session.createSQLQuery(sql);
+				query.addEntity(UserWish.class);
+				query.setParameter("userid", userId);
+
+				java.util.List results = (java.util.List) query.list();
+
+				for (Iterator iterator = ((java.util.List) results).iterator(); iterator
+						.hasNext();) {
+
+					UserWish userWish = (UserWish) iterator.next();
+					
+					int wishId = userWish.getWishId();
+					String sqlWish = "SELECT * FROM WISH WHERE WISHID = :wishid";
+					SQLQuery queryWish = session.createSQLQuery(sqlWish);
+					queryWish.addEntity(Wish.class);
+					queryWish.setParameter("wishid", wishId);
+					java.util.List resultsWish = (java.util.List) queryWish.list();
+					
+					for (Iterator iteratorWish = ((java.util.List) resultsWish).iterator(); iteratorWish
+							.hasNext();) {
+						Wish wishFound = (Wish)iteratorWish.next();
+						wishes.add(wishFound);
+					}
+				}
+			} else if( type == CommonLib.WISH_OWN ) {
+				String sql = "SELECT * FROM WISH WHERE USERID = :userid AND STATUS = :status";
+				SQLQuery query = session.createSQLQuery(sql);
+				query.addEntity(Wish.class);
+				query.setParameter("userid", userId);
+				query.setParameter("status", CommonLib.STATUS_ACTIVE);
+
+				java.util.List results = (java.util.List) query.list();
+
+				for (Iterator iterator = ((java.util.List) results).iterator(); iterator
+						.hasNext();) {
+
+					wish = (Wish) iterator.next();
+					wishes.add(wish);
+					i++;
+
+				}
+			}
+
+			transaction.commit();
+			session.close();
+
+		} catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+
+			System.out.println("error");
+			return 0;
+		} finally {
+			if(session != null && session.isOpen())
+				session.close();
+		}
+
+		return wishes.size();
+	}
+
 
 	public Wish getWish(int wishId) {
 		Wish wish = null;

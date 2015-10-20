@@ -38,6 +38,10 @@ public class CommonLib {
 	public static final int MESSAGE_STATUS_ARCHIVE_TO = 2;
 	public static final int MESSAGE_STATUS_ACTIVE = 3;
 	
+	
+	public static final int WISH_OFFERED = 1;
+	public static final int WISH_OWN = 2;
+	
 	public static final int INVALID_COUPON = 0;
 	
 	/**
