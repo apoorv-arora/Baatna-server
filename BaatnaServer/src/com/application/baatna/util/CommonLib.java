@@ -12,7 +12,7 @@ import com.application.baatna.bean.Institution;
 
 public class CommonLib {
 
-	public static boolean isFacebookCheckValid = true;
+	public static boolean isFacebookCheckValid = false;
 	public static final String ANDROID_CLIENT_ID = "bt_android_client";
 	public static final String ANDROID_APP_TYPE = "bt_android";
 	public static String SERVER_WITHOUT_VERSION = "http://192.168.0.104:8080/BaatnaServer/rest/";
