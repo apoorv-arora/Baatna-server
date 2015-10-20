@@ -10,6 +10,9 @@ public class Coupon implements Serializable{
 	private String terms;
 	private int count;
 	private String image;
+	
+	private int userid;
+	private int wishid;
 //	
 //	//Limit for the number of coupons
 //	private int limit;
@@ -66,6 +69,22 @@ public class Coupon implements Serializable{
 		this.image = image;
 	}
 
+	public int getUserid() {
+		return userid;
+	}
+
+	public void setUserid(int userid) {
+		this.userid = userid;
+	}
+
+	public int getWishid() {
+		return wishid;
+	}
+
+	public void setWishid(int wishid) {
+		this.wishid = wishid;
+	}
+
 //	public int getLimit() {
 //		return limit;
 //	}
@@ -73,5 +92,7 @@ public class Coupon implements Serializable{
 //	public void setLimit(int limit) {
 //		this.limit = limit;
 //	}
+	
+	
 	
 }

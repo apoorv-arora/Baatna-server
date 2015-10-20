@@ -34,7 +34,7 @@ public class RedeemDao {
 			mCoupon.setName(coupon.getName());
 			mCoupon.setTerms(coupon.getTerms());
 			mCoupon.setValidity(coupon.getValidity());
-//			mCoupon.setLimit(coupon.getLimit());
+			// mCoupon.setLimit(coupon.getLimit());
 
 			session.save(mCoupon);
 			transaction.commit();
@@ -63,28 +63,32 @@ public class RedeemDao {
 			session = DBUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
 
-			// get the number of times the user can avail all
-			String sql = "SELECT * FROM USERWISH WHERE USERID = :userid AND CouponId = 0";// LIMIT :start , :count
-			SQLQuery query = session.createSQLQuery(sql);
-			query.addEntity(UserWish.class);
-			query.setParameter("userid", userId);
-//			query.setParameter("start", start);
-//			query.setParameter("count", count);
+			String couponSql = "SELECT * FROM Coupon WHERE Count > 0";
+			SQLQuery couponQuery = session.createSQLQuery(couponSql);
+			couponQuery.addEntity(Coupon.class);
+			java.util.List couponResults = (java.util.List) couponQuery.list();
 
-			java.util.List results = (java.util.List) query.list();
+			for (Iterator iterator = ((java.util.List) couponResults).iterator(); iterator.hasNext();) {
+				Coupon mCoupon = (Coupon) iterator.next();
 
-			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
+				// get the number of times the user can avail all
+				String sql = "SELECT * FROM USERWISH WHERE USERID = :userid";
+				SQLQuery query = session.createSQLQuery(sql);
+				query.addEntity(UserWish.class);
+				query.setParameter("userid", userId);
 
-				UserWish wish = (UserWish) iterator.next();
-
-				// Query in coupon table for the specified coupon
-				String couponSql = "SELECT * FROM Coupon WHERE Count > 0";
-				SQLQuery couponQuery = session.createSQLQuery(couponSql);
-				couponQuery.addEntity(Coupon.class);
-
-				java.util.List couponResults = (java.util.List) couponQuery.list();
-				for (Iterator couponIterator = ((java.util.List) couponResults).iterator(); couponIterator.hasNext();) {
-					coupons.add((Coupon) couponIterator.next());
+				java.util.List results = (java.util.List) query.list();
+				for (Iterator qiterator = ((java.util.List) results).iterator(); qiterator.hasNext();) {
+					UserWish userWish = (UserWish) qiterator.next();
+					boolean found = false;
+					for (Coupon coupon : userWish.getCoupons()) {
+						if (coupon.getId() == mCoupon.getId()) {
+							// this user already has this coupon
+							found = true;
+						}
+					}
+					if (!found)
+						coupons.add(mCoupon);
 				}
 			}
 
@@ -152,7 +156,7 @@ public class RedeemDao {
 		return coupons.size();
 	}
 
-	//This is called when the user hit the redeem button.
+	// This is called when the user hit the redeem button.
 	public boolean updateCouponOnRedeem(int userId, int couponId) {
 
 		Session session = null;
@@ -170,12 +174,37 @@ public class RedeemDao {
 
 			boolean found = false;
 			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
+
 				userWish = (UserWish) iterator.next();
 				// assign one coupon to this user
-				if (userWish.getCouponId() == CommonLib.INVALID_COUPON) {
-					found = true;
-					userWish.setCouponId(couponId);
+				for (Coupon mCoupon : userWish.getCoupons()) {
+					if (mCoupon.getId() == couponId) {
+						found = true;
+						break;
+					}
 				}
+
+				if (found) {
+					found = false;
+					break;
+				} else {
+					// Query in coupon table for the specified coupon
+					String couponSql = "SELECT * FROM Coupon WHERE Id = :couponId";
+					SQLQuery couponQuery = session.createSQLQuery(couponSql);
+					couponQuery.addEntity(Coupon.class);
+					query.setParameter("couponId", couponId);
+
+					java.util.List couponResults = (java.util.List) couponQuery.list();
+					for (Iterator couponIterator = ((java.util.List) couponResults).iterator(); couponIterator
+							.hasNext();) {
+						Coupon coupon = (Coupon) iterator.next();
+						userWish.getCoupons().add(coupon);
+						break;
+					}
+
+					return true;
+				}
+
 			}
 
 			if (found)

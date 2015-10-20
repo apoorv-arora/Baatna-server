@@ -7,15 +7,12 @@
 			<key-property name="userId" column="USERID" type="java.lang.Integer" />
 			<key-property name="wishId" column="WISHID" type="java.lang.Integer" />
 		</composite-id>
-		<property column="CouponId" name="couponId" type="java.lang.Integer" />
-		<!--  <id column="MAPID" name="id" unsaved-value="-1">
-			<generator class="native" />
-		</id>
-		<property name="userId" 
-			column="USERID" lazy="false" type="java.lang.Integer"/>
-		<property name="wishId" 
-			column="WISHID" lazy="false" type="java.lang.Integer" />
--->
+		<!-- <list name="coupons">
+			<key column="Id"></key>
+			<list-index column="Id"></list-index>
+			<one-to-many entity-name="coupons"
+				class="com.application.baatna.bean.Coupon" />
+		</list> -->
 
 	</class>
 
