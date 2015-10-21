@@ -81,12 +81,12 @@ public class RedeemDao {
 				for (Iterator qiterator = ((java.util.List) results).iterator(); qiterator.hasNext();) {
 					UserWish userWish = (UserWish) qiterator.next();
 					boolean found = false;
-					for (Coupon coupon : userWish.getCoupons()) {
-						if (coupon.getId() == mCoupon.getId()) {
-							// this user already has this coupon
-							found = true;
-						}
-					}
+//					for (Coupon coupon : userWish.getCoupons()) {
+//						if (coupon.getId() == mCoupon.getId()) {
+//							// this user already has this coupon
+//							found = true;
+//						}
+//					}
 					if (!found)
 						coupons.add(mCoupon);
 				}
@@ -177,12 +177,12 @@ public class RedeemDao {
 
 				userWish = (UserWish) iterator.next();
 				// assign one coupon to this user
-				for (Coupon mCoupon : userWish.getCoupons()) {
-					if (mCoupon.getId() == couponId) {
-						found = true;
-						break;
-					}
-				}
+//				for (Coupon mCoupon : userWish.getCoupons()) {
+//					if (mCoupon.getId() == couponId) {
+//						found = true;
+//						break;
+//					}
+//				}
 
 				if (found) {
 					found = false;
@@ -195,12 +195,12 @@ public class RedeemDao {
 					query.setParameter("couponId", couponId);
 
 					java.util.List couponResults = (java.util.List) couponQuery.list();
-					for (Iterator couponIterator = ((java.util.List) couponResults).iterator(); couponIterator
-							.hasNext();) {
-						Coupon coupon = (Coupon) iterator.next();
-						userWish.getCoupons().add(coupon);
-						break;
-					}
+//					for (Iterator couponIterator = ((java.util.List) couponResults).iterator(); couponIterator
+//							.hasNext();) {
+//						Coupon coupon = (Coupon) iterator.next();
+//						userWish.getCoupons().add(coupon);
+//						break;
+//					}
 
 					return true;
 				}
