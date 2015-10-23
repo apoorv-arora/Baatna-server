@@ -102,7 +102,7 @@ public class WishPost {
 					} else
 						notificationString = user.getUserName();
 				}
-				notificationString = notificationString + " wants to borrow" +  wish.getTitle();
+				notificationString = notificationString + " wants to borrow " +  wish.getTitle();
 				
 				JSONObject wishJson = new JSONObject();
 				try {
