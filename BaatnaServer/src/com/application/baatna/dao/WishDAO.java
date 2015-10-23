@@ -148,13 +148,13 @@ public class WishDAO {
 					}
 				}
 			} else if( type == CommonLib.WISH_OWN ) {
-				String sql = "SELECT * FROM WISH WHERE USERID = :userid AND STATUS = :status LIMIT :start , :count";
+				String sql = "SELECT * FROM WISH WHERE USERID = :userid LIMIT :start , :count";
 				SQLQuery query = session.createSQLQuery(sql);
 				query.addEntity(Wish.class);
 				query.setParameter("userid", userId);
 				query.setParameter("start", start);
 				query.setParameter("count", count);
-				query.setParameter("status", CommonLib.STATUS_ACTIVE);
+//				query.setParameter("status", CommonLib.STATUS_ACTIVE);
 
 				java.util.List results = (java.util.List) query.list();
 
@@ -224,11 +224,11 @@ public class WishDAO {
 					}
 				}
 			} else if( type == CommonLib.WISH_OWN ) {
-				String sql = "SELECT * FROM WISH WHERE USERID = :userid AND STATUS = :status";
+				String sql = "SELECT * FROM WISH WHERE USERID = :userid";
 				SQLQuery query = session.createSQLQuery(sql);
 				query.addEntity(Wish.class);
 				query.setParameter("userid", userId);
-				query.setParameter("status", CommonLib.STATUS_ACTIVE);
+//				query.setParameter("status", CommonLib.STATUS_ACTIVE);
 
 				java.util.List results = (java.util.List) query.list();
 

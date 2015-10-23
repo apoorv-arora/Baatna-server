@@ -166,6 +166,7 @@ public class WishPost {
 	@Consumes("application/x-www-form-urlencoded")
 	public JSONObject getWishes(@FormParam("access_token") String accessToken,
 			@QueryParam("type") int type,
+			@QueryParam("another_user") int anotherUser,
 			@QueryParam("start") int start,
 			@QueryParam("count") int count) {
 
@@ -175,6 +176,8 @@ public class WishPost {
 		if (userId > 0) {
 
 			WishDAO wishdao = new WishDAO();
+			if(anotherUser != 0)
+				userId = anotherUser;
 			List<Wish> wishes = wishdao.getAllWishesBasedOnType(userId, start, count, type);
 			int size = wishdao.getAllWishesCountBasedOnType(userId, type);
 			JSONObject returnObject = new JSONObject();
