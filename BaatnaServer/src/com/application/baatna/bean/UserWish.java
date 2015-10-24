@@ -7,7 +7,7 @@ import java.util.List;
 public class UserWish implements Serializable {
 	private int wishId;
 	private int userId;
-	private int couponId = 0;
+	private String couponId;
 
 	public UserWish() {
 	}
@@ -28,11 +28,11 @@ public class UserWish implements Serializable {
 		this.userId = userId;
 	}
 
-	public int getCouponId() {
+	public String getCouponId() {
 		return couponId;
 	}
 
-	public void setCouponId(int couponId) {
+	public void setCouponId(String couponId) {
 		this.couponId = couponId;
 	}
 }

@@ -47,7 +47,6 @@ public class Redeem {
 		if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
 			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_APP_TYPE);
 
-		RedeemDao redeemDao = new RedeemDao();
 		Coupon mCoupon = new Coupon();
 		mCoupon.setCount(count);
 		mCoupon.setImage(image);
@@ -55,6 +54,7 @@ public class Redeem {
 		mCoupon.setName(name);
 		mCoupon.setTerms(terms);
 		mCoupon.setValidity(validity);
+		RedeemDao redeemDao = new RedeemDao();
 		mCoupon = redeemDao.addCouponDetails(mCoupon);
 
 		if (mCoupon != null) {
@@ -96,8 +96,9 @@ public class Redeem {
 		if (userId > 0) {
 
 			RedeemDao redeemDao = new RedeemDao();
-			List<Coupon> coupons = redeemDao.getAllCoupons(userId, start, count);
-			int size = redeemDao.getCouponsCount(userId);
+			Object[] couponList = redeemDao.getAllCoupons(userId, start, count);
+			List<Coupon> coupons = (List<Coupon>) couponList[0];
+			int quantity = (int) couponList[1];
 			JSONObject returnObject = new JSONObject();
 			try {
 				JSONArray jsonArr = new JSONArray();
@@ -105,7 +106,7 @@ public class Redeem {
 					jsonArr.put(JsonUtil.getCouponDetails(coupon));
 				}
 				returnObject.put("coupons", jsonArr);
-				returnObject.put("total", size);
+				returnObject.put("quantity", quantity);
 			} catch (JSONException e) {
 
 			}

@@ -55,37 +55,35 @@ public class RedeemDao {
 	// for the userId fetch all the valid coupon Ids stored in UserWish table
 	// for the coupon Id get the complete coupon object and return the same
 	// get all available coupons
-	public ArrayList<Coupon> getAllCoupons(int userId, int start, int count) {
+	public Object[] getAllCoupons(int userId, int start, int count) {
 		Session session = null;
+		Object[] couponList = new Object[2];
 		ArrayList<Coupon> coupons = new ArrayList<Coupon>();
 		try {
 			session = DBUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
 
 			// get the number of times the user can avail all
-			String sql = "SELECT * FROM USERWISH WHERE USERID = :userid AND CouponId = 0";// LIMIT :start , :count
+			String sql = "SELECT * FROM USERWISH WHERE USERID = :userid AND CouponId IS NULL";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(UserWish.class);
 			query.setParameter("userid", userId);
-//			query.setParameter("start", start);
-//			query.setParameter("count", count);
 
 			java.util.List results = (java.util.List) query.list();
 
-			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
-
-				UserWish wish = (UserWish) iterator.next();
-
-				// Query in coupon table for the specified coupon
+			if (results != null && results.size() > 0) {
+				// get all coupons and set the quantity to size.
 				String couponSql = "SELECT * FROM Coupon WHERE Count > 0";
 				SQLQuery couponQuery = session.createSQLQuery(couponSql);
 				couponQuery.addEntity(Coupon.class);
-
 				java.util.List couponResults = (java.util.List) couponQuery.list();
 				for (Iterator couponIterator = ((java.util.List) couponResults).iterator(); couponIterator.hasNext();) {
 					coupons.add((Coupon) couponIterator.next());
 				}
 			}
+
+			couponList[0] = coupons;
+			couponList[1] = results.size();
 
 			transaction.commit();
 			session.close();
@@ -93,7 +91,6 @@ public class RedeemDao {
 		} catch (HibernateException e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
-
 			System.out.println("error");
 			return null;
 		} finally {
@@ -101,57 +98,10 @@ public class RedeemDao {
 				session.close();
 		}
 
-		return coupons;
+		return couponList;
 	}
 
-	public int getCouponsCount(int userId) {
-		Session session = null;
-		ArrayList<Coupon> coupons = new ArrayList<Coupon>();
-		try {
-			session = DBUtil.getSessionFactory().openSession();
-			Transaction transaction = session.beginTransaction();
-
-			// finding user info
-			String sql = "SELECT * FROM USERWISH WHERE USERID = :userid AND CouponId = 0";
-			SQLQuery query = session.createSQLQuery(sql);
-			query.addEntity(UserWish.class);
-			query.setParameter("userid", userId);
-
-			java.util.List results = (java.util.List) query.list();
-
-			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
-
-				UserWish wish = (UserWish) iterator.next();
-
-				// Query in coupon table for the specified coupon
-				String couponSql = "SELECT * FROM Coupon WHERE Count > 0";
-				SQLQuery couponQuery = session.createSQLQuery(couponSql);
-				couponQuery.addEntity(Coupon.class);
-
-				java.util.List couponResults = (java.util.List) couponQuery.list();
-				for (Iterator couponIterator = ((java.util.List) couponResults).iterator(); couponIterator.hasNext();) {
-					coupons.add((Coupon) couponIterator.next());
-				}
-			}
-
-			transaction.commit();
-			session.close();
-
-		} catch (HibernateException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-
-			System.out.println("error");
-			return 0;
-		} finally {
-			if (session != null && session.isOpen())
-				session.close();
-		}
-
-		return coupons.size();
-	}
-
-	//This is called when the user hit the redeem button.
+	// This is called when the user hit the redeem button.
 	public boolean updateCouponOnRedeem(int userId, int couponId) {
 
 		Session session = null;
@@ -171,9 +121,10 @@ public class RedeemDao {
 			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
 				userWish = (UserWish) iterator.next();
 				// assign one coupon to this user
-				if (userWish.getCouponId() == CommonLib.INVALID_COUPON) {
+				if (userWish.getCouponId() == null){//CommonLib.INVALID_COUPON) {
 					found = true;
-					userWish.setCouponId(couponId);
+					userWish.setCouponId(""+couponId);
+					break;
 				}
 			}
 
