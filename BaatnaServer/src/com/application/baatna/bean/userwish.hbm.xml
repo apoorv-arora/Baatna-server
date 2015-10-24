@@ -7,12 +7,7 @@
 			<key-property name="userId" column="USERID" type="java.lang.Integer" />
 			<key-property name="wishId" column="WISHID" type="java.lang.Integer" />
 		</composite-id>
-		<!-- <list name="coupons">
-			<key column="Id"></key>
-			<list-index column="Id"></list-index>
-			<one-to-many entity-name="coupons"
-				class="com.application.baatna.bean.Coupon" />
-		</list> -->
+		<property column="CouponId" name="couponId" type="java.lang.Integer" />
 
 	</class>
 

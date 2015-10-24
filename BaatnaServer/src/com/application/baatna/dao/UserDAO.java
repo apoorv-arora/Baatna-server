@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -16,7 +14,6 @@ import com.application.baatna.bean.Location;
 import com.application.baatna.bean.User;
 import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.DBUtil;
-import com.application.baatna.util.facebook.Friends;
 
 public class UserDAO {
 
