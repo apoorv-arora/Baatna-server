@@ -73,8 +73,7 @@ public class Redeem {
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
 	public JSONObject getCoupons(@FormParam("client_id") String clientId, @FormParam("app_type") String appType,
-			@FormParam("access_token") String accessToken, @QueryParam("start") int start,
-			@QueryParam("count") int count) {
+			@FormParam("access_token") String accessToken) {
 
 		// null checks, invalid request
 		if (clientId == null || appType == null)
@@ -96,7 +95,7 @@ public class Redeem {
 		if (userId > 0) {
 
 			RedeemDao redeemDao = new RedeemDao();
-			Object[] couponList = redeemDao.getAllCoupons(userId, start, count);
+			Object[] couponList = redeemDao.getAllCoupons(userId);
 			List<Coupon> coupons = (List<Coupon>) couponList[0];
 			int quantity = (int) couponList[1];
 			JSONObject returnObject = new JSONObject();

@@ -133,7 +133,7 @@ public class JsonUtil {
 		couponJsonObject.put("terms", object.getTerms());
 		couponJsonObject.put("validity", object.getValidity());
 		
-		couponJson.put("couponJson", couponJsonObject);
+		couponJson.put("coupon", couponJsonObject);
 		return couponJson;
 	}
 	

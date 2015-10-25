@@ -55,7 +55,7 @@ public class RedeemDao {
 	// for the userId fetch all the valid coupon Ids stored in UserWish table
 	// for the coupon Id get the complete coupon object and return the same
 	// get all available coupons
-	public Object[] getAllCoupons(int userId, int start, int count) {
+	public Object[] getAllCoupons(int userId) {
 		Session session = null;
 		Object[] couponList = new Object[2];
 		ArrayList<Coupon> coupons = new ArrayList<Coupon>();
