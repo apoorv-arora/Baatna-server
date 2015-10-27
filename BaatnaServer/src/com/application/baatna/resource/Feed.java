@@ -101,6 +101,8 @@ public class Feed {
 						if ( shouldAdd ) {
 							feedJsonObject.put("userFirst", JsonUtil.getUserJson(userFirst));
 
+							feedJsonObject.put("timestamp", userFirst.getTimestamp());
+							
 							feedJsonObject.put("type", 1);
 							try {
 								Session session = userDao.getSession(userIdFirst);
@@ -135,7 +137,7 @@ public class Feed {
 							Wish wish = wishDao.getWish(wishId);
 
 							feedJsonObject.put("userFirst", JsonUtil.getUserJson(userFirst));
-
+							feedJsonObject.put("timestamp", wish.getTimeOfPost());
 							feedJsonObject.put("wish", JsonUtil.getWishJson(wish));
 							feedJsonObject.put("type", 2);
 
@@ -176,7 +178,7 @@ public class Feed {
 							
 							WishDAO wishDao = new WishDAO();
 							Wish wish = wishDao.getWish(wishId);
-
+							feedJsonObject.put("timestamp", wish.getTimeOfPost());
 							feedJsonObject.put("userFirst", JsonUtil.getUserJson(userFirst));
 							feedJsonObject.put("userSecond", JsonUtil.getUserJson(userSecond));
 

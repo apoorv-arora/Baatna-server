@@ -44,6 +44,7 @@ public class UserDAO {
 			user.setFacebookData(fbData);
 			user.setFacebookToken(fbToken);
 			user.setFbPermission(fbPermissions);
+			user.setTimestamp(System.currentTimeMillis()+"");
 			session.save(user);
 
 			transaction.commit();
@@ -233,7 +234,7 @@ public class UserDAO {
 
 			String sql = "SELECT * FROM SESSION WHERE USERID = :userid";
 			SQLQuery query = session.createSQLQuery(sql);
-			query.addEntity(User.class);
+			query.addEntity(com.application.baatna.bean.Session.class);
 			query.setParameter("userid", userId);
 			java.util.List results = (java.util.List) query.list();
 
@@ -270,14 +271,14 @@ public class UserDAO {
 
 			Random rand = new Random();
 
-			int aT = 0;
+			long aT = 0;
 
 			for (int i = 0; i < 6; i++) {
 
 				aT = aT * 10 + rand.nextInt(10);
 
 			}
-			accessToken = aT + "";
+			accessToken = aT + "" + (System.currentTimeMillis() / 100);
 			// setting access token for the user
 
 			String sql = "UPDATE SESSION SET ACCESS_TOKEN = " + accessToken + "  WHERE USERID = " + userId;
@@ -712,7 +713,7 @@ public class UserDAO {
 			session = DBUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
 			users = new ArrayList<com.application.baatna.bean.Session>();
-			
+
 			String sql = "SELECT * FROM SESSION WHERE USERID <> :user_id LIMIT 900";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(com.application.baatna.bean.Session.class);
@@ -720,10 +721,11 @@ public class UserDAO {
 			java.util.List results2 = (java.util.List) query.list();
 
 			for (Iterator iterator = ((java.util.List) results2).iterator(); iterator.hasNext();) {
-				com.application.baatna.bean.Session currentSesion = ( com.application.baatna.bean.Session ) iterator.next();
+				com.application.baatna.bean.Session currentSesion = (com.application.baatna.bean.Session) iterator
+						.next();
 				users.add(currentSesion);
 			}
-			
+
 			transaction.commit();
 			session.close();
 
@@ -737,7 +739,6 @@ public class UserDAO {
 		return users;
 	}
 
-	
 	public ArrayList<com.application.baatna.bean.Session> getNearbyUsers(int userId) {
 
 		ArrayList<com.application.baatna.bean.Session> users = null;
@@ -748,7 +749,7 @@ public class UserDAO {
 			session = DBUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
 			users = new ArrayList<com.application.baatna.bean.Session>();
-					
+
 			String sql = "SELECT * FROM SESSION WHERE USERID = :user_id LIMIT 50";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(com.application.baatna.bean.Session.class);
@@ -782,9 +783,8 @@ public class UserDAO {
 		return users;
 	}
 
-	public boolean updateInstitution(
-			String institutionName, String studentId, int userId, int isInstitutionVerified
-			, String branchName, int year, String phoneNumber) {
+	public boolean updateInstitution(String institutionName, String studentId, int userId, int isInstitutionVerified,
+			String branchName, int year, String phoneNumber) {
 
 		Session session = null;
 

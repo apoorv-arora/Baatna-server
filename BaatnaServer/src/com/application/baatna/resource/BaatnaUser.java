@@ -42,44 +42,31 @@ public class BaatnaUser {
 	@POST
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
-	public JSONObject userSignup(
-			@DefaultValue("images/default.jpg") @FormParam("profile_pic") String profilePic,
-			@FormParam("client_id") String clientId,
-			@FormParam("app_type") String appType,
-			@FormParam("user_name") String userName,
-			@FormParam("password") String passWord,
-			@FormParam("email") String email,
-			@FormParam("address") String address,
-			@FormParam("phone") String phone, 
-			@FormParam("bio") String bio,
-			@FormParam("fbid") String fbId,
-			@FormParam("fbdata") String fbData,
-			@FormParam("fb_token") String fbToken,
-			@FormParam("fb_permission") String fb_permissions,
+	public JSONObject userSignup(@DefaultValue("images/default.jpg") @FormParam("profile_pic") String profilePic,
+			@FormParam("client_id") String clientId, @FormParam("app_type") String appType,
+			@FormParam("user_name") String userName, @FormParam("password") String passWord,
+			@FormParam("email") String email, @FormParam("address") String address, @FormParam("phone") String phone,
+			@FormParam("bio") String bio, @FormParam("fbid") String fbId, @FormParam("fbdata") String fbData,
+			@FormParam("fb_token") String fbToken, @FormParam("fb_permission") String fb_permissions,
 			@QueryParam("isFacebookLogin") boolean isFacebookLogin) {
 
 		// check for client_id
 		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
-			return CommonLib.getResponseString("Invalid client id", "",
-					CommonLib.RESPONSE_INVALID_CLIENT_ID);
+			return CommonLib.getResponseString("Invalid client id", "", CommonLib.RESPONSE_INVALID_CLIENT_ID);
 
 		// check for app type
 		if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
-			return CommonLib.getResponseString("Invalid params", "",
-					CommonLib.RESPONSE_INVALID_APP_TYPE);
+			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_APP_TYPE);
 
 		// check invalid params
 		if (userName == null || userName.isEmpty())
-			CommonLib.getResponseString("", "Invalid userName",
-					CommonLib.RESPONSE_INVALID_PARAMS);
+			CommonLib.getResponseString("", "Invalid userName", CommonLib.RESPONSE_INVALID_PARAMS);
 
 		if (passWord == null || passWord.isEmpty())
-			CommonLib.getResponseString("", "Invalid passWord",
-					CommonLib.RESPONSE_INVALID_PARAMS);
+			CommonLib.getResponseString("", "Invalid passWord", CommonLib.RESPONSE_INVALID_PARAMS);
 
 		if (email == null || email.isEmpty())
-			CommonLib.getResponseString("", "Invalid email",
-					CommonLib.RESPONSE_INVALID_PARAMS);
+			CommonLib.getResponseString("", "Invalid email", CommonLib.RESPONSE_INVALID_PARAMS);
 
 		UserDAO dao = new UserDAO();
 		// check if user exists
@@ -104,42 +91,37 @@ public class BaatnaUser {
 					e.printStackTrace();
 				}
 			}
-			if(facebookPic != null)
+			if (facebookPic != null)
 				profilePic = facebookPic;
-			userCreated = dao.addUserDetails(profilePic, userName, passWord,
-					email, address, phone, bio, fbId, fbData, fbToken, fb_permissions);
+			userCreated = dao.addUserDetails(profilePic, userName, passWord, email, address, phone, bio, fbId, fbData,
+					fbToken, fb_permissions);
 
 			if (userCreated != null) {
 				try {
-					EmailUtil.sendEmail(email, userCreated,
-							EmailType.VERIFY_MAIL);
+					EmailUtil.sendEmail(email, userCreated, EmailType.VERIFY_MAIL);
 					// TODO: send a push to nearby users.
 				} catch (EmailException e) {
 					e.printStackTrace();
 				} catch (Exception e2) {
 					e2.printStackTrace();
 				}
-				
+
 				FeedDAO feedDao = new FeedDAO();
-				boolean returnFeedResult = feedDao.addFeedItem(FeedDAO.USER_JOINED, System.currentTimeMillis()
-						, userCreated.getUserId(), -1, -1);
-				if(returnFeedResult) {
+				boolean returnFeedResult = feedDao.addFeedItem(FeedDAO.USER_JOINED, System.currentTimeMillis(),
+						userCreated.getUserId(), -1, -1);
+				if (returnFeedResult) {
 					System.out.println("Success type 1");
 				} else {
 					System.out.println("Failure type 1");
 				}
-				
-				return CommonLib.getResponseString("success", "",
-						CommonLib.RESPONSE_SUCCESS);
+
+				return CommonLib.getResponseString("success", "", CommonLib.RESPONSE_SUCCESS);
 
 			} else {
-				return CommonLib.getResponseString("", "Something went wrong",
-						CommonLib.RESPONSE_FAILURE);
+				return CommonLib.getResponseString("", "Something went wrong", CommonLib.RESPONSE_FAILURE);
 			}
 		} else {
-			return CommonLib.getResponseString("",
-					"User already exists with the email",
-					CommonLib.RESPONSE_FAILURE);
+			return CommonLib.getResponseString("", "User already exists with the email", CommonLib.RESPONSE_FAILURE);
 		}
 	}
 
@@ -161,15 +143,12 @@ public class BaatnaUser {
 			String userJsonStr = helper.decrypt(blobToDecrypt, null, null);
 			if (userJsonStr != null) {
 				JSONObject userJson = new JSONObject(userJsonStr);
-				if (userJson.has("user_id")
-						&& userJson.get("user_id") instanceof Integer) {
+				if (userJson.has("user_id") && userJson.get("user_id") instanceof Integer) {
 					UserDAO userDao = new UserDAO();
-					User userObject = userDao.getUserDetails(userJson
-							.getInt("user_id"));
+					User userObject = userDao.getUserDetails(userJson.getInt("user_id"));
 					if (userObject != null) {
 						userDao.verifyUserEmail(userObject, true);
-						return CommonLib.getResponseString("success", "",
-								CommonLib.RESPONSE_SUCCESS).toString();
+						return CommonLib.getResponseString("success", "", CommonLib.RESPONSE_SUCCESS).toString();
 					}
 				}
 			}
@@ -183,20 +162,16 @@ public class BaatnaUser {
 	@POST
 	@Produces(MediaType.TEXT_PLAIN)
 	@Consumes("application/x-www-form-urlencoded")
-	public String changeProfile(@FormParam("access_token") String accessToken,
-			@FormParam("userName") String userName,
-			@FormParam("passWord") String passWord,
-			@FormParam("email") String email,
-			@FormParam("address") String address,
-			@FormParam("phone") String phone, @FormParam("bio") String bio) {
+	public String changeProfile(@FormParam("access_token") String accessToken, @FormParam("userName") String userName,
+			@FormParam("passWord") String passWord, @FormParam("email") String email,
+			@FormParam("address") String address, @FormParam("phone") String phone, @FormParam("bio") String bio) {
 
 		UserDAO userdao = new UserDAO();
 
 		int userId = userdao.userActive(accessToken);
 		if (userId > 0) {
 
-			if (userdao.editUserDetails(userId, userName, passWord, email,
-					address, phone, bio))
+			if (userdao.editUserDetails(userId, userName, passWord, email, address, phone, bio))
 				return "SUCCESS";
 
 		}
@@ -208,11 +183,9 @@ public class BaatnaUser {
 	@POST
 	@Produces(MediaType.TEXT_PLAIN)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public String uploadFile(
-			@FormDataParam("file") InputStream uploadedInputStream,
+	public String uploadFile(@FormDataParam("file") InputStream uploadedInputStream,
 			@FormDataParam("file") FormDataContentDisposition fileDetail,
-			@FormDataParam("access_token") String accessToken)
-			throws IOException {
+			@FormDataParam("access_token") String accessToken) throws IOException {
 
 		UserDAO userdao = new UserDAO();
 
@@ -245,60 +218,50 @@ public class BaatnaUser {
 	@POST
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
-	public JSONObject registerPushId(
-			@FormParam("access_token") String accessToken,
+	public JSONObject registerPushId(@FormParam("access_token") String accessToken,
 			@FormParam("pushId") String pushId) {
 
 		UserDAO dao = new UserDAO();
 
-		 int userId = dao.userActive(accessToken);
+		int userId = dao.userActive(accessToken);
 
 		if (userId > 0 && dao.updatePushId(pushId, accessToken))
-			return CommonLib.getResponseString("success", "success",
-					CommonLib.RESPONSE_SUCCESS);
+			return CommonLib.getResponseString("success", "success", CommonLib.RESPONSE_SUCCESS);
 
-		return CommonLib.getResponseString("failure", "failure",
-				CommonLib.RESPONSE_FAILURE);
+		return CommonLib.getResponseString("failure", "failure", CommonLib.RESPONSE_FAILURE);
 	}
-	
+
 	@Path("/location")
 	@POST
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
-	public JSONObject registerPushId(
-			@FormParam("access_token") String accessToken,
-			@FormParam("latitude") double lat,
+	public JSONObject registerPushId(@FormParam("access_token") String accessToken, @FormParam("latitude") double lat,
 			@FormParam("longitude") double lon) {
 
 		UserDAO dao = new UserDAO();
 
-		 int userId = dao.userActive(accessToken);
+		int userId = dao.userActive(accessToken);
 
 		if (userId > 0 && dao.updateLocation(lat, lon, accessToken))
-			return CommonLib.getResponseString("success", "success",
-					CommonLib.RESPONSE_SUCCESS);
+			return CommonLib.getResponseString("success", "success", CommonLib.RESPONSE_SUCCESS);
 
-		return CommonLib.getResponseString("failure", "failure",
-				CommonLib.RESPONSE_FAILURE);
+		return CommonLib.getResponseString("failure", "failure", CommonLib.RESPONSE_FAILURE);
 	}
 
 	@Path("/nearbyusers")
 	@POST
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
-	public JSONObject getNearbyUsers(@FormParam("client_id") String clientId,
-			@FormParam("app_type") String appType,
+	public JSONObject getNearbyUsers(@FormParam("client_id") String clientId, @FormParam("app_type") String appType,
 			@FormParam("access_token") String accessToken) {
 
 		// check for client_id
 		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
-			return CommonLib.getResponseString("Invalid client id", "",
-					CommonLib.RESPONSE_INVALID_CLIENT_ID);
+			return CommonLib.getResponseString("Invalid client id", "", CommonLib.RESPONSE_INVALID_CLIENT_ID);
 
 		// check for app type
 		if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
-			return CommonLib.getResponseString("Invalid params", "",
-					CommonLib.RESPONSE_INVALID_APP_TYPE);
+			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_APP_TYPE);
 
 		UserDAO dao = new UserDAO();
 		// check if user exists
@@ -309,71 +272,58 @@ public class BaatnaUser {
 			JSONObject nearbyUsersJson = new JSONObject();
 			JSONArray userArr = new JSONArray();
 			try {
-				for(com.application.baatna.bean.Session nearbyUser:nearbyUsers) {
+				for (com.application.baatna.bean.Session nearbyUser : nearbyUsers) {
 					userArr.put(JsonUtil.getSessionJson(nearbyUser));
 				}
 				nearbyUsersJson.put("users", userArr);
-			} catch(JSONException e) {
+			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			return CommonLib.getResponseString(nearbyUsersJson, "",
-					CommonLib.RESPONSE_SUCCESS);
+			return CommonLib.getResponseString(nearbyUsersJson, "", CommonLib.RESPONSE_SUCCESS);
 
 		} else {
-			return CommonLib.getResponseString("", "Something went wrong",
-					CommonLib.RESPONSE_FAILURE);
+			return CommonLib.getResponseString("", "Something went wrong", CommonLib.RESPONSE_FAILURE);
 		}
 	}
-	
-	
-	
+
 	@Path("/institution")
 	@POST
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
-	public JSONObject updateInstitution(
-			@FormParam("client_id") String clientId,
-			@FormParam("app_type") String appType,
-			@FormParam("access_token") String accessToken,
-			@FormParam("institution_name") String institutionId,
-			@FormParam("branch_name") String branchName,
-			@FormParam("year") int year,
-			@FormParam("phone_number") String phoneNumber){
+	public JSONObject updateInstitution(@FormParam("client_id") String clientId, @FormParam("app_type") String appType,
+			@FormParam("access_token") String accessToken, @FormParam("institution_name") String institutionId,
+			@FormParam("branch_name") String branchName, @FormParam("year") int year,
+			@FormParam("phone_number") String phoneNumber) {
 
 		// check for client_id
 		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
-			return CommonLib.getResponseString("Invalid client id", "",
-					CommonLib.RESPONSE_INVALID_CLIENT_ID);
+			return CommonLib.getResponseString("Invalid client id", "", CommonLib.RESPONSE_INVALID_CLIENT_ID);
 
 		// check for app type
 		if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
-			return CommonLib.getResponseString("Invalid params", "",
-					CommonLib.RESPONSE_INVALID_APP_TYPE);
-		
+			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_APP_TYPE);
+
 		UserDAO userDao = new UserDAO();
 
-		//access token validity
+		// access token validity
 		int userId = userDao.userActive(accessToken);
 		if (userId > 0) {
-			
-			//check institution validity
-			if(!userDao.validateInstitution(institutionId))
-				return CommonLib.getResponseString("failure", "Invalid institution name",
-						CommonLib.RESPONSE_FAILURE);
-			
-			boolean returnValue = userDao.updateInstitution(institutionId, "", userId, 1, branchName, year, phoneNumber);
-			if(returnValue) {
-				return CommonLib.getResponseString("success", "",
-						CommonLib.RESPONSE_SUCCESS);
-			} else 
-				return CommonLib.getResponseString("failure", "Something went wrong",
-						CommonLib.RESPONSE_FAILURE);
+
+			// check institution validity
+			if (!userDao.validateInstitution(institutionId))
+				return CommonLib.getResponseString("failure", "Invalid institution name", CommonLib.RESPONSE_FAILURE);
+
+			boolean returnValue = userDao.updateInstitution(institutionId, "", userId, 1, branchName, year,
+					phoneNumber);
+			if (returnValue) {
+				return CommonLib.getResponseString("success", "", CommonLib.RESPONSE_SUCCESS);
+			} else
+				return CommonLib.getResponseString("failure", "Something went wrong", CommonLib.RESPONSE_FAILURE);
 		} else
-			return CommonLib.getResponseString("failure", "",
-					CommonLib.RESPONSE_FAILURE);
+			return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_FAILURE);
 
 	}
-	
+
 	@Path("/institutions")
 	@POST
 	@Produces("application/json")
@@ -387,13 +337,13 @@ public class BaatnaUser {
 
 			List<Institution> categories = CommonLib.getInstitutionsList();
 			JSONObject returnObject = new JSONObject();
-			try{
+			try {
 				JSONArray categoriesArr = new JSONArray();
-				for(Institution category: categories) {
+				for (Institution category : categories) {
 					categoriesArr.put(JsonUtil.getInstitutionJson(category));
 				}
 				returnObject.put("institutions", categoriesArr);
-			} catch(JSONException e) {
+			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 			return CommonLib.getResponseString(returnObject, "", CommonLib.RESPONSE_SUCCESS);
@@ -403,39 +353,34 @@ public class BaatnaUser {
 
 	}
 
-	
 	@Path("/test")
 	@POST
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
 	public JSONObject getTest() {
 		JSONObject object = new JSONObject();
-		try{
+		try {
 			object.put("test", "passed");
-		}catch(JSONException e) {
+		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		return object;
 	}
-	
+
 	@Path("/details")
 	@POST
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
-	public JSONObject userDetails(
-			@FormParam("client_id") String clientId,
-			@FormParam("app_type") String appType,
+	public JSONObject userDetails(@FormParam("client_id") String clientId, @FormParam("app_type") String appType,
 			@QueryParam("user_id") String userId) {
 
 		// check for client_id
 		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
-			return CommonLib.getResponseString("Invalid client id", "",
-					CommonLib.RESPONSE_INVALID_CLIENT_ID);
+			return CommonLib.getResponseString("Invalid client id", "", CommonLib.RESPONSE_INVALID_CLIENT_ID);
 
 		// check for app type
 		if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
-			return CommonLib.getResponseString("Invalid params", "",
-					CommonLib.RESPONSE_INVALID_APP_TYPE);
+			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_APP_TYPE);
 
 		UserDAO dao = new UserDAO();
 		// check if user exists
@@ -443,17 +388,51 @@ public class BaatnaUser {
 		// create the user if the user does not exist.
 		if (userExists != null) {
 			try {
-				return CommonLib.getResponseString(JsonUtil.getUserJson(userExists),
-						"Success",
+				return CommonLib.getResponseString(JsonUtil.getUserJson(userExists), "Success",
 						CommonLib.RESPONSE_SUCCESS);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-		} 
-		return CommonLib.getResponseString("",
-				"User already exists with the email",
-				CommonLib.RESPONSE_FAILURE);
+		}
+		return CommonLib.getResponseString("", "User already exists with the email", CommonLib.RESPONSE_FAILURE);
 	}
 
+	@Path("/feedback")
+	@POST
+	@Produces("application/json")
+	@Consumes("application/x-www-form-urlencoded")
+	public JSONObject userSignup(@FormParam("client_id") String clientId, @FormParam("app_type") String appType,
+			@FormParam("log") String log,
+			@FormParam("message") String title, @FormParam("access_token") String accessToken) {
+		// null checks, invalid request
+		if (clientId == null || appType == null)
+			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_PARAMS);
+
+		// check for client_id
+		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
+			return CommonLib.getResponseString("Invalid client id", "", CommonLib.RESPONSE_INVALID_CLIENT_ID);
+
+		// check for app type
+		if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
+			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_APP_TYPE);
+
+		UserDAO userDao = new UserDAO();
+
+		// access token validity
+		int userId = userDao.userActive(accessToken);
+
+		if (userId > 0) {
+			try {
+				EmailUtil.sendFeedback("android@baatna.com", log, title, EmailType.VERIFY_MAIL);
+				return CommonLib.getResponseString("success", "success", CommonLib.RESPONSE_SUCCESS);
+			} catch (EmailException e) {
+				e.printStackTrace();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+			return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_FAILURE);
+		} else
+			return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_FAILURE);
+	}
 
 }

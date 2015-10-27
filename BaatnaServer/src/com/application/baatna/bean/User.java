@@ -24,6 +24,7 @@ public class User implements Serializable {
 	private String phoneNumber;
 	private int year;
 	private String studentId;
+	private String timestamp;
 	
 	private Set<Wish> acceptedWishes = new HashSet<Wish>();
 	private Set<Wish> declinedWishes = new HashSet<Wish>();
@@ -198,4 +199,13 @@ public class User implements Serializable {
 	public void setYear(int year) {
 		this.year = year;
 	}
+
+	public String getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(String timestamp) {
+		this.timestamp = timestamp;
+	}
+	
 }
