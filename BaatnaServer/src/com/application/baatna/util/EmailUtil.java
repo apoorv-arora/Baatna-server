@@ -21,7 +21,7 @@ public class EmailUtil {
 
 	private static final String hostName = "smtp.gmail.com";
 	private static final int portNumber = 465;
-	private static final String senderEmailId = "android.notifications@gmail.com";
+	private static final String senderEmailId = "android@baatna.com";
 
 	/**
 	 * @param receivers_email_id
@@ -50,7 +50,7 @@ public class EmailUtil {
 			}
 		});
 
-		session.setDebug(true);
+		session.setDebug(false);
 
 		try {
 			// Create a default MimeMessage object.
@@ -63,7 +63,7 @@ public class EmailUtil {
 			message.addRecipient(Message.RecipientType.TO, new InternetAddress(receivers_email_id));
 
 			// Set Subject: header field
-			message.setSubject("This is the Subject Line!");
+			message.setSubject("Welcome to your local Baatna Community!!");
 
 			JSONObject userJsonObject = new JSONObject();
 			userJsonObject.put("user_id", user.getUserId() + "");
@@ -71,7 +71,15 @@ public class EmailUtil {
 			String blob = helper.encrypt(userJsonObject.toString(), null, null);
 			String verifyUrl = CommonLib.SERVER_WITHOUT_VERSION + "/user/verifyEmail?blob=" + blob;
 
-			message.setText("Hello, this is sample for to check send " + "email using JavaMailAPI " + verifyUrl);
+			String text = "Hey," + "\n\nWelcome to Baatna! Thank you for becoming a member of the local Baatna community!"
+					+ "\n\nBaatna enables you to borrow the things you need from people in your neighborhood. Right here, right now, for free."
+					+ "\n\nHow does it work?"
+					+ "\n\nYou know those moments where you need to use something that you do not need to own? Tell Baatna what you are looking for and we'll find friendly neighbors willing to lend it to you. Looking for something right now? Just go to the app and post your need."
+					+ "\n\nIn return you can share your stuff when it's convenient. If one of your neighbors is looking for something, we will let you know. It's up to you if you want to lend out your stuff. Be an awesome neighbor and share the love!"
+					+ "\n\nWe're doing our best to make Baatna more efficient and useful for you everyday. Incase you have any feedback, please get back to us at - hello@baatna.com."
+					+ "\nWe would love to hear from you." + "\n\nCheers" + "\nBaatna Team";
+
+			message.setText(text);
 			// Send message
 			Transport.send(message);
 			System.out.println("Sent message successfully....");
@@ -84,7 +92,8 @@ public class EmailUtil {
 		}
 	}
 
-	public static void sendFeedback( String receivers_email_id, String log, String text, EmailType emailType) throws EmailException {
+	public static void sendFeedback(String receivers_email_id, String log, String text, EmailType emailType)
+			throws EmailException {
 
 		// Get system properties
 		Properties properties = new Properties();
