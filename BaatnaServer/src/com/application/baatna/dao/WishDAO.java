@@ -135,10 +135,11 @@ public class WishDAO {
 					UserWish userWish = (UserWish) iterator.next();
 					
 					int wishId = userWish.getWishId();
-					String sqlWish = "SELECT * FROM WISH WHERE WISHID = :wishid";
+					String sqlWish = "SELECT * FROM WISH WHERE WISHID = :wishid AND STATUS <> :status_id";
 					SQLQuery queryWish = session.createSQLQuery(sqlWish);
 					queryWish.addEntity(Wish.class);
 					queryWish.setParameter("wishid", wishId);
+					queryWish.setParameter("status_id", CommonLib.STATUS_DELETED);
 					java.util.List resultsWish = (java.util.List) queryWish.list();
 					
 					for (Iterator iteratorWish = ((java.util.List) resultsWish).iterator(); iteratorWish
@@ -148,13 +149,13 @@ public class WishDAO {
 					}
 				}
 			} else if( type == CommonLib.WISH_OWN ) {
-				String sql = "SELECT * FROM WISH WHERE USERID = :userid LIMIT :start , :count";
+				String sql = "SELECT * FROM WISH WHERE USERID = :userid AND STATUS <> :status_id LIMIT :start , :count";
 				SQLQuery query = session.createSQLQuery(sql);
 				query.addEntity(Wish.class);
 				query.setParameter("userid", userId);
 				query.setParameter("start", start);
 				query.setParameter("count", count);
-//				query.setParameter("status", CommonLib.STATUS_ACTIVE);
+				query.setParameter("status_id", CommonLib.STATUS_DELETED);
 
 				java.util.List results = (java.util.List) query.list();
 
@@ -211,10 +212,11 @@ public class WishDAO {
 					UserWish userWish = (UserWish) iterator.next();
 					
 					int wishId = userWish.getWishId();
-					String sqlWish = "SELECT * FROM WISH WHERE WISHID = :wishid";
+					String sqlWish = "SELECT * FROM WISH WHERE WISHID = :wishid AND STATUS <> :status_id ";
 					SQLQuery queryWish = session.createSQLQuery(sqlWish);
 					queryWish.addEntity(Wish.class);
 					queryWish.setParameter("wishid", wishId);
+					queryWish.setParameter("status_id", CommonLib.STATUS_DELETED);
 					java.util.List resultsWish = (java.util.List) queryWish.list();
 					
 					for (Iterator iteratorWish = ((java.util.List) resultsWish).iterator(); iteratorWish
@@ -224,11 +226,11 @@ public class WishDAO {
 					}
 				}
 			} else if( type == CommonLib.WISH_OWN ) {
-				String sql = "SELECT * FROM WISH WHERE USERID = :userid";
+				String sql = "SELECT * FROM WISH WHERE USERID = :userid AND STATUS <> :status_id ";
 				SQLQuery query = session.createSQLQuery(sql);
 				query.addEntity(Wish.class);
 				query.setParameter("userid", userId);
-//				query.setParameter("status", CommonLib.STATUS_ACTIVE);
+				query.setParameter("status_id", CommonLib.STATUS_DELETED);
 
 				java.util.List results = (java.util.List) query.list();
 
@@ -310,15 +312,8 @@ public class WishDAO {
 			session = DBUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
 
-//			String hql = "DELETE FROM Wish WHERE wishId = :wish_id";
-//			Query query = session.createQuery(hql);
-//			query.setParameter("wish_id", wishId);
-//			int result = query.executeUpdate();
-//			CommonLib.BLog(result + "");
-//			session.flush();
-			
 			//Archive the wish and not deleting the wish helps in Data analysis
-			String sql = "SELECT * FROM Wish WHERE wishId = :wish_id";
+			String sql = "SELECT * FROM WISH WHERE wishId = :wish_id";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(Wish.class);
 			query.setParameter("wish_id", wishId);
