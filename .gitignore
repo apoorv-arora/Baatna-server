@@ -69,3 +69,5 @@ local.properties
 .buildpath
 BaatnaServer/bin/*
 
+
+BaatnaServer/build/classes/com/application/baatna/bean/wish.hbm.xml

@@ -15,9 +15,9 @@ public class CommonLib {
 	public static boolean isFacebookCheckValid = false;
 	public static final String ANDROID_CLIENT_ID = "bt_android_client";
 	public static final String ANDROID_APP_TYPE = "bt_android";
-	public static String SERVER_WITHOUT_VERSION = "http://192.168.0.104:8080/BaatnaServer/rest/";
+	public static String SERVER_WITHOUT_VERSION = "http://52.74.254.28:8080/BaatnaServer/rest/";
 
-	public static final String ANDROID_APP_VERSION = "1.0.4";
+	public static final String ANDROID_APP_VERSION = "1.0.5";
 	
 	public static final int RESPONSE_FAILURE = 200;
 	public static final int RESPONSE_SUCCESS = 201;
