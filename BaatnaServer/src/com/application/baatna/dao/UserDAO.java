@@ -830,6 +830,8 @@ public class UserDAO {
 				return true;
 			}
 		}
+		if(institutionName.equalsIgnoreCase("-1"))
+			return true;
 		return false;
 	}
 
