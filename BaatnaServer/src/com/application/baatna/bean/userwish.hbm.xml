@@ -7,7 +7,6 @@
 			<key-property name="userId" column="USERID" type="java.lang.Integer" />
 			<key-property name="wishId" column="WISHID" type="java.lang.Integer" />
 		</composite-id>
-		<property column="CouponId" not-null="true" name="couponId" type="java.lang.String" />
 
 	</class>
 
