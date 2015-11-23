@@ -225,6 +225,7 @@ public class MessageDAO {
 						compatMessage.setUser(acceptedUser);
 						compatMessage.setWish(currentWish);
 						compatMessage.setType(CommonLib.CURRENT_USER_WISH_ACCEPTED);
+						compatMessage.setTimestamp(currentWish.getTimeOfPost());
 						acceptedUsers.add(compatMessage);
 					}
 				}
@@ -237,6 +238,7 @@ public class MessageDAO {
 							compatMessage.setUser(userDao.getUserDetails(currentWish.getUserId()));
 							compatMessage.setWish(currentWish);
 							compatMessage.setType(CommonLib.WISH_ACCEPTED_CURRENT_USER);
+							compatMessage.setTimestamp(currentWish.getTimeOfPost());
 							acceptedUsers.add(compatMessage);
 						}
 					}

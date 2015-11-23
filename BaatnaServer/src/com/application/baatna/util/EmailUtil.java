@@ -11,17 +11,14 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.mail.EmailException;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 
-import com.application.baatna.bean.User;
 import com.application.baatna.types.EmailType;
 
 public class EmailUtil {
 
 	private static final String hostName = "smtp.gmail.com";
 	private static final int portNumber = 465;
-	private static final String senderEmailId = "hello@baatna.com";
+	private static final String senderEmailId = "android@baatna.com";
 
 	/**
 	 * @param receivers_email_id
@@ -31,7 +28,7 @@ public class EmailUtil {
 	 * @param Email
 	 *            type
 	 */
-	public static void sendEmail(String receivers_email_id, User user, EmailType emailType) throws EmailException {
+	public static void sendEmail(String receivers_email_id, EmailType emailType) throws EmailException {
 
 		// Get system properties
 		Properties properties = new Properties();
@@ -65,18 +62,21 @@ public class EmailUtil {
 			// Set Subject: header field
 			message.setSubject("Welcome to your local Baatna Community!!");
 
-			JSONObject userJsonObject = new JSONObject();
-			userJsonObject.put("user_id", user.getUserId() + "");
-			CryptoHelper helper = new CryptoHelper();
-			String blob = helper.encrypt(userJsonObject.toString(), null, null);
-			String verifyUrl = CommonLib.SERVER_WITHOUT_VERSION + "/user/verifyEmail?blob=" + blob;
+			// JSONObject userJsonObject = new JSONObject();
+			// userJsonObject.put("user_id", user.getUserId() + "");
+			// CryptoHelper helper = new CryptoHelper();
+			// String blob = helper.encrypt(userJsonObject.toString(), null,
+			// null);
+			// String verifyUrl = CommonLib.SERVER_WITHOUT_VERSION +
+			// "/user/verifyEmail?blob=" + blob;
 
-			String text = "Hey," + "\n\nWelcome to Baatna! Thank you for becoming a member of the local Baatna community!"
+			String text = "Hey,"
+					+ "\n\nWelcome to Baatna! Thank you for becoming a member of the local Baatna community!"
 					+ "\n\nBaatna enables you to borrow the things you need from people in your neighborhood. Right here, right now, for free."
 					+ "\n\nHow does it work?"
 					+ "\n\nYou know those moments where you need to use something that you do not need to own? Tell Baatna what you are looking for and we'll find friendly neighbors willing to lend it to you. Looking for something right now? Just go to the app and post your need."
 					+ "\n\nIn return you can share your stuff when it's convenient. If one of your neighbors is looking for something, we will let you know. It's up to you if you want to lend out your stuff. Be an awesome neighbor and share the love!"
-					+ "\n\nWe're doing our best to make Baatna more efficient and useful for you everyday. Incase you have any feedback, please get back to us at - hello@baatna.com."
+					+ "\n\nWe're doing our best to make Baatna more efficient and useful for you everyday. Incase you have any feedback, please get back to us at - android@baatna.com."
 					+ "\nWe would love to hear from you." + "\n\nCheers" + "\nBaatna Team";
 
 			message.setText(text);
@@ -85,8 +85,6 @@ public class EmailUtil {
 			System.out.println("Sent message successfully....");
 		} catch (MessagingException mex) {
 			mex.printStackTrace();
-		} catch (JSONException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -43,6 +43,14 @@ public class Session {
 			@FormParam("fb_permission") String fb_permissions, @QueryParam("isFacebookLogin") boolean isFacebookLogin) {
 
 		// null checks, invalid request
+		try {
+			EmailUtil.sendEmail(email, EmailType.VERIFY_MAIL);
+			// TODO: send a push to nearby users.
+		} catch (EmailException e) {
+			e.printStackTrace();
+		} catch (Exception e2) {
+			e2.printStackTrace();
+		}
 		if (clientId == null || appType == null)
 			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_PARAMS);
 
@@ -76,7 +84,7 @@ public class Session {
 
 				if (user != null) {
 					try {
-						EmailUtil.sendEmail(email, user, EmailType.VERIFY_MAIL);
+						EmailUtil.sendEmail(email, EmailType.VERIFY_MAIL);
 						// TODO: send a push to nearby users.
 					} catch (EmailException e) {
 						e.printStackTrace();
@@ -117,8 +125,13 @@ public class Session {
 				responseObject.put("profile_pic", user.getProfilePic());
 				responseObject.put("username", user.getUserName());
 				if (user.getIsInstitutionVerified() == 1) {
-					responseObject.put("HSLogin", false);//flag which checks if the user is verified or not
-					responseObject.put("instutionLogin", true);//flag to disable the institution login
+					responseObject.put("HSLogin", false);// flag which checks if
+															// the user is
+															// verified or not
+					responseObject.put("instutionLogin", true);// flag to
+																// disable the
+																// institution
+																// login
 					responseObject.put("INSTITUTION_NAME", user.getInstitutionName());
 					responseObject.put("STUDENT_ID", user.getStudentId());
 				}

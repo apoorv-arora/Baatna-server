@@ -98,7 +98,7 @@ public class BaatnaUser {
 
 			if (userCreated != null) {
 				try {
-					EmailUtil.sendEmail(email, userCreated, EmailType.VERIFY_MAIL);
+					EmailUtil.sendEmail(email, EmailType.VERIFY_MAIL);
 					// TODO: send a push to nearby users.
 				} catch (EmailException e) {
 					e.printStackTrace();

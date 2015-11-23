@@ -1,6 +1,8 @@
 package com.application.baatna.resource;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 
 import javax.ws.rs.Consumes;
@@ -155,6 +157,11 @@ public class Messaging {
 			JSONObject messageJson = new JSONObject();
 			ArrayList<UserCompactMessage> messages = messageDao.getAcceptedUsersForMessages(userId);
 			try {
+				java.util.Collections.sort(messages, new Comparator<UserCompactMessage>() {
+					public int compare(UserCompactMessage s1, UserCompactMessage s2) {
+						return (int) (s2.getTimestamp() - s1.getTimestamp());
+					}
+				});
 				for (UserCompactMessage message : messages) {
 					messageArr.put(JsonUtil.getUserCompatJson(message));
 				}
