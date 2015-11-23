@@ -43,14 +43,6 @@ public class Session {
 			@FormParam("fb_permission") String fb_permissions, @QueryParam("isFacebookLogin") boolean isFacebookLogin) {
 
 		// null checks, invalid request
-		try {
-			EmailUtil.sendEmail(email, EmailType.VERIFY_MAIL);
-			// TODO: send a push to nearby users.
-		} catch (EmailException e) {
-			e.printStackTrace();
-		} catch (Exception e2) {
-			e2.printStackTrace();
-		}
 		if (clientId == null || appType == null)
 			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_PARAMS);
 
