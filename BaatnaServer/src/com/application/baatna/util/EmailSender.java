@@ -24,7 +24,7 @@ public class EmailSender implements Runnable {
 			String logger_str = String.format("Sending %s email to %s",
 					emailType.toString(), email_id);
 			logger.info(logger_str);
-			EmailUtil.sendEmail(email_id, null, emailType);
+			EmailUtil.sendEmail(email_id, emailType);
 		} catch (EmailException e) {
 			logger.error("Exception occurred while sending email", e);
 		}
