@@ -9,6 +9,8 @@ public class Session implements Serializable{
 	private String pushId;
 	private Location location;
 	private int userId;
+	private long created;
+	private long modified;
 	
 	public Session() {
 	}
@@ -51,6 +53,22 @@ public class Session implements Serializable{
 
 	public void setLocation(Location location) {
 		this.location = location;
+	}
+
+	public long getCreated() {
+		return created;
+	}
+
+	public void setCreated(long created) {
+		this.created = created;
+	}
+
+	public long getModified() {
+		return modified;
+	}
+
+	public void setModified(long modified) {
+		this.modified = modified;
 	}
 
 }

@@ -487,6 +487,7 @@ public class UserDAO {
 			java.util.List results = (java.util.List) query.list();
 			com.application.baatna.bean.Session currentSession = (com.application.baatna.bean.Session) results.get(0);
 			currentSession.setPushId(pushId);
+			currentSession.setModified(System.currentTimeMillis());
 			session.update(currentSession);
 
 			transaction.commit();
@@ -523,6 +524,7 @@ public class UserDAO {
 			com.application.baatna.bean.Session currentSession = (com.application.baatna.bean.Session) results.get(0);
 			Location location = new Location(lat, lon);
 			currentSession.setLocation(location);
+			currentSession.setModified(System.currentTimeMillis());
 			session.update(currentSession);
 
 			transaction.commit();
@@ -649,6 +651,8 @@ public class UserDAO {
 			loginSession.setAccessToken(accessToken);
 			loginSession.setLocation(location);
 			loginSession.setPushId(registrationId);
+			loginSession.setCreated(System.currentTimeMillis());
+			loginSession.setModified(0);
 
 			session.save(loginSession);
 

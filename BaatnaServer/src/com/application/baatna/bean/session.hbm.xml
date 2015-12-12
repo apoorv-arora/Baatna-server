@@ -14,6 +14,8 @@
 			<property name="longitude" column="LONGITUDE" type="java.lang.Double" />
 		</component>
 		<property column="USERID" name="userId" type="java.lang.Integer" />
+		<property column="Created" name="created" type="java.lang.Long" />
+		<property column="Modified" name="modified" type="java.lang.Long" />
 
 
 	</class>
