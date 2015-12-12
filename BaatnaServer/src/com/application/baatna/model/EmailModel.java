@@ -1,5 +1,7 @@
 package com.application.baatna.model;
 
+import com.application.baatna.types.EmailType;
+
 public class EmailModel {
 
 	private String fromAddress;
@@ -7,7 +9,16 @@ public class EmailModel {
 	private String emailSubject;
 	private String emailContent;
 	private String logFile;
+	private EmailType emailType;
 	
+	public EmailType getEmailType() {
+		return emailType;
+	}
+
+	public void setEmailType(EmailType emailType) {
+		this.emailType = emailType;
+	}
+
 	public String getFromAddress() {
 		return fromAddress;
 	}

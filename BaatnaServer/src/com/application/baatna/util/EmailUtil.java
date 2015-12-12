@@ -19,7 +19,7 @@ public class EmailUtil {
 
 	private static final String hostName = "smtp.gmail.com";
 	private static final int portNumber = 465;
-	private static final String senderEmailId = "hello@baatna.com";
+	public static final String senderEmailId = "hello@baatna.com";
 
 	/**
 	 * @param receivers_email_id
