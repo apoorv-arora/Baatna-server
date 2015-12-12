@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.mail.EmailException;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.HibernateException;
@@ -17,8 +18,11 @@ import org.jivesoftware.smack.XMPPException;
 import com.application.baatna.bean.User;
 import com.application.baatna.bean.UserWish;
 import com.application.baatna.bean.Wish;
+import com.application.baatna.model.EmailModel;
+import com.application.baatna.types.EmailType;
 import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.DBUtil;
+import com.application.baatna.util.EmailUtil;
 import com.application.baatna.util.GCM;
 
 public class WishDAO {
@@ -459,7 +463,38 @@ public class WishDAO {
 				query3.setParameter("USERID", wish.getUserId());
 				query3.setParameter("WISH_STATUS", CommonLib.STATUS_ACCEPTED );
 				query3.setParameter("USER_TWO_ID", userId);
+
+				query3.executeUpdate();
 				
+				String sql2 = "SELECT * FROM USER WHERE USERID = :userid";
+				SQLQuery query4 = session.createSQLQuery(sql2);
+				query4.addEntity(User.class);
+				query4.setParameter("userid", wish.getUserId());
+				java.util.List results4 = (java.util.List) query4.list();
+
+				User mUser = null;
+				for (Iterator iterator = ((java.util.List) results4).iterator(); iterator
+						.hasNext();) {
+					mUser = (User) iterator.next();
+				}
+				
+				if(mUser != null) {
+					EmailModel emailModel= new EmailModel();
+					emailModel.setFromAddress(EmailUtil.senderEmailId);
+					emailModel.setToAddress(mUser.getEmail());
+					emailModel.setEmailSubject("hey your wish accepted");
+					emailModel.setEmailContent("your wish has been accpeted please get back to the app asap and continue");
+					emailModel.setEmailType(EmailType.ACCEPTANCE);
+					try{
+						EmailUtil.sendEmail(emailModel);
+						}catch (EmailException e) {
+							e.printStackTrace();
+						} catch (Exception e2) {
+							e2.printStackTrace();
+						}
+						
+				}
+
 			}
 			else if (type == CommonLib.ACTION_DECLINE_WISH) {
 				
@@ -471,6 +506,7 @@ public class WishDAO {
 				query3.setParameter("WISH_STATUS", CommonLib.STATUS_DELETED );
 				query3.setParameter("USER_TWO_ID", userId);
 
+				query3.executeUpdate();
 			}
 
 			transaction.commit();
