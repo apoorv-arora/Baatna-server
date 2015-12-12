@@ -200,127 +200,13 @@ public class MessageDAO {
 
 	}
 	
-	public ArrayList<UserCompactMessage> getAcceptedUsersForMessages(int userId) {
-
-		Session session = null;
-		ArrayList<UserCompactMessage> acceptedUsers = new ArrayList<UserCompactMessage>();
-		try {
-			session = DBUtil.getSessionFactory().openSession();
-			Transaction transaction = session.beginTransaction();
-
-			String sql = "SELECT * FROM WISH";
-			SQLQuery query = session.createSQLQuery(sql);
-			query.addEntity(Wish.class);
-
-			java.util.List results = (java.util.List) query.list();
-
-			for (Iterator iterator = ((java.util.List) results).iterator(); iterator
-					.hasNext();) {
-				
-				Wish currentWish = (Wish) iterator.next();
-				//Find all users which have accepted the wish of this particular user
-				if(currentWish != null && currentWish.getUserId() == userId && currentWish.getAcceptedUsers() != null) {
-					for(User acceptedUser: currentWish.getAcceptedUsers()) {
-						UserCompactMessage compatMessage = new UserCompactMessage();
-						compatMessage.setUser(acceptedUser);
-						compatMessage.setWish(currentWish);
-						compatMessage.setType(CommonLib.CURRENT_USER_WISH_ACCEPTED);
-						compatMessage.setTimestamp(currentWish.getTimeOfPost());
-						acceptedUsers.add(compatMessage);
-					}
-				}
-				//Find all users which have provided a wish and is accepted by this particular user 
-				else if(currentWish != null && currentWish.getAcceptedUsers() != null) {
-					for(User user: currentWish.getAcceptedUsers()) {
-						if(user.getUserId() == userId) {
-							UserCompactMessage compatMessage = new UserCompactMessage();
-							UserDAO userDao = new UserDAO();
-							compatMessage.setUser(userDao.getUserDetails(currentWish.getUserId()));
-							compatMessage.setWish(currentWish);
-							compatMessage.setType(CommonLib.WISH_ACCEPTED_CURRENT_USER);
-							compatMessage.setTimestamp(currentWish.getTimeOfPost());
-							acceptedUsers.add(compatMessage);
-						}
-					}
-				}
-				
-			}
-			
-			transaction.commit();
-			session.close();
-
-		} catch (HibernateException e) {
-			System.out.println(e.getMessage());
-			System.out.println("error");
-			e.printStackTrace();
-
-		} finally {
-			if(session != null && session.isOpen())
-				session.close();
-		}
-		return acceptedUsers;
-	}
 	
 	/**
 	 * @param userId User which has sent the deletion request
 	 * @param wishId Wish which is to be deleted
 	 * */
-	public boolean deleteMessage(int wishId, int userId) { 
-
-		Session session = null;
-		try {
-			session = DBUtil.getSessionFactory().openSession();
-			Transaction transaction = session.beginTransaction();
-
-			//Archive the wish and not deleting the wish helps in Data analysis
-			String sql = "SELECT * FROM MESSAGE WHERE WISHID = :wish_id";
-			SQLQuery query = session.createSQLQuery(sql);
-			query.addEntity(Message.class);
-			query.setParameter("wish_id", wishId);
-			java.util.List results = (java.util.List) query.list();
-			for(Message message: (ArrayList<Message>) results) {
-				boolean changed = false;
-				if( message.getFromUserId() == userId ) {
-					//set from archive flag to true
-					changed = true;
-					if(message.getStatusFlag() == CommonLib.MESSAGE_STATUS_ARCHIVE_TO)
-						message.setStatusFlag(CommonLib.MESSAGE_STATUS_INACTIVE);
-					else
-						message.setStatusFlag(CommonLib.MESSAGE_STATUS_ARCHIVE_FROM);
-				} else if (message.getToUserId() == userId) {
-					//set to archive flag to true
-					changed = true;
-					if(message.getStatusFlag() == CommonLib.MESSAGE_STATUS_ARCHIVE_FROM)
-						message.setStatusFlag(CommonLib.MESSAGE_STATUS_INACTIVE);
-					else
-						message.setStatusFlag(CommonLib.MESSAGE_STATUS_ARCHIVE_TO);
-				}
-				if(changed)
-					session.update(message);
-			}
-			transaction.commit();
-			session.close();
-
-		} catch (HibernateException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-
-			System.out.println("error");
-			return false;
-		} finally {
-			if(session != null && session.isOpen())
-				session.close();
-		}
-		
-		//Delete this user from accepted users
-		WishDAO wishDao = new WishDAO();
-		wishDao.deleteAcceptedUserInWish(wishId, userId);
-
-		return true;
-
-	}
-
 	
+
 
 	
 }

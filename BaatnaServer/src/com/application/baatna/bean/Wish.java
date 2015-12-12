@@ -13,10 +13,8 @@ public class Wish implements Serializable {
 	private String description;
 	private long timeOfPost;
 	private int wishId;
-	private int userId;
+	private int userId; // wish posting user
 	private int status;
-	private Set<User> acceptedUsers = new HashSet<User>();
-	private Set<User> declinedUsers = new HashSet<User>();
 
 	public Wish() {
 	}
@@ -59,22 +57,6 @@ public class Wish implements Serializable {
 
 	public void setUserId(int userId) {
 		this.userId = userId;
-	}
-
-	public Set<User> getAcceptedUsers() {
-		return acceptedUsers;
-	}
-
-	public void setAcceptedUsers(Set<User> acceptedUsers) {
-		this.acceptedUsers = acceptedUsers;
-	}
-
-	public Set<User> getDeclinedUsers() {
-		return declinedUsers;
-	}
-
-	public void setDeclinedUsers(Set<User> declinedUsers) {
-		this.declinedUsers = declinedUsers;
 	}
 
 	public int getStatus() {

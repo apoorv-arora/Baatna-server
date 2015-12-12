@@ -2,6 +2,7 @@ package com.application.baatna.resource;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -138,7 +139,17 @@ public class Feed {
 
 							feedJsonObject.put("userFirst", JsonUtil.getUserJson(userFirst));
 							feedJsonObject.put("timestamp", wish.getTimeOfPost());
-							feedJsonObject.put("wish", JsonUtil.getWishJson(wish));
+							JSONObject wishJson = JsonUtil.getWishJson(wish);
+							
+							JSONArray userArr = new JSONArray();
+							List<User> acceptedUsers = wishDao.getWishedUsers(1, wishId);
+							for (User acceptedUser : acceptedUsers) {
+								userArr.put(JsonUtil.getUserJson(acceptedUser));
+							}
+							wishJson.getJSONObject("wish").put("accepted_users", userArr);
+							
+							
+							feedJsonObject.put("wish", wishJson);
 							feedJsonObject.put("type", 2);
 
 							try {

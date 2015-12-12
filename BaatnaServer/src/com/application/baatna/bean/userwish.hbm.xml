@@ -3,11 +3,13 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 	<class name="com.application.baatna.bean.UserWish" table="USERWISH">
-		<composite-id>
-			<key-property name="userId" column="USERID" type="java.lang.Integer" />
-			<key-property name="wishId" column="WISHID" type="java.lang.Integer" />
-		</composite-id>
-
+		<id column="SERIAL" name="serial" type="java.lang.Integer">
+			<generator class="native" />
+		</id>
+		<property name="wishId" column="WISHID" type="java.lang.Integer" />
+		<property name="userId" column="USERID" type="java.lang.Integer" />
+		<property name="wishStatus" column="WISH_STATUS" type="java.lang.Integer" />
+		<property name="userTwoId" column="USER_TWO_ID" type="java.lang.Integer" />
 	</class>
 
 </hibernate-mapping>

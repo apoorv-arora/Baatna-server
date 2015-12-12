@@ -145,7 +145,15 @@ public class WishPost {
 			try {
 				JSONArray jsonArr = new JSONArray();
 				for (Wish wish : wishes) {
-					jsonArr.put(JsonUtil.getWishJson(wish));
+					JSONObject wishJson = JsonUtil.getWishJson(wish);
+
+					JSONArray userArr = new JSONArray();
+					List<User> acceptedUsers = wishdao.getWishedUsers(1, wish.getWishId());
+					for (User acceptedUser : acceptedUsers) {
+						userArr.put(JsonUtil.getUserJson(acceptedUser));
+					}
+					wishJson.getJSONObject("wish").put("accepted_users", userArr);
+					jsonArr.put(wishJson);
 				}
 				returnObject.put("wishes", jsonArr);
 				returnObject.put("total", size);
@@ -184,7 +192,16 @@ public class WishPost {
 			try {
 				JSONArray jsonArr = new JSONArray();
 				for (Wish wish : wishes) {
-					jsonArr.put(JsonUtil.getWishJson(wish));
+
+					JSONObject wishJson = JsonUtil.getWishJson(wish);
+
+					JSONArray userArr = new JSONArray();
+					List<User> acceptedUsers = wishdao.getWishedUsers(1, wish.getWishId());
+					for (User acceptedUser : acceptedUsers) {
+						userArr.put(JsonUtil.getUserJson(acceptedUser));
+					}
+					wishJson.getJSONObject("wish").put("accepted_users", userArr);
+					jsonArr.put(wishJson);
 				}
 				returnObject.put("wishes", jsonArr);
 				returnObject.put("total", size);
@@ -343,9 +360,9 @@ public class WishPost {
 		int userId = dao.userActive(accessToken);
 
 		if (userId > 0) {
-
+			List<User> users ;
 			WishDAO wishdao = new WishDAO();
-			Set users = wishdao.getWishedUsers(updateType, wishId);
+			users = wishdao.getWishedUsers(updateType, wishId);
 			JSONObject returnJsonObject = new JSONObject();
 			JSONArray usersArray = new JSONArray();
 			try {

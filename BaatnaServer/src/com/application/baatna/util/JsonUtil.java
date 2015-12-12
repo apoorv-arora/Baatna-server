@@ -1,5 +1,7 @@
 package com.application.baatna.util;
 
+import java.util.List;
+
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -11,6 +13,7 @@ import com.application.baatna.bean.Session;
 import com.application.baatna.bean.User;
 import com.application.baatna.bean.UserCompactMessage;
 import com.application.baatna.bean.Wish;
+import com.application.baatna.dao.WishDAO;
 
 public class JsonUtil {
 
@@ -61,12 +64,6 @@ public class JsonUtil {
 		wishJsonObject.put("time_post", wish.getTimeOfPost());
 		wishJsonObject.put("wish_id", wish.getWishId());
 		wishJsonObject.put("status", wish.getStatus());
-
-		JSONArray userArr = new JSONArray();
-		for (User acceptedUser : wish.getAcceptedUsers()) {
-			userArr.put(JsonUtil.getUserJson(acceptedUser));
-		}
-		wishJsonObject.put("accepted_users", userArr);
 
 		categoryJson.put("wish", wishJsonObject);
 		return categoryJson;
@@ -119,8 +116,18 @@ public class JsonUtil {
 	public static JSONObject getUserCompatJson(UserCompactMessage object) throws JSONException {
 		JSONObject userCompatJsonObject = new JSONObject();
 		JSONObject userCompatJson = new JSONObject();
-
-		userCompatJsonObject.put("wish", getWishJson(object.getWish()));
+		
+		WishDAO wishDao = new WishDAO();
+		
+		JSONObject wishJson = JsonUtil.getWishJson(object.getWish());
+		
+		JSONArray userArr = new JSONArray();
+		List<User> acceptedUsers = wishDao.getWishedUsers(1, object.getWish().getWishId());
+		for (User acceptedUser : acceptedUsers) {
+			userArr.put(JsonUtil.getUserJson(acceptedUser));
+		}
+		wishJson.getJSONObject("wish").put("accepted_users", userArr);
+		userCompatJsonObject.put("wish", wishJson);
 		userCompatJsonObject.put("user", getUserJson(object.getUser()));
 		userCompatJsonObject.put("type", object.getType());
 

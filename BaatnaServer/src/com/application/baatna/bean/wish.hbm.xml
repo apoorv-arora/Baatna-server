@@ -12,18 +12,7 @@
 		<property column="TIME_OF_POST" name="timeOfPost" type="java.lang.Long" />
 		<property column="USERID" name="userId" type="java.lang.Integer" />
 		<property column="STATUS" name="status" type="java.lang.Integer" />
-		<set name="acceptedUsers" table="USERWISH" lazy="false" cascade="all">
-			<key column="WISHID" />
-			<many-to-many entity-name="com.application.baatna.bean.User">
-			     <column name="USERID" />
-		    </many-to-many>
-		</set>
-		<set name="declinedUsers" table="USERWISH" lazy="false" cascade="all">
-			<key column="WISHID" />
-			<many-to-many entity-name="com.application.baatna.bean.User">
-			     <column name="USERID" />
-		    </many-to-many>
-		</set>
+		
 	</class>
 
 </hibernate-mapping>

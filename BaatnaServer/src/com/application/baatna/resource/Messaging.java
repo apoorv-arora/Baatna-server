@@ -131,77 +131,7 @@ public class Messaging {
 		return allmessages;
 	}
 
-	@Path("/get")
-	@POST
-	@Produces("application/json")
-	@Consumes("application/x-www-form-urlencoded")
-	public JSONObject getNewsFeed(@FormParam("access_token") String accessToken,
-			@FormParam("client_id") String clientId, @FormParam("app_type") String appType) {
-		// check for client_id
-		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
-			return CommonLib.getResponseString("Invalid client id", "", CommonLib.RESPONSE_INVALID_CLIENT_ID);
-
-		// check for app type
-		if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
-			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_APP_TYPE);
-
-		UserDAO userDao = new UserDAO();
-
-		// access token validity
-		int userId = userDao.userActive(accessToken);
-
-		if (userId > 0) {
-			// Iterate over all the wishes
-			MessageDAO messageDao = new MessageDAO();
-			JSONArray messageArr = new JSONArray();
-			JSONObject messageJson = new JSONObject();
-			ArrayList<UserCompactMessage> messages = messageDao.getAcceptedUsersForMessages(userId);
-			try {
-				java.util.Collections.sort(messages, new Comparator<UserCompactMessage>() {
-					public int compare(UserCompactMessage s1, UserCompactMessage s2) {
-						return (int) (s2.getTimestamp() - s1.getTimestamp());
-					}
-				});
-				for (UserCompactMessage message : messages) {
-					messageArr.put(JsonUtil.getUserCompatJson(message));
-				}
-				messageJson.put("messages", messageArr);
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-			return CommonLib.getResponseString(messageJson, "", CommonLib.RESPONSE_SUCCESS);
-		}
-		return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_FAILURE);
-	}
 	
-	@Path("/delete")
-	@POST
-	@Produces("application/json")
-	@Consumes("application/x-www-form-urlencoded")
-	public JSONObject deleteWishes(
-			@FormParam("access_token") String accessToken,
-			@FormParam("wishId") int wishId,
-			@FormParam("userId") int otherUserId) {
-
-		UserDAO dao = new UserDAO();
-		int userId = dao.userActive(accessToken);
-		boolean value = false;
-
-		if (userId > 0) {
-
-			MessageDAO messageDao = new MessageDAO();
-			value = messageDao.deleteMessage(wishId, userId);
-
-			if (value)
-				return CommonLib.getResponseString(String.valueOf(wishId),
-						"success", CommonLib.RESPONSE_SUCCESS);
-
-		}
-
-		return CommonLib.getResponseString("failure", "failure",
-				CommonLib.RESPONSE_FAILURE);
-
-	}
-
-
+	
+	
 }

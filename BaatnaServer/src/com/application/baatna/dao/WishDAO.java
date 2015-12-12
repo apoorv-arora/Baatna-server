@@ -3,8 +3,8 @@ package com.application.baatna.dao;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -448,45 +448,30 @@ public class WishDAO {
 			query.setParameter("wishId", wishId);
 
 			java.util.List results = (java.util.List) query.list();
-
-			for (Iterator iterator = ((java.util.List) results).iterator(); iterator
-					.hasNext();) {
-
-				wish = (Wish) iterator.next();
-
-			}
-
-			//Get the user for the particular id
-			User user = new User();
-
-			String sql1 = "SELECT * FROM USER WHERE USERID = :userid";
-			SQLQuery query2 = session.createSQLQuery(sql1);
-			query2.addEntity(User.class);
-			query2.setParameter("userid", userId);
-			java.util.List results3 = (java.util.List) query2.list();
-
-			for (Iterator iterator = ((java.util.List) results3).iterator(); iterator
-					.hasNext();) {
-				user = (User) iterator.next();
-			}
+			
+			wish = (Wish)results.get(0);
 
 			if (type == CommonLib.ACTION_ACCEPT_WISH) {
-				if(wish.getAcceptedUsers() != null) {
-					wish.getAcceptedUsers().add(user);
-					if(wish.getStatus() == CommonLib.STATUS_ACTIVE)
-						wish.setStatus(CommonLib.STATUS_ACCEPTED);
-				}
-				else 
-					System.out.println("List not initialized");
+				
+				String sql3 = "INSERT INTO USERWISH VALUES (:WISHID,:USERID,:WISH_STATUS,:USER_TWO_ID);";
+				SQLQuery query3 = session.createSQLQuery(sql3);
+				query3.setParameter("WISHID", wishId);
+				query3.setParameter("USERID", wish.getUserId());
+				query3.setParameter("WISH_STATUS", CommonLib.STATUS_ACCEPTED );
+				query3.setParameter("USER_TWO_ID", userId);
+				
 			}
 			else if (type == CommonLib.ACTION_DECLINE_WISH) {
-				if(wish.getAcceptedUsers() != null)
-					wish.getDeclinedUsers().add(user);
-				else 
-					System.out.println("List not initialized");
-			}
+				
+				
+				String sql3 = "INSERT INTO USERWISH VALUES (:WISHID,:USERID,:WISH_STATUS,:USER_TWO_ID);";
+				SQLQuery query3 = session.createSQLQuery(sql3);
+				query3.setParameter("WISHID", wishId);
+				query3.setParameter("USERID", wish.getUserId());
+				query3.setParameter("WISH_STATUS", CommonLib.STATUS_DELETED );
+				query3.setParameter("USER_TWO_ID", userId);
 
-			session.update(wish);
+			}
 
 			transaction.commit();
 			session.close();
@@ -504,6 +489,7 @@ public class WishDAO {
 		return false;
 	}
 
+	/*
 	public Set getWishedUsers(int type, int wishId) {
 
 		Session session = null;
@@ -528,10 +514,12 @@ public class WishDAO {
 
 			}
 			
-			if (type == 1)
+			if (type == CommonLib.STATUS_ACCEPTED){
 				users = wish.getAcceptedUsers();
-			else if (type == 2)
+			}
+			else if (type == CommonLib.STATUS_DELETED){
 				users = wish.getDeclinedUsers();
+			}
 
 			transaction.commit();
 			session.close();
@@ -547,6 +535,7 @@ public class WishDAO {
 		}
 		return users;
 	}
+	*/
 	
 	public int getWishesCount(int userId) {
 		int size = 0;
@@ -591,58 +580,7 @@ public class WishDAO {
 		return size;
 	}
 	
-	public boolean deleteAcceptedUserInWish(int wishId, int userId) {
-
-		Session session = null;
-		try {
-			session = DBUtil.getSessionFactory().openSession();
-			Transaction transaction = session.beginTransaction();
-
-			//Archive the wish and not deleting the wish helps in Data analysis
-			String sql = "SELECT * FROM Wish WHERE wishId = :wish_id";
-			SQLQuery query = session.createSQLQuery(sql);
-			query.addEntity(Wish.class);
-			query.setParameter("wish_id", wishId);
-			java.util.List results = (java.util.List) query.list();
-			Wish currentSession = (Wish) results.get(0);
-			User userToDelete = null;
-			for(User user: currentSession.getAcceptedUsers()) {
-				if( user.getUserId() == userId ) {
-					userToDelete = user;
-					break;
-				}
-			}
-			if(userToDelete != null) {
-				currentSession.getAcceptedUsers().remove(userToDelete);
-				if(currentSession.getAcceptedUsers().size() == 0 && currentSession.getStatus() == CommonLib.STATUS_ACCEPTED) {
-					currentSession.setStatus(CommonLib.STATUS_ACTIVE);
-				}
-				
-				session.update(currentSession);
-			}
-
-			transaction.commit();
-			session.close();
-
-		} catch (HibernateException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-
-			System.out.println("error");
-			return false;
-		} finally {
-			if(session != null && session.isOpen())
-				session.close();
-		}
 		
-		//Delete this wish from feed
-		FeedDAO feedDao = new FeedDAO();
-		feedDao.deleteWish(wishId);
-
-		return true;
-
-	}
-	
 	public boolean updateWishStatus(int userId, int type, int wishId, int offered) {
 
 		Session session = null;
@@ -695,7 +633,38 @@ public class WishDAO {
 		return false;
 	}
 
+	public List<User> getWishedUsers(int updateType, int wishId ){
+		
+		
+		Session session = null;
+		List<User> results= new ArrayList<>() ;
+		try {
+			session = DBUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
 	
+			String sql = "Select * FROM USER WHERE USERID in (SELECT USERID FROM USERWISH WHERE WISHID = :wishId AND WISH_STATUS = :status)";
+			SQLQuery query = session.createSQLQuery(sql);
+			query.addEntity(User.class);
+			query.setParameter("wishId", wishId);
+			query.setParameter("status", updateType);
+			
+			results = (java.util.List) query.list();
+			
+			transaction.commit();
+			session.close();
+		}catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			System.out.println("error");
+			e.printStackTrace();
+
+		} finally {
+			if(session != null && session.isOpen())
+				session.close();
+		}
+
+			return results;
+		
+	}
 	
 
 }
