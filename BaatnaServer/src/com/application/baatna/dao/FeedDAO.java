@@ -1,5 +1,6 @@
 package com.application.baatna.dao;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -218,23 +219,27 @@ public class FeedDAO {
 	}
 
 	public int getFeedItemsCount(Location location,  int currentUserId) {
-		int count = 0;
+		int count;
 		Session session = null;
 		try {
 
 			session = DBUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
 
-			String sql = "SELECT * FROM NEWSFEED WHERE USER_ID_FIRST <> :user_id";
+			String sql = "SELECT COUNT(*) FROM NEWSFEED WHERE USER_ID_FIRST <> :user_id";
 			SQLQuery query = session.createSQLQuery(sql);
-			query.addEntity(NewsFeed.class);
 			query.setParameter("user_id", currentUserId);
 			java.util.List results = (java.util.List) query.list();
-
-			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
+			Object resultValue = results.get(0);
+			if(resultValue instanceof BigInteger)
+				count = ((BigInteger) results.get(0)).intValue();
+			else 
+				count = 0;
+//			count= ((java.langng.Number) query.).intValue();
+			/*for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
 				iterator.next();
 				count++;
-			}
+			}*/
 
 			transaction.commit();
 			session.close();

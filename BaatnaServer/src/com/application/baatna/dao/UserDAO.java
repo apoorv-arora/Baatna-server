@@ -3,6 +3,7 @@ package com.application.baatna.dao;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.UUID;
 
 import org.apache.commons.mail.EmailException;
 import org.hibernate.HibernateException;
@@ -272,16 +273,8 @@ public class UserDAO {
 			session = DBUtil.getSessionFactory().openSession();
 			transaction = session.beginTransaction();
 
-			Random rand = new Random();
-
-			long aT = 0;
-
-			for (int i = 0; i < 6; i++) {
-
-				aT = aT * 10 + rand.nextInt(10);
-
-			}
-			accessToken = aT + "" + (System.currentTimeMillis() / 100);
+			
+			accessToken = UUID.randomUUID().toString();
 			// setting access token for the user
 
 			String sql = "UPDATE SESSION SET ACCESS_TOKEN = " + accessToken + "  WHERE USERID = " + userId;
