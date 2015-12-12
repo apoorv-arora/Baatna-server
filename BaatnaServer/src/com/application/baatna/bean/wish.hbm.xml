@@ -8,7 +8,7 @@
 			<generator class="native" />
 		</id>
 		<property column="TITLE" name="title" type="java.lang.String" />
-		<property column="DESCRIPTION" name="description" type="java.lang.String" />
+		<property column="DESCRIPTION" name="description" type="text" />
 		<property column="TIME_OF_POST" name="timeOfPost" type="java.lang.Long" />
 		<property column="USERID" name="userId" type="java.lang.Integer" />
 		<property column="STATUS" name="status" type="java.lang.Integer" />
