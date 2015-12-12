@@ -1,5 +1,6 @@
 package com.application.baatna.dao;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -191,7 +192,9 @@ public class WishDAO {
 	}
 	
 	public int getAllWishesCountBasedOnType(int userId, int type) {
-		ArrayList<Wish> wishes;
+		//ArrayList<Wish> wishes;
+		int count=0;
+
 		Session session = null;
 		try {
 			session = DBUtil.getSessionFactory().openSession();
@@ -199,8 +202,8 @@ public class WishDAO {
 
 			// finding user info
 			Wish wish = null;
-			int i = 0;
-			wishes = new ArrayList<Wish>();
+			//int i = 0;
+			//wishes = new ArrayList<Wish>();
 			
 			if(type == CommonLib.WISH_OFFERED) {
 				String sql = "SELECT * FROM USERWISH WHERE USERID = :userid";
@@ -218,34 +221,42 @@ public class WishDAO {
 					int wishId = userWish.getWishId();
 					String sqlWish = "SELECT * FROM WISH WHERE WISHID = :wishid AND STATUS <> :status_id ";
 					SQLQuery queryWish = session.createSQLQuery(sqlWish);
-					queryWish.addEntity(Wish.class);
+					//queryWish.addEntity(Wish.class);
 					queryWish.setParameter("wishid", wishId);
 					queryWish.setParameter("status_id", CommonLib.STATUS_DELETED);
 					java.util.List resultsWish = (java.util.List) queryWish.list();
-					
-					for (Iterator iteratorWish = ((java.util.List) resultsWish).iterator(); iteratorWish
+					Object resultValue = resultsWish.get(0);
+					if(resultValue instanceof BigInteger)
+						count += ((BigInteger) resultsWish.get(0)).intValue();
+					else 
+						count += 0;
+					/*for (Iterator iteratorWish = ((java.util.List) resultsWish).iterator(); iteratorWish
 							.hasNext();) {
 						Wish wishFound = (Wish)iteratorWish.next();
 						wishes.add(wishFound);
-					}
+					}*/
 				}
 			} else if( type == CommonLib.WISH_OWN ) {
 				String sql = "SELECT * FROM WISH WHERE USERID = :userid AND STATUS <> :status_id ";
 				SQLQuery query = session.createSQLQuery(sql);
-				query.addEntity(Wish.class);
+				//query.addEntity(Wish.class);
 				query.setParameter("userid", userId);
 				query.setParameter("status_id", CommonLib.STATUS_DELETED);
 
 				java.util.List results = (java.util.List) query.list();
-
-				for (Iterator iterator = ((java.util.List) results).iterator(); iterator
+				Object resultValue = results.get(0);
+				if(resultValue instanceof BigInteger)
+					count = ((BigInteger) results.get(0)).intValue();
+				else 
+					count = 0;
+				/*for (Iterator iterator = ((java.util.List) results).iterator(); iterator
 						.hasNext();) {
 
 					wish = (Wish) iterator.next();
 					wishes.add(wish);
 					i++;
 
-				}
+				}*/
 			}
 
 			transaction.commit();
@@ -261,8 +272,8 @@ public class WishDAO {
 			if(session != null && session.isOpen())
 				session.close();
 		}
-
-		return wishes.size();
+		return count;
+		//return wishes.size();
 	}
 
 
@@ -580,25 +591,28 @@ public class WishDAO {
 		try {
 			session = DBUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
-
+			
 			// finding user info
-			Wish wish = null;
-			wishes = new ArrayList<Wish>();
+			//Wish wish = null;
 
-			String sql = "SELECT * FROM WISH WHERE USERID = :userid AND STATUS = :status";
+			String sql = "SELECT COUNT(*) FROM WISH WHERE USERID = :userid AND STATUS = :status";
 			SQLQuery query = session.createSQLQuery(sql);
-			query.addEntity(Wish.class);
+			//query.addEntity(Wish.class);
 			query.setParameter("userid", userId);
 			query.setParameter("status", CommonLib.STATUS_ACTIVE);
 
 			java.util.List results = (java.util.List) query.list();
-			for (Iterator iterator = ((java.util.List) results).iterator(); iterator
+			Object resultValue = results.get(0);
+			if(resultValue instanceof BigInteger)
+				size = ((BigInteger) results.get(0)).intValue();
+			else 
+				size = 0;
+			/*for (Iterator iterator = ((java.util.List) results).iterator(); iterator
 					.hasNext();) {
 
 				wish = (Wish) iterator.next();
-				wishes.add(wish);
 				size++;
-			}
+			}*/
 
 			transaction.commit();
 			session.close();
