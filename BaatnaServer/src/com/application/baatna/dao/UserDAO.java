@@ -47,7 +47,8 @@ public class UserDAO {
 			user.setFacebookData(fbData);
 			user.setFacebookToken(fbToken);
 			user.setFbPermission(fbPermissions);
-			user.setTimestamp(System.currentTimeMillis()+"");
+			user.setTimestamp(System.currentTimeMillis());
+			user.setModified(0);
 			session.save(user);
 
 			transaction.commit();
@@ -559,6 +560,7 @@ public class UserDAO {
 			user.setPhone(phone);
 			user.setAddress(address);
 			user.setBio(bio);
+			user.setModified(System.currentTimeMillis());
 
 			session.save(user);
 			transaction.commit();
@@ -586,12 +588,16 @@ public class UserDAO {
 			session = DBUtil.getSessionFactory().openSession();
 
 			Transaction transaction = session.beginTransaction();
-			String sql = "UPDATE USER SET PROFILE_PIC = :profilePic  WHERE USERID = :user_id";
+			String sql = "UPDATE USER SET PROFILE_PIC = :profilePic, MODIFIED = :modified   WHERE USERID = :user_id";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(User.class);
 			query.setParameter("profilePic", profilePic);
 			query.setParameter("user_id", userId);
+			query.setParameter("modified", System.currentTimeMillis());
 			int result = query.executeUpdate();
+			
+			User user = getUserDetails(userId);
+			user.setModified(System.currentTimeMillis());
 
 			transaction.commit();
 			session.close();
@@ -799,12 +805,15 @@ public class UserDAO {
 			session = DBUtil.getSessionFactory().openSession();
 
 			Transaction transaction = session.beginTransaction();
+			
+			
 
 			String sql = "SELECT * FROM USER WHERE USERID = :userId";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(User.class);
 			query.setParameter("userId", userId);
 			java.util.List results = (java.util.List) query.list();
+			
 			User currentSession = (User) results.get(0);
 			currentSession.setInstitutionName(institutionName);
 			currentSession.setStudentId(studentId);
@@ -812,6 +821,7 @@ public class UserDAO {
 			currentSession.setYear(year);
 			currentSession.setBranchName(branchName);
 			currentSession.setIsInstitutionVerified(isInstitutionVerified);
+			currentSession.setModified(System.currentTimeMillis());
 			session.update(currentSession);
 			transaction.commit();
 			session.close();

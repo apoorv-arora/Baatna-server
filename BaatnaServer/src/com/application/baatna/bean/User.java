@@ -24,13 +24,16 @@ public class User implements Serializable {
 	private String phoneNumber;
 	private int year;
 	private String studentId;
-	private String timestamp;
+	private long timestamp;
+	private long modified;
 	
+
 	private Set<Wish> acceptedWishes = new HashSet<Wish>();
 	private Set<Wish> declinedWishes = new HashSet<Wish>();
 
 	public User() {
 	}
+	
 
 	public int getUserId() {
 		return userId;
@@ -200,12 +203,20 @@ public class User implements Serializable {
 		this.year = year;
 	}
 
-	public String getTimestamp() {
+	public long getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(String timestamp) {
+	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
+	}
+	
+	public long getModified() {
+		return modified;
+	}
+
+	public void setModified(long modified) {
+		this.modified = modified;
 	}
 	
 }

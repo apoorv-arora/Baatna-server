@@ -25,7 +25,8 @@
 		<property column="PhoneNumber" name="phoneNumber" type="java.lang.String" />
 		<property column="Year" name="year" type="java.lang.Integer" />
 		<property column="STUDENTID" name="studentId" type="java.lang.String" />
-		<property column="TimeStamp" name="timestamp" type="java.lang.String" />
+		<property column="TimeStamp" name="timestamp" type="java.lang.Long" />
+		<property column="MODIFIED" name="modified" type="java.lang.Long" />
 		<set name="acceptedWishes" table="USERWISH" lazy="false" cascade="all">
 			<key column="USERID" />
 			<many-to-many entity-name="com.application.baatna.bean.Wish">
