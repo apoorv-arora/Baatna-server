@@ -2,7 +2,7 @@ package com.application.baatna.dao;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.UUID;
+import java.util.Random;
 
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
@@ -270,8 +270,16 @@ public class UserDAO {
 			session = DBUtil.getSessionFactory().openSession();
 			transaction = session.beginTransaction();
 
-			
-			accessToken = UUID.randomUUID().toString();
+			Random rand = new Random();
+
+			long aT = 0;
+
+			for (int i = 0; i < 6; i++) {
+
+				aT = aT * 10 + rand.nextInt(10);
+
+			}
+			accessToken = aT + "" + (System.currentTimeMillis() / 100);
 			// setting access token for the user
 
 			String sql = "UPDATE SESSION SET ACCESS_TOKEN = " + accessToken + "  WHERE USERID = " + userId;
@@ -293,7 +301,6 @@ public class UserDAO {
 		}
 
 		return accessToken;
-
 	}
 
 	/**
@@ -584,7 +591,7 @@ public class UserDAO {
 			query.setParameter("user_id", userId);
 			query.setParameter("modified", System.currentTimeMillis());
 			int result = query.executeUpdate();
-			
+
 			User user = getUserDetails(userId);
 			user.setModified(System.currentTimeMillis());
 
@@ -794,15 +801,13 @@ public class UserDAO {
 			session = DBUtil.getSessionFactory().openSession();
 
 			Transaction transaction = session.beginTransaction();
-			
-			
 
 			String sql = "SELECT * FROM USER WHERE USERID = :userId";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(User.class);
 			query.setParameter("userId", userId);
 			java.util.List results = (java.util.List) query.list();
-			
+
 			User currentSession = (User) results.get(0);
 			currentSession.setInstitutionName(institutionName);
 			currentSession.setStudentId(studentId);
@@ -835,7 +840,7 @@ public class UserDAO {
 				return true;
 			}
 		}
-		if(institutionName.equalsIgnoreCase("-1"))
+		if (institutionName.equalsIgnoreCase("-1"))
 			return true;
 		return false;
 	}
