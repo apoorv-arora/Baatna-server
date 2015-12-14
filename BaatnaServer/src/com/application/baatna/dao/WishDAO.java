@@ -461,7 +461,7 @@ public class WishDAO {
 
 			if (type == CommonLib.ACTION_ACCEPT_WISH) {
 
-				String sql3 = "INSERT INTO USERWISH VALUES (:WISHID,:USERID,:WISH_STATUS,:USER_TWO_ID);";
+				String sql3 = "INSERT INTO USERWISH (WISHID, USERID, WISH_STATUS, USER_TWO_ID) VALUES (:WISHID,:USERID,:WISH_STATUS,:USER_TWO_ID);";
 				SQLQuery query3 = session.createSQLQuery(sql3);
 				query3.setParameter("WISHID", wishId);
 				query3.setParameter("USERID", wish.getUserId());
@@ -493,7 +493,7 @@ public class WishDAO {
 
 			} else if (type == CommonLib.ACTION_DECLINE_WISH) {
 
-				String sql3 = "INSERT INTO USERWISH VALUES (:WISHID,:USERID,:WISH_STATUS,:USER_TWO_ID);";
+				String sql3 = "INSERT INTO USERWISH (WISHID, USERID, WISH_STATUS, USER_TWO_ID) VALUES (:WISHID,:USERID,:WISH_STATUS,:USER_TWO_ID);";
 				SQLQuery query3 = session.createSQLQuery(sql3);
 				query3.setParameter("WISHID", wishId);
 				query3.setParameter("USERID", wish.getUserId());

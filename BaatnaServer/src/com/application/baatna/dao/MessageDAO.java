@@ -34,8 +34,8 @@ public class MessageDAO {
 	public MessageDAO() {
 	}
 
-	public Message addMessage(String incomingMessage, boolean status,
-			String timeOfMessage, int fromUserId, int toUserId, int wishId) {
+	public Message addMessage(String incomingMessage, boolean status, String timeOfMessage, int fromUserId,
+			int toUserId, int wishId) {
 		Session session = null;
 		Message message;
 		try {
@@ -64,17 +64,16 @@ public class MessageDAO {
 			message = null;
 			System.out.println("error");
 		} finally {
-			if(session != null && session.isOpen())
+			if (session != null && session.isOpen())
 				session.close();
 		}
 		return message;
 	}
-	
+
 	public void sendPushToNearbyUsers(JSONObject notification, int userId) {
 
 		UserDAO userDao = new UserDAO();
-		ArrayList<com.application.baatna.bean.Session> nearbyUsers = userDao
-				.getNearbyUsers(userId);
+		ArrayList<com.application.baatna.bean.Session> nearbyUsers = userDao.getNearbyUsers(userId);
 		GCM ccsClient = new GCM();
 		String userName = CommonLib.projectId + "@gcm.googleapis.com";
 		String password = CommonLib.apiKey;
@@ -89,7 +88,7 @@ public class MessageDAO {
 		payload.put("command", "something");
 		payload.put("Notification", String.valueOf(notification));
 		payload.put("type", "message");
-		
+
 		JSONObject object = new JSONObject();
 		try {
 			object.put("Notification", notification);
@@ -105,16 +104,15 @@ public class MessageDAO {
 		Long timeToLive = 10000L;
 		Boolean delayWhileIdle = false;
 
-		//this will change
+		// this will change
 		for (com.application.baatna.bean.Session nearbyUser : nearbyUsers) {
 			// send push notif to all
-			ccsClient.send(GCM.createJsonMessage(nearbyUser.getPushId(),
-					messageId, payload, null, timeToLive, delayWhileIdle));
+			ccsClient.send(GCM.createJsonMessage(nearbyUser.getPushId(), messageId, payload, null, timeToLive,
+					delayWhileIdle));
 		}
 		ccsClient.disconnect();
 
 	}
-
 
 	public AllMessages getAllMessages(int fromUserId, int toUserId) {
 
@@ -143,8 +141,7 @@ public class MessageDAO {
 
 			java.util.List results = (java.util.List) query.list();
 
-			for (Iterator iterator = ((java.util.List) results).iterator(); iterator
-					.hasNext();) {
+			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
 
 				message = (Message) iterator.next();
 				messages.add(message);
@@ -168,8 +165,7 @@ public class MessageDAO {
 
 			results = (java.util.List) query.list();
 
-			for (Iterator iterator = ((java.util.List) results).iterator(); iterator
-					.hasNext();) {
+			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
 
 				message = (Message) iterator.next();
 				messages.add(message);
@@ -191,7 +187,7 @@ public class MessageDAO {
 			System.out.println("error");
 			return null;
 		} finally {
-			if(session != null && session.isOpen())
+			if (session != null && session.isOpen())
 				session.close();
 		}
 
@@ -199,14 +195,88 @@ public class MessageDAO {
 		return allmessages;
 
 	}
-	
-	
+
 	/**
-	 * @param userId User which has sent the deletion request
-	 * @param wishId Wish which is to be deleted
-	 * */
-	
+	 * @param userId
+	 *            User which has sent the deletion request
+	 * @param wishId
+	 *            Wish which is to be deleted
+	 */
+	public ArrayList<UserCompactMessage> getAcceptedUsersForMessages(int userId) {
 
+		Session session = null;
+		ArrayList<UserCompactMessage> acceptedUsers = new ArrayList<UserCompactMessage>();
+		try {
+			session = DBUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
 
-	
+			{
+				String sql = "SELECT * FROM WISH WHERE USERID <> :userId";
+				SQLQuery query = session.createSQLQuery(sql);
+				query.addEntity(Wish.class);
+				query.setParameter("userId", userId);
+				java.util.List results = (java.util.List) query.list();
+				for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
+					Wish currentWish = (Wish) iterator.next();
+					String sql2 = "SELECT * FROM USER WHERE USERID IN (SELECT USER_TWO_ID FROM USERWISH WHERE WISH_STATUS = :status and USERID = :userId and WISHID =:wishId)";
+					SQLQuery query2 = session.createSQLQuery(sql2);
+					query2.addEntity(User.class);
+					query2.setParameter("status", CommonLib.STATUS_ACCEPTED);
+					query2.setParameter("userId", userId);
+					query2.setParameter("wishId", currentWish.getWishId());
+					java.util.List results2 = (java.util.List) query2.list();
+					for (Iterator iterator2 = ((java.util.List) results2).iterator(); iterator2.hasNext();) {
+						User acceptedUser = (User) iterator2.next();
+						UserCompactMessage compatMessage = new UserCompactMessage();
+						compatMessage.setUser(acceptedUser);
+						compatMessage.setWish(currentWish);
+						compatMessage.setType(CommonLib.WISH_ACCEPTED_CURRENT_USER);
+						compatMessage.setTimestamp(currentWish.getTimeOfPost());
+						acceptedUsers.add(compatMessage);
+					}
+				}
+			}
+
+			{
+				String sql = "SELECT * FROM WISH WHERE USERID = :userId";
+				SQLQuery query = session.createSQLQuery(sql);
+				query.addEntity(Wish.class);
+				query.setParameter("userId", userId);
+				java.util.List results = (java.util.List) query.list();
+				for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
+					Wish currentWish = (Wish) iterator.next();
+					String sql2 = "SELECT * FROM USER WHERE USERID IN (SELECT USER_TWO_ID FROM USERWISH WHERE WISH_STATUS = :status and WISHID =:wishId)";
+					SQLQuery query2 = session.createSQLQuery(sql2);
+					query2.addEntity(User.class);
+					query2.setParameter("status", CommonLib.STATUS_ACCEPTED);
+					query2.setParameter("wishId", currentWish.getWishId());
+					java.util.List results2 = (java.util.List) query2.list();
+					for (Iterator iterator2 = ((java.util.List) results2).iterator(); iterator2.hasNext();) {
+						User acceptedUser = (User) iterator2.next();
+						UserCompactMessage compatMessage = new UserCompactMessage();
+						compatMessage.setUser(acceptedUser);
+						compatMessage.setWish(currentWish);
+						compatMessage.setType(CommonLib.CURRENT_USER_WISH_ACCEPTED);
+						compatMessage.setTimestamp(currentWish.getTimeOfPost());
+						acceptedUsers.add(compatMessage);
+					}
+				}
+
+			}
+
+			transaction.commit();
+			session.close();
+
+		} catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			System.out.println("error");
+			e.printStackTrace();
+
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
+		return acceptedUsers;
+	}
+
 }
