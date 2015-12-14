@@ -27,12 +27,11 @@ import com.application.baatna.bean.Institution;
 import com.application.baatna.bean.User;
 import com.application.baatna.dao.FeedDAO;
 import com.application.baatna.dao.UserDAO;
-import com.application.baatna.model.EmailModel;
-import com.application.baatna.types.EmailType;
 import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.CryptoHelper;
-import com.application.baatna.util.EmailUtil;
 import com.application.baatna.util.JsonUtil;
+import com.application.baatna.util.mailer.EmailModel;
+import com.application.baatna.util.mailer.EmailUtil;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
@@ -98,27 +97,20 @@ public class BaatnaUser {
 					fbToken, fb_permissions);
 
 			if (userCreated != null) {
-				try {
-					EmailModel emailModel= new EmailModel();
-					emailModel.setToAddress(email);
-					emailModel.setFromAddress(EmailUtil.senderEmailId);
-					emailModel.setEmailSubject("Welcome to your local Baatna Community!!");
-					emailModel.setEmailContent("Hey,"
-												+ "\n\nWelcome to Baatna! Thank you for becoming a member of the local Baatna community!"
-												+ "\n\nBaatna enables you to borrow the things you need from people in your neighborhood. Right here, right now, for free."
-												+ "\n\nHow does it work?"
-												+ "\n\nYou know those moments where you need to use something that you do not need to own? Tell Baatna what you are looking for and we'll find friendly neighbors willing to lend it to you. Looking for something right now? Just go to the app and post your need."
-												+ "\n\nIn return you can share your stuff when it's convenient. If one of your neighbors is looking for something, we will let you know. It's up to you if you want to lend out your stuff. Be an awesome neighbor and share the love!"
-												+ "\n\nWe're doing our best to make Baatna more efficient and useful for you everyday. Incase you have any feedback, please get back to us at -hello@baatna.com."
-											    + "\nWe would love to hear from you." + "\n\nCheers" + "\nBaatna Team");
-					emailModel.setEmailType(EmailType.WELCOME);
-					EmailUtil.sendEmail(emailModel);
-					// TODO: send a push to nearby users.
-				} catch (EmailException e) {
-					e.printStackTrace();
-				} catch (Exception e2) {
-					e2.printStackTrace();
-				}
+				EmailModel emailModel = new EmailModel();
+				emailModel.setTo(email);
+				emailModel.setFrom(CommonLib.BAPP_ID);
+				emailModel.setSubject("Welcome to your local Baatna Community!!");
+				emailModel.setContent(
+						"Hey," + "\n\nWelcome to Baatna! Thank you for becoming a member of the local Baatna community!"
+								+ "\n\nBaatna enables you to borrow the things you need from people in your neighborhood. Right here, right now, for free."
+								+ "\n\nHow does it work?"
+								+ "\n\nYou know those moments where you need to use something that you do not need to own? Tell Baatna what you are looking for and we'll find friendly neighbors willing to lend it to you. Looking for something right now? Just go to the app and post your need."
+								+ "\n\nIn return you can share your stuff when it's convenient. If one of your neighbors is looking for something, we will let you know. It's up to you if you want to lend out your stuff. Be an awesome neighbor and share the love!"
+								+ "\n\nWe're doing our best to make Baatna more efficient and useful for you everyday. Incase you have any feedback, please get back to us at -hello@baatna.com."
+								+ "\nWe would love to hear from you." + "\n\nCheers" + "\nBaatna Team");
+				EmailUtil.getInstance().sendEmail(emailModel);
+				// TODO: send a push to nearby users.
 
 				FeedDAO feedDao = new FeedDAO();
 				boolean returnFeedResult = feedDao.addFeedItem(FeedDAO.USER_JOINED, System.currentTimeMillis(),
@@ -416,8 +408,8 @@ public class BaatnaUser {
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
 	public JSONObject userSignup(@FormParam("client_id") String clientId, @FormParam("app_type") String appType,
-			@FormParam("log") String log,
-			@FormParam("message") String title, @FormParam("access_token") String accessToken) {
+			@FormParam("log") String log, @FormParam("message") String title,
+			@FormParam("access_token") String accessToken) {
 		// null checks, invalid request
 		if (clientId == null || appType == null)
 			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_PARAMS);
@@ -436,23 +428,14 @@ public class BaatnaUser {
 		int userId = userDao.userActive(accessToken);
 
 		if (userId > 0) {
-			try {
-				User user=userDao.getUserDetails(userId);
-				//EmailUtil.sendFeedback("android@baatna.com", log, title, EmailType.VERIFY_MAIL);
-				EmailModel emailModel=new EmailModel();
-				emailModel.setToAddress(EmailUtil.senderEmailId);
-				emailModel.setFromAddress(user.getEmail());
-				emailModel.setLogFile(log);
-				emailModel.setEmailSubject(title);
-				emailModel.setEmailType(EmailType.VERIFY_MAIL);
-				EmailUtil.sendEmail(emailModel);
-				return CommonLib.getResponseString("success", "success", CommonLib.RESPONSE_SUCCESS);
-			} catch (EmailException e) {
-				e.printStackTrace();
-			} catch (Exception e2) {
-				e2.printStackTrace();
-			}
-			return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_FAILURE);
+			User user = userDao.getUserDetails(userId);
+			EmailModel emailModel = new EmailModel();
+			emailModel.setTo(CommonLib.BAPP_ID);
+			emailModel.setFrom(user.getEmail());
+			emailModel.setSubject("Baatna Android Application Feedback");
+			emailModel.setContent("Message:" + title + "\n\nLog:" + log);
+			EmailUtil.getInstance().sendEmail(emailModel);
+			return CommonLib.getResponseString("success", "success", CommonLib.RESPONSE_SUCCESS);
 		} else
 			return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_FAILURE);
 	}

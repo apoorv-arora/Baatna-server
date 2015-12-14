@@ -26,6 +26,9 @@ public class CommonLib {
 	public static final int RESPONSE_INVALID_APP_TYPE = 204;
 	public static final int RESPONSE_INVALID_CLIENT_ID = 205;
 	
+	public static final String BAPP_ID = "hello@baatna.com";
+	public static final String BAPP_PWD = "hello.baatna";
+	
 	public static final int STATUS_DELETED = 0;
 	public static final int STATUS_ACTIVE = 1;
 	public static final int STATUS_ACCEPTED = 2;

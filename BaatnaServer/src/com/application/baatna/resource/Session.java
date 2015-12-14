@@ -12,17 +12,15 @@ import javax.ws.rs.core.MediaType;
 import org.apache.commons.mail.EmailException;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
-import org.hibernate.engine.spi.SessionDelegatorBaseImpl;
 
 import com.application.baatna.bean.Location;
 import com.application.baatna.bean.User;
 import com.application.baatna.dao.FeedDAO;
 import com.application.baatna.dao.UserDAO;
-import com.application.baatna.model.EmailModel;
-import com.application.baatna.types.EmailType;
 import com.application.baatna.util.CommonLib;
-import com.application.baatna.util.EmailUtil;
 import com.application.baatna.util.JsonUtil;
+import com.application.baatna.util.mailer.EmailModel;
+import com.application.baatna.util.mailer.EmailUtil;
 
 @Path("/auth")
 public class Session {
@@ -76,27 +74,19 @@ public class Session {
 						fbToken, fb_permissions);
 
 				if (user != null) {
-					try {
-						EmailModel emailModel=new EmailModel();
-						emailModel.setToAddress(user.getEmail());
-						emailModel.setFromAddress(EmailUtil.senderEmailId);
-						emailModel.setEmailType(EmailType.WELCOME);
-						emailModel.setEmailSubject("Welcome to your local Baatna Community!!");
-						emailModel.setEmailContent("Hey,"
-												+ "\n\nWelcome to Baatna! Thank you for becoming a member of the local Baatna community!"
-												+ "\n\nBaatna enables you to borrow the things you need from people in your neighborhood. Right here, right now, for free."
-												+ "\n\nHow does it work?"
-												+ "\n\nYou know those moments where you need to use something that you do not need to own? Tell Baatna what you are looking for and we'll find friendly neighbors willing to lend it to you. Looking for something right now? Just go to the app and post your need."
-												+ "\n\nIn return you can share your stuff when it's convenient. If one of your neighbors is looking for something, we will let you know. It's up to you if you want to lend out your stuff. Be an awesome neighbor and share the love!"
-												+ "\n\nWe're doing our best to make Baatna more efficient and useful for you everyday. Incase you have any feedback, please get back to us at -hello@baatna.com."
-											    + "\nWe would love to hear from you." + "\n\nCheers" + "\nBaatna Team");
-						EmailUtil.sendEmail(emailModel);
-						// TODO: send a push to nearby users.
-					} catch (EmailException e) {
-						e.printStackTrace();
-					} catch (Exception e2) {
-						e2.printStackTrace();
-					}
+					EmailModel emailModel = new EmailModel();
+					emailModel.setTo(user.getEmail());
+					emailModel.setFrom(CommonLib.BAPP_ID);
+					emailModel.setSubject("Welcome to your local Baatna Community!!");
+					emailModel.setContent(
+							"Hey," + "\n\nWelcome to Baatna! Thank you for becoming a member of the local Baatna community!"
+									+ "\n\nBaatna enables you to borrow the things you need from people in your neighborhood. Right here, right now, for free."
+									+ "\n\nHow does it work?"
+									+ "\n\nYou know those moments where you need to use something that you do not need to own? Tell Baatna what you are looking for and we'll find friendly neighbors willing to lend it to you. Looking for something right now? Just go to the app and post your need."
+									+ "\n\nIn return you can share your stuff when it's convenient. If one of your neighbors is looking for something, we will let you know. It's up to you if you want to lend out your stuff. Be an awesome neighbor and share the love!"
+									+ "\n\nWe're doing our best to make Baatna more efficient and useful for you everyday. Incase you have any feedback, please get back to us at -hello@baatna.com."
+									+ "\nWe would love to hear from you." + "\n\nCheers" + "\nBaatna Team");
+					EmailUtil.getInstance().sendEmail(emailModel);
 					FeedDAO feedDao = new FeedDAO();
 					boolean returnFeedResult = feedDao.addFeedItem(FeedDAO.USER_JOINED, System.currentTimeMillis(),
 							user.getUserId(), -1, -1);
