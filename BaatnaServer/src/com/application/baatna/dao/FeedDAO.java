@@ -187,8 +187,6 @@ public class FeedDAO {
 
 	public ArrayList<NewsFeed> getFeedItems(Location location, int start, int count, int currentUserId) {
 		ArrayList<NewsFeed> feedItems = new ArrayList<NewsFeed>();
-		ArrayList<NewsFeed> feedItems1 = new ArrayList<NewsFeed>();
-		//NewsFeed tempnews=new NewsFeed();
 		Session session = null;
 		try {
 
@@ -204,24 +202,7 @@ public class FeedDAO {
 			java.util.List results = (java.util.List) query.list();
 
 			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
-				feedItems1.add((NewsFeed) iterator.next());
-			}
-			for (NewsFeed feedItem : feedItems1) {
-				
-				int Wishid= feedItem.getWishId();
-				String sql1= "SELECT * FROM USERWISH WHERE WISH_ID =:wishid AND USER_TWO_ID =:usertwoid AND WISH_STATUS =:wishstatus1 OR WISH_STATUS =:wishstatus2 ";
-				SQLQuery query1 = session.createSQLQuery(sql1);
-				query1.addEntity(UserWish.class);
-				query1.setParameter("wishid", Wishid);
-				query1.setParameter("usertwoid", currentUserId);
-				query1.setParameter("wishstatus1",CommonLib.STATUS_ACCEPTED);
-				query1.setParameter("wishstatus2",CommonLib.STATUS_DELETED);
-				java.util.List results1 = (java.util.List) query1.list();
-				
-				if(results1.isEmpty()){
-				feedItems.add((NewsFeed) feedItem);
-				}
-				
+				feedItems.add((NewsFeed) iterator.next());
 			}
 			transaction.commit();
 			session.close();

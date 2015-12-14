@@ -27,13 +27,8 @@ public class User implements Serializable {
 	private long timestamp;
 	private long modified;
 	
-
-	private Set<Wish> acceptedWishes = new HashSet<Wish>();
-	private Set<Wish> declinedWishes = new HashSet<Wish>();
-
 	public User() {
 	}
-	
 
 	public int getUserId() {
 		return userId;
@@ -161,22 +156,6 @@ public class User implements Serializable {
 
 	public void setStudentId(String studentId) {
 		this.studentId = studentId;
-	}
-
-	public Set<Wish> getAcceptedWishes() {
-		return acceptedWishes;
-	}
-
-	public void setAcceptedWishes(Set<Wish> acceptedWishes) {
-		this.acceptedWishes = acceptedWishes;
-	}
-
-	public Set<Wish> getDeclinedWishes() {
-		return declinedWishes;
-	}
-
-	public void setDeclinedWishes(Set<Wish> declinedWishes) {
-		this.declinedWishes = declinedWishes;
 	}
 
 	public String getBranchName() {
