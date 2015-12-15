@@ -118,7 +118,6 @@ public class WishDAO {
 
 			// finding user info
 			Wish wish = null;
-			int i = 0;
 			wishes = new ArrayList<Wish>();
 
 			if (type == CommonLib.WISH_OFFERED) {
@@ -151,8 +150,6 @@ public class WishDAO {
 
 					wish = (Wish) iterator.next();
 					wishes.add(wish);
-					i++;
-
 				}
 			}
 
