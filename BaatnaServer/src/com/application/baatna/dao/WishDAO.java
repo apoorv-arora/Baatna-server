@@ -110,7 +110,7 @@ public class WishDAO {
 	}
 
 	public ArrayList<Wish> getAllWishesBasedOnType(int userId, int start, int count, int type) {
-		ArrayList<Wish> wishes;
+		ArrayList<Wish> wishes = new ArrayList<Wish>();
 		Session session = null;
 		try {
 			session = DBUtil.getSessionFactory().openSession();
@@ -121,9 +121,9 @@ public class WishDAO {
 			wishes = new ArrayList<Wish>();
 
 			if (type == CommonLib.WISH_OFFERED) {
-				String sql = "SELECT * FROM WISH WHERE STATUS <> :status_id AND WISHID IN (SELECT WISHID FROM USERWISH WHERE USER_TWO_ID = :userid LIMIT :start , :count)";
+				String sql = "SELECT * FROM WISH WHERE STATUS <> :status_id AND WISHID IN (SELECT WISHID FROM USERWISH WHERE USER_TWO_ID = :userid) LIMIT :start , :count";
 				SQLQuery query = session.createSQLQuery(sql);
-				query.addEntity(UserWish.class);
+				query.addEntity(Wish.class);
 				query.setParameter("userid", userId);
 				query.setParameter("start", start);
 				query.setParameter("count", count);
@@ -185,36 +185,16 @@ public class WishDAO {
 			// wishes = new ArrayList<Wish>();
 
 			if (type == CommonLib.WISH_OFFERED) {
-				String sql = "SELECT * FROM USERWISH WHERE USERID = :userid";
+				String sql = "Select Count(*) from Wish where STATUS <> :status_id and WISHID IN (SELECT WISHID FROM USERWISH WHERE USER_TWO_ID = :userid)";
 				SQLQuery query = session.createSQLQuery(sql);
-				query.addEntity(UserWish.class);
 				query.setParameter("userid", userId);
-
+				query.setParameter("status_id", CommonLib.STATUS_DELETED);
 				java.util.List results = (java.util.List) query.list();
-
-				for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
-
-					UserWish userWish = (UserWish) iterator.next();
-
-					int wishId = userWish.getWishId();
-					String sqlWish = "SELECT * FROM WISH WHERE WISHID = :wishid AND STATUS <> :status_id ";
-					SQLQuery queryWish = session.createSQLQuery(sqlWish);
-					// queryWish.addEntity(Wish.class);
-					queryWish.setParameter("wishid", wishId);
-					queryWish.setParameter("status_id", CommonLib.STATUS_DELETED);
-					java.util.List resultsWish = (java.util.List) queryWish.list();
-					Object resultValue = resultsWish.get(0);
-					if (resultValue instanceof BigInteger)
-						count += ((BigInteger) resultsWish.get(0)).intValue();
-					else
-						count += 0;
-					/*
-					 * for (Iterator iteratorWish = ((java.util.List)
-					 * resultsWish).iterator(); iteratorWish .hasNext();) { Wish
-					 * wishFound = (Wish)iteratorWish.next();
-					 * wishes.add(wishFound); }
-					 */
-				}
+				Object resultValue = results.get(0);
+				if (resultValue instanceof BigInteger)
+					count = ((BigInteger) results.get(0)).intValue();
+				else
+					count = 0;
 			} else if (type == CommonLib.WISH_OWN) {
 				String sql = "SELECT * FROM WISH WHERE USERID = :userid AND STATUS <> :status_id ";
 				SQLQuery query = session.createSQLQuery(sql);
@@ -228,14 +208,6 @@ public class WishDAO {
 					count = ((BigInteger) results.get(0)).intValue();
 				else
 					count = 0;
-				/*
-				 * for (Iterator iterator = ((java.util.List)
-				 * results).iterator(); iterator .hasNext();) {
-				 * 
-				 * wish = (Wish) iterator.next(); wishes.add(wish); i++;
-				 * 
-				 * }
-				 */
 			}
 
 			transaction.commit();
