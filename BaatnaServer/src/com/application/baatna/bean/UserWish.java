@@ -10,6 +10,8 @@ public class UserWish implements Serializable {
 	private int userId; // wish posting user
 	private int wishStatus;
 	private int userTwoId; // accepting or declining user
+	private boolean negotiationStatus;
+	private int negotiationAmount;
 //	private String couponId;
 
 	public int getSerial() {
@@ -53,6 +55,22 @@ public class UserWish implements Serializable {
 
 	public void setUserId(int userId) {
 		this.userId = userId;
+	}
+
+	public boolean isNegotiationStatus() {
+		return negotiationStatus;
+	}
+
+	public void setNegotiationStatus(boolean negotiationStatus) {
+		this.negotiationStatus = negotiationStatus;
+	}
+
+	public int getNegotiationAmount() {
+		return negotiationAmount;
+	}
+
+	public void setNegotiationAmount(int negotiationAmount) {
+		this.negotiationAmount = negotiationAmount;
 	}
 	
 	

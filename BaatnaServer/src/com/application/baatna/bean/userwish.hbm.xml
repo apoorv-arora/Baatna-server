@@ -10,6 +10,8 @@
 		<property name="userId" column="USERID" type="java.lang.Integer" />
 		<property name="wishStatus" column="WISH_STATUS" type="java.lang.Integer" />
 		<property name="userTwoId" column="USER_TWO_ID" type="java.lang.Integer" />
+		<property name="negotiationStatus" column="NEGOTIATION_STATUS" type="java.lang.Boolean" />
+		<property name="negotiationAmount" column="NEGOTIATION_AMOUNT" type="java.lang.Integer" />
 	</class>
 
 </hibernate-mapping>

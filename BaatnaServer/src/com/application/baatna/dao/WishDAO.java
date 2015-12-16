@@ -442,7 +442,7 @@ public class WishDAO {
 
 	}
 
-	public boolean updateWishedUsers(int userId, int type, int wishId) {
+	public boolean updateWishedUsers(int userId, int type, int wishId ) {
 
 		Session session = null;
 		Wish wish = null;
@@ -461,12 +461,14 @@ public class WishDAO {
 
 			if (type == CommonLib.ACTION_ACCEPT_WISH) {
 
-				String sql3 = "INSERT INTO USERWISH VALUES (:WISHID,:USERID,:WISH_STATUS,:USER_TWO_ID);";
+				String sql3 = "INSERT INTO USERWISH VALUES (:WISHID,:USERID,:WISH_STATUS,:USER_TWO_ID,:NEGOTIATION_STATUS,:NEGOTIATION_AMOUNT);";
 				SQLQuery query3 = session.createSQLQuery(sql3);
 				query3.setParameter("WISHID", wishId);
 				query3.setParameter("USERID", wish.getUserId());
 				query3.setParameter("WISH_STATUS", CommonLib.STATUS_ACCEPTED);
 				query3.setParameter("USER_TWO_ID", userId);
+				query3.setParameter("NEGOTATION_STATUS", false);
+				query3.setParameter("NEGOTATION_AMOUNT", -1);
 
 				query3.executeUpdate();
 
@@ -499,7 +501,8 @@ public class WishDAO {
 				query3.setParameter("USERID", wish.getUserId());
 				query3.setParameter("WISH_STATUS", CommonLib.STATUS_DELETED);
 				query3.setParameter("USER_TWO_ID", userId);
-
+				query3.setParameter("NEGOTATION_STATUS", false);
+				query3.setParameter("NEGOTATION_AMOUNT", -1);
 				query3.executeUpdate();
 			}
 
@@ -517,6 +520,62 @@ public class WishDAO {
 				session.close();
 		}
 		return false;
+	}
+	
+	
+	public boolean updateWishedNegotiation(int userId, int actionType, int wishId, int negAmount ) {
+		
+		Session session = null;
+		Wish wish = null;
+		if (actionType == CommonLib.ACTION_NEGOTIATION_ACCEPTED){
+
+			try {
+				session = DBUtil.getSessionFactory().openSession();
+				Transaction transaction = session.beginTransaction();
+
+				String sql = "SELECT * FROM WISH WHERE WISHID = :wishId";
+				SQLQuery query = session.createSQLQuery(sql);
+				query.addEntity(Wish.class);
+				query.setParameter("wishId", wishId);
+
+				java.util.List results = (java.util.List) query.list();
+
+				wish = (Wish) results.get(0);
+
+				
+
+				String sql3 = "Update USERWISH set NEGOTIATION_STATUS=:negStatus, NEGOTIATION_AMOUNT=:negAmount WHERE USER_TWO_ID=:userId AND WISHID=:wishID;";
+				SQLQuery query3 = session.createSQLQuery(sql3);
+				query3.setParameter("wishId", wishId);
+				query3.setParameter("userId", wish.getUserId());
+				query3.setParameter("NEGOTATION_STATUS", true);
+				query3.setParameter("NEGOTATION_AMOUNT", negAmount);
+
+				query3.executeUpdate();
+
+				transaction.commit();
+				session.close();
+				return true;
+
+			} catch (HibernateException e) {
+				System.out.println(e.getMessage());
+				System.out.println("error");
+				e.printStackTrace();
+
+			} finally {
+				if (session != null && session.isOpen())
+					session.close();
+			}
+		return false;
+		}
+
+		else if(actionType == CommonLib.ACTION_NEGOTIATION_STARTED || actionType==CommonLib.ACTION_RENEGOTIATION ){
+			return true;
+		}
+
+		else{
+			return false;
+		}
 	}
 
 	/*
