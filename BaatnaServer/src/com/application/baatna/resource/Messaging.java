@@ -172,5 +172,102 @@ public class Messaging {
 		}
 		return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_FAILURE);
 	}
+	
+	// negotiation deposit amount
+		@Path("/negotiate")
+		@POST
+		@Produces("application/json")
+		@Consumes("application/x-www-form-urlencoded")
+		public JSONObject updateNegotiatedWishes(@FormParam("client_id") String clientId,
+				@FormParam("app_type") String appType, @FormParam("userId") int toUserId,
+				@FormParam("wishId") int wishId, @FormParam("access_token") String accessToken,
+				@FormParam("action") int actionType,
+				@FormParam("negAmount") int negAmount) {
+
+			// null checks, invalid request
+			if (clientId == null || appType == null)
+				return CommonLib.getResponseString("Invalid params", "",
+						CommonLib.RESPONSE_INVALID_PARAMS);
+
+			// check for client_id
+			if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
+				return CommonLib.getResponseString("Invalid client id", "",
+						CommonLib.RESPONSE_INVALID_CLIENT_ID);
+
+			// check for app type
+			if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
+				return CommonLib.getResponseString("Invalid params", "",
+						CommonLib.RESPONSE_INVALID_APP_TYPE);
+
+			UserDAO userDao = new UserDAO();
+
+			// access token validity
+			int userId = userDao.userActive(accessToken);
+			
+			if (userId > 0) {
+
+				WishDAO wishDao = new WishDAO();
+				Wish wish  = wishDao.getWish(wishId);
+
+				boolean value = wishDao.updateWishedNegotiation(userId, actionType, wishId, negAmount );
+
+					// get all sessions of toUserId from sessions table
+					// create your own JSON object
+					// send to all sessions
+				if( value == true ){
+					
+					String notificationString = "";
+					User user = userDao.getUserDetails(userId) ; 
+					if( user != null )  {
+						if( user.getUserName() == null || user.getUserName().equals("") ) {
+							try { 
+								JSONObject data = new JSONObject(user.getFacebookData());
+								if(data.has("name")) {
+									String name = String.valueOf(data.get("name"));
+									name = name.split(" ")[0];
+									notificationString = name ;
+								}
+							} catch(JSONException e) {
+								e.printStackTrace();
+							}
+						} else
+							notificationString = user.getUserName();
+					}
+					notificationString = notificationString + " wants to set the negotiation amount of " +  wish.getTitle() 
+					+ " at Rs. " + negAmount + ".";
+					
+					JSONObject negJson = new JSONObject();
+					try {
+						negJson.put("user", JsonUtil.getUserJson(user));
+						negJson.put("wish", JsonUtil.getWishJson(wish));
+						negJson.put("message", notificationString);
+						//negJson.put("type", value);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					
+					UserDAO userdao = new UserDAO();
+					userdao.sendPushToAllSessions(negJson, toUserId);
+					
+					
+					//MessageDAO messageDao = new MessageDAO();
+					//Message messageObj = messageDao.addMessage(notificationString, false, "" + System.currentTimeMillis(), userId,
+						//	toUserId, wishId);
+
+					return CommonLib.getResponseString("success", "",
+							CommonLib.RESPONSE_SUCCESS);
+				}
+
+				else{
+						return CommonLib.getResponseString("failure", "",
+						CommonLib.RESPONSE_FAILURE);
+				}
+			} 
+			else
+			return CommonLib.getResponseString("failure", "",
+				CommonLib.RESPONSE_FAILURE);
+
+		}
+
 
 }

@@ -639,5 +639,61 @@ public class WishDAO {
 		return results;
 
 	}
+	
+	public boolean updateWishedNegotiation(int userId, int actionType, int wishId, int negAmount ) {
+		
+		Session session = null;
+		Wish wish = null;
+		if (actionType == CommonLib.ACTION_NEGOTIATION_ACCEPTED){
+
+			try {
+				session = DBUtil.getSessionFactory().openSession();
+				Transaction transaction = session.beginTransaction();
+
+				String sql = "SELECT * FROM WISH WHERE WISHID = :wishid";
+				SQLQuery query = session.createSQLQuery(sql);
+				query.addEntity(Wish.class);
+				query.setParameter("wishid", wishId);
+
+				java.util.List results = (java.util.List) query.list();
+
+				wish = (Wish) results.get(0);
+
+				
+
+				String sql3 = "Update USERWISH set NEGOTIATION_STATUS=:negStatus, NEGOTIATION_AMOUNT=:negAmount WHERE USERID=:userId AND WISHID=:wishId";
+				SQLQuery query3 = session.createSQLQuery(sql3);
+				query3.setParameter("negStatus", true);
+				query3.setParameter("negAmount", negAmount);
+				query3.setParameter("wishId", wishId);
+				query3.setParameter("userId", wish.getUserId());
+
+				query3.executeUpdate();
+
+				transaction.commit();
+				session.close();
+				return true;
+
+			} catch (HibernateException e) {
+				System.out.println(e.getMessage());
+				System.out.println("error");
+				e.printStackTrace();
+
+			} finally {
+				if (session != null && session.isOpen())
+					session.close();
+			}
+		return false;
+		}
+
+		else if(actionType == CommonLib.ACTION_NEGOTIATION_STARTED || actionType==CommonLib.ACTION_RENEGOTIATION ){
+			return true;
+		}
+
+		else{
+			return false;
+		}
+	}
+
 
 }

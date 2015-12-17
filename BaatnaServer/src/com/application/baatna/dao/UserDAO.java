@@ -3,17 +3,23 @@ package com.application.baatna.dao;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.jivesoftware.smack.XMPPException;
 
 import com.application.baatna.bean.Institution;
 import com.application.baatna.bean.Location;
 import com.application.baatna.bean.User;
 import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.DBUtil;
+import com.application.baatna.util.GCM;
 
 public class UserDAO {
 
@@ -845,4 +851,79 @@ public class UserDAO {
 		return false;
 	}
 
+	public void sendPushToAllSessions(JSONObject notification, int userId){
+
+		//send to all sessions of user userId
+		ArrayList<com.application.baatna.bean.Session> users = null;
+
+		//correct function below
+		Session session = null;
+		try {
+
+			session = DBUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+			users = new ArrayList<com.application.baatna.bean.Session>();
+
+			String sql = "SELECT * FROM SESSION WHERE USERID = :user_id ;";
+			SQLQuery query = session.createSQLQuery(sql);
+			query.addEntity(com.application.baatna.bean.Session.class);
+			query.setParameter("user_id", userId);
+			java.util.List results = (java.util.List) query.list();
+
+			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
+				users.add((com.application.baatna.bean.Session) iterator.next());
+			}
+
+			transaction.commit();
+			session.close();
+
+		} catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			System.out.println("error");
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
+
+		GCM ccsClient = new GCM();
+		String userName = CommonLib.projectId + "@gcm.googleapis.com";
+		String password = CommonLib.apiKey;
+		try {
+			ccsClient.connect(userName, password);
+		} catch (XMPPException e) {
+			e.printStackTrace();
+		}
+		String messageId = ccsClient.getRandomMessageId();
+
+		Map<String, String> payload = new HashMap<String, String>();
+		payload.put("command", "something");
+		payload.put("Notification", String.valueOf(notification));
+		payload.put("type", "wish");
+
+		JSONObject object = new JSONObject();
+		try {
+			object.put("Notification", notification);
+			object.put("actionId", "id");
+			object.put("additionalParam", "value");
+		} catch (JSONException exp) {
+			// String error = LogMessages.FETCH_ERROR + exp.getMessage();
+			// logger.log(Level.INFO, error);
+			exp.printStackTrace();
+		}
+		payload.put("value", object.toString());
+		payload.put("EmbeddedMessageId", messageId);
+		Long timeToLive = 10000L;
+		Boolean delayWhileIdle = false;
+
+		// this will change
+		for (com.application.baatna.bean.Session user : users) {
+			// send push notif to all
+			ccsClient.send(GCM.createJsonMessage(user.getPushId(), messageId, payload, null, timeToLive,
+					delayWhileIdle));
+		}
+		ccsClient.disconnect();
+
+	}
+
+	
 }

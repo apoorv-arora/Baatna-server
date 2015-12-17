@@ -64,6 +64,10 @@ public class CommonLib {
 	public static final int ACTION_WISH_OFFERED = 3;
 	public static final int ACTION_WISH_RECEIVED = 4;
 	
+	public static final int ACTION_NEGOTIATION_STARTED = 5;
+	public static final int ACTION_NEGOTIATION_ACCEPTED = 6;
+	public static final int ACTION_RENEGOTIATION = 7;
+	
 	public static final int CURRENT_USER_WISH_ACCEPTED = 1;
 	public static final int WISH_ACCEPTED_CURRENT_USER = 2;
 
