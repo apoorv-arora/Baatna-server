@@ -65,6 +65,7 @@ public class JsonUtil {
 		wishJsonObject.put("time_post", wish.getTimeOfPost());
 		wishJsonObject.put("wish_id", wish.getWishId());
 		wishJsonObject.put("status", wish.getStatus());
+		wishJsonObject.put("required_for", wish.getRequiredFor());
 
 		categoryJson.put("wish", wishJsonObject);
 		return categoryJson;

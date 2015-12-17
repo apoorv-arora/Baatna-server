@@ -39,6 +39,7 @@ public class WishPost {
 			@FormParam("app_type") String appType,
 			@FormParam("title") String title,
 			@FormParam("description") String description,
+			@FormParam("required_for") int requiredFor,
 			@FormParam("access_token") String accessToken) {
 
 		// null checks, invalid request
@@ -59,13 +60,13 @@ public class WishPost {
 		UserDAO userDao = new UserDAO();
 
 		// access token validity
-		int userId = userDao.userActive(accessToken);
+		final int userId = userDao.userActive(accessToken);
 
 		if (userId > 0) {
 			final WishDAO wishdao = new WishDAO();
 
 			Wish wish = wishdao.addWishPost(title, description,
-					System.currentTimeMillis(), userId);
+					System.currentTimeMillis(), userId, requiredFor);
 
 			if (wish != null) {
 
@@ -104,7 +105,7 @@ public class WishPost {
 				}
 				notificationString = notificationString + " wants to borrow " +  wish.getTitle();
 				
-				JSONObject wishJson = new JSONObject();
+				final JSONObject wishJson = new JSONObject();
 				try {
 					wishJson.put("user", JsonUtil.getUserJson(user));
 					wishJson.put("wish", JsonUtil.getWishJson(wish));
@@ -112,7 +113,14 @@ public class WishPost {
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				wishdao.sendPushToNearbyUsers(wishJson, userId);
+				Runnable runnable = new Runnable() {
+					@Override
+					public void run() {
+						wishdao.sendPushToNearbyUsers(wishJson, userId);
+					}
+				};
+				Thread thread = new Thread(runnable);
+				thread.start();
 
 				return CommonLib.getResponseString("success", "",
 						CommonLib.RESPONSE_SUCCESS);

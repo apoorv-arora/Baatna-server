@@ -14,6 +14,7 @@ public class Wish implements Serializable {
 	private long timeOfPost;
 	private int wishId;
 	private int userId; // wish posting user
+	private int requiredFor; // Number of days for which the wish is required
 	private int status;
 
 	public Wish() {
@@ -67,4 +68,12 @@ public class Wish implements Serializable {
 		this.status = status;
 	}
 
+	public int getRequiredFor() {
+		return requiredFor;
+	}
+
+	public void setRequiredFor(int requiredFor) {
+		this.requiredFor = requiredFor;
+	}
+	
 }

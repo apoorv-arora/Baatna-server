@@ -30,7 +30,7 @@ public class WishDAO {
 	public WishDAO() {
 	}
 
-	public Wish addWishPost(String title, String description, long timeOfPost, int userId) {
+	public Wish addWishPost(String title, String description, long timeOfPost, int userId, int requiredFor) {
 
 		Wish wish;
 		Session session = null;
@@ -43,6 +43,7 @@ public class WishDAO {
 			wish.setDescription(description);
 			wish.setTimeOfPost(timeOfPost);
 			wish.setUserId(userId);
+			wish.setRequiredFor(requiredFor);
 			wish.setStatus(CommonLib.STATUS_ACTIVE);
 
 			session.save(wish);

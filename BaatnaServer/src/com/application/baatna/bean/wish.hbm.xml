@@ -12,6 +12,7 @@
 		<property column="TIME_OF_POST" name="timeOfPost" type="java.lang.Long" />
 		<property column="USERID" name="userId" type="java.lang.Integer" />
 		<property column="STATUS" name="status" type="java.lang.Integer" />
+		<property column="Required_For" name="requiredFor" type="java.lang.Integer" />
 		
 	</class>
 
