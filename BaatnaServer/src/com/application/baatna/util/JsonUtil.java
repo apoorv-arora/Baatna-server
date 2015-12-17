@@ -30,6 +30,7 @@ public class JsonUtil {
 		userJsonObject.put("profile_pic", user.getProfilePic());
 		userJsonObject.put("fbId", user.getFacebookId());
 		userJsonObject.put("contact", user.getPhone());
+		userJsonObject.put("rating",user.getRating());
 		if (user.getUserName() == null || user.getUserName().equals("")) {
 
 			JSONObject data = null;
@@ -51,6 +52,14 @@ public class JsonUtil {
 		}
 		userJson.put("user", userJsonObject);
 		return userJson;
+	}
+	public static JSONObject getRatingJson(User user) throws JSONException{
+		JSONObject userRatingJsonObject = new JSONObject();
+		JSONObject userRatingJson = new JSONObject();
+
+		userRatingJsonObject.put("rating",user.getRating());
+		userRatingJson.put("user", userRatingJsonObject);
+		return userRatingJson;
 	}
 
 	public static JSONObject getWishJson(Wish wish) throws JSONException {
