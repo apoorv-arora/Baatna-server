@@ -49,7 +49,7 @@ public class EmailUtil {
 	 * 
 	 * @param emailModel
 	 */
-	public void sendEmail(EmailModel emailModel) {
+	public void sendEmail(final EmailModel emailModel) {
 
 		Runnable runnable = new Runnable() {
 			public void run() {

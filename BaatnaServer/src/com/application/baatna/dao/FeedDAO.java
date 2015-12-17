@@ -193,15 +193,23 @@ public class FeedDAO {
 			session = DBUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
 
-			String sql = "SELECT * FROM NEWSFEED WHERE USER_ID_FIRST <>:user_id LIMIT :start , :count";
+			// check if the newsfeed wish is accepted by the current user, if it
+			// is, do not add a specific type
+			// sort the feed by distance
+
+			String sql = "SELECT * FROM NEWSFEED WHERE USER_ID_FIRST <>:user_id and FEEDID NOT IN (Select FEEDID FROM NEWSFEED WHERE WISHID IN (Select WISHID FROM NEWSFEED WHERE USER_ID_SECOND = :current_user)) ORDER BY TIMESTAMP DESC LIMIT :start , :count";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(NewsFeed.class);
 			query.setParameter("user_id", currentUserId);
 			query.setParameter("start", start);
 			query.setParameter("count", count);
+			query.setParameter("current_user", currentUserId);
 			java.util.List results = (java.util.List) query.list();
 
 			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
+				// get the wish id and check if there is any existing row with
+				// user id first
+
 				feedItems.add((NewsFeed) iterator.next());
 			}
 			transaction.commit();
@@ -217,7 +225,7 @@ public class FeedDAO {
 		return feedItems;
 	}
 
-	public int getFeedItemsCount(Location location,  int currentUserId) {
+	public int getFeedItemsCount(Location location, int currentUserId) {
 		int count;
 		Session session = null;
 		try {
@@ -225,20 +233,21 @@ public class FeedDAO {
 			session = DBUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
 
-			String sql = "SELECT COUNT(*) FROM NEWSFEED WHERE USER_ID_FIRST <> :user_id";
+			String sql = "SELECT COUNT(*) FROM NEWSFEED WHERE USER_ID_FIRST <>:user_id and FEEDID NOT IN (Select FEEDID FROM NEWSFEED WHERE WISHID IN (Select WISHID FROM NEWSFEED WHERE USER_ID_SECOND = :current_user))";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.setParameter("user_id", currentUserId);
+			query.setParameter("current_user", currentUserId);
 			java.util.List results = (java.util.List) query.list();
 			Object resultValue = results.get(0);
-			if(resultValue instanceof BigInteger)
+			if (resultValue instanceof BigInteger)
 				count = ((BigInteger) results.get(0)).intValue();
-			else 
+			else
 				count = 0;
-//			count= ((java.langng.Number) query.).intValue();
-			/*for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
-				iterator.next();
-				count++;
-			}*/
+			// count= ((java.langng.Number) query.).intValue();
+			/*
+			 * for (Iterator iterator = ((java.util.List) results).iterator();
+			 * iterator.hasNext();) { iterator.next(); count++; }
+			 */
 
 			transaction.commit();
 			session.close();
@@ -266,7 +275,7 @@ public class FeedDAO {
 			query.setParameter("wish_id", wishId);
 			int result = query.executeUpdate();
 			CommonLib.BLog(result + "");
-			session.flush();	
+			session.flush();
 
 			transaction.commit();
 			session.close();
@@ -278,7 +287,7 @@ public class FeedDAO {
 			System.out.println("error");
 			return false;
 		} finally {
-			if(session != null && session.isOpen())
+			if (session != null && session.isOpen())
 				session.close();
 		}
 

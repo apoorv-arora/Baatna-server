@@ -69,13 +69,6 @@ public class Feed {
 			FeedDAO feedDao = new FeedDAO();
 			feedItems.addAll(feedDao.getFeedItems(location, start, count, userId));
 			int total = feedDao.getFeedItemsCount(location, userId);
-			// sort based on timestamp of the feed items
-			java.util.Collections.sort(feedItems, new Comparator<NewsFeed>() {
-				public int compare(NewsFeed s1, NewsFeed s2) {
-					return (int) (s1.getTimestamp() - s2.getTimestamp());
-				}
-			});
-			java.util.Collections.reverse(feedItems);
 
 			// construction of big fat json
 			JSONObject newsFeedJsonObject = new JSONObject();
