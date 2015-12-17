@@ -203,10 +203,13 @@ public class WishDAO {
 				query.setParameter("status_id", CommonLib.STATUS_DELETED);
 
 				java.util.List results = (java.util.List) query.list();
-				Object resultValue = results.get(0);
-				if (resultValue instanceof BigInteger)
-					count = ((BigInteger) results.get(0)).intValue();
-				else
+				if (results != null && results.size() > 0) {
+					Object resultValue = results.get(0);
+					if (resultValue instanceof BigInteger) {
+						count = ((BigInteger) results.get(0)).intValue();
+					} else
+						count = 0;
+				} else
 					count = 0;
 			}
 

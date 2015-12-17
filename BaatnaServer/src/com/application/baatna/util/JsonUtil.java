@@ -29,6 +29,7 @@ public class JsonUtil {
 		userJsonObject.put("phone", user.getPhone());
 		userJsonObject.put("profile_pic", user.getProfilePic());
 		userJsonObject.put("fbId", user.getFacebookId());
+		userJsonObject.put("bio", user.getBio());
 		userJsonObject.put("contact", user.getPhone());
 		if (user.getUserName() == null || user.getUserName().equals("")) {
 
