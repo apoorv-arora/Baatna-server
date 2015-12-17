@@ -107,7 +107,7 @@ public class WishPost {
 				
 				final JSONObject wishJson = new JSONObject();
 				try {
-					wishJson.put("user", JsonUtil.getUserJson(user));
+					wishJson.put("user", JsonUtil.getUserJsonWithoutBio(user));
 					wishJson.put("wish", JsonUtil.getWishJson(wish));
 					wishJson.put("message", notificationString);
 				} catch (JSONException e) {
@@ -334,7 +334,7 @@ public class WishPost {
 				JSONObject messageJson = new JSONObject();
 				try {
 					UserDAO userDao = new UserDAO();
-					messageJson.put("from_user", JsonUtil.getUserJson(userDao.getUserDetails(userId)));
+					messageJson.put("from_user", JsonUtil.getUserJsonWithoutBio(userDao.getUserDetails(userId)));
 					messageJson.put("action_type", actionType);
 					messageJson.put("wish", JsonUtil.getWishJson(currentWish));
 				} catch (JSONException e) {

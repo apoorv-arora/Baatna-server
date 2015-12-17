@@ -72,12 +72,12 @@ public class Messaging {
 			if (messageObj != null) {
 
 				User fromUser = userDao.getUserDetails(messageObj.getFromUserId());
-				User toUser = userDao.getUserDetails(messageObj.getToUserId());
+				final User toUser = userDao.getUserDetails(messageObj.getToUserId());
 				Wish wish = wishDao.getWish(messageObj.getWishId());
-				JSONObject messageJson = new JSONObject();
+				final JSONObject messageJson = new JSONObject();
 				try {
-					messageJson.put("to_user", JsonUtil.getUserJson(toUser));
-					messageJson.put("from_user", JsonUtil.getUserJson(fromUser));
+					messageJson.put("to_user", JsonUtil.getUserJsonWithoutBio(toUser));
+					messageJson.put("from_user", JsonUtil.getUserJsonWithoutBio(fromUser));
 					messageJson.put("wish", JsonUtil.getWishJson(wish));
 					messageJson.put("message_id", messageObj.getMessageId());
 					messageJson.put("from_to", false);
@@ -86,12 +86,18 @@ public class Messaging {
 					e.printStackTrace();
 				}
 
-				messageDao.sendPushToNearbyUsers(messageJson, toUser.getUserId());
+				Runnable runnable = new Runnable() {
+					public void run() {
+						messageDao.sendPushToNearbyUsers(messageJson, toUser.getUserId());						
+					}
+				};
+				Thread thread = new Thread(runnable);
+				thread.start();
 
 				JSONObject messageJsonCustom = new JSONObject();
 				try {
-					messageJsonCustom.put("to_user", JsonUtil.getUserJson(toUser));
-					messageJsonCustom.put("from_user", JsonUtil.getUserJson(fromUser));
+					messageJsonCustom.put("to_user", JsonUtil.getUserJsonWithoutBio(toUser));
+					messageJsonCustom.put("from_user", JsonUtil.getUserJsonWithoutBio(fromUser));
 					messageJsonCustom.put("wish", JsonUtil.getWishJson(wish));
 					messageJsonCustom.put("message_id", messageObj.getMessageId());
 					messageJsonCustom.put("from_to", true);

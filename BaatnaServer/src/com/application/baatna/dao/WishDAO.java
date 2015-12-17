@@ -440,14 +440,27 @@ public class WishDAO {
 				User mUser = null;
 				for (Iterator iterator = ((java.util.List) results4).iterator(); iterator.hasNext();) {
 					mUser = (User) iterator.next();
+					break;
+				}
+				
+				String currentSqlQuery = "SELECT * FROM USER WHERE USERID = :userid";
+				SQLQuery currentQuery = session.createSQLQuery(currentSqlQuery);
+				currentQuery.addEntity(User.class);
+				currentQuery.setParameter("userid", userId);
+				java.util.List currentResults = (java.util.List) currentQuery.list();
+
+				User currentUser = null;
+				for (Iterator iterator = ((java.util.List) currentResults).iterator(); iterator.hasNext();) {
+					currentUser = (User) iterator.next();
+					break;
 				}
 
-				if (mUser != null) {
+				if (mUser != null && currentUser != null) {
 					EmailModel emailModel = new EmailModel();
 					emailModel.setFrom(CommonLib.BAPP_ID);
 					emailModel.setTo(mUser.getEmail());
-					emailModel.setSubject("Baatna Wish Acceptance");
-					emailModel.setContent("your wish has been accpeted please get back to the app asap and continue");
+					emailModel.setSubject("There is a new response to your request for " + wish.getTitle());
+					emailModel.setContent("Hi" + mUser.getUserName() + "\n" + currentUser.getUserName() + " replied to your request for (a) " + wish.getTitle() + "!\n\n Let " + currentUser.getUserName() + " know if you're interested.\nHave you found what you're looking for?\n\nSee you around the neighbourhood.\n\n,Cheers\nBaatna Team");
 					EmailUtil.getInstance().sendEmail(emailModel);
 
 				}

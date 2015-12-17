@@ -24,12 +24,46 @@ public class JsonUtil {
 		userJsonObject.put("user_id", user.getUserId());
 		userJsonObject.put("is_verified", user.getIsVerified());
 		userJsonObject.put("address", user.getAddress());
-		userJsonObject.put("description", user.getBio());
 		userJsonObject.put("email", user.getEmail());
 		userJsonObject.put("phone", user.getPhone());
 		userJsonObject.put("profile_pic", user.getProfilePic());
 		userJsonObject.put("fbId", user.getFacebookId());
 		userJsonObject.put("bio", user.getBio());
+		userJsonObject.put("contact", user.getPhone());
+		if (user.getUserName() == null || user.getUserName().equals("")) {
+
+			JSONObject data = null;
+			try {
+				data = new JSONObject(user.getFacebookData());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			if (data != null && data.has("name")) {
+				String name = String.valueOf(data.get("name"));
+				name = name.split(" ")[0];
+				userJsonObject.put("user_name", name);
+			}
+		} else {
+			String name = user.getUserName();
+			name = name.split(" ")[0];
+			userJsonObject.put("user_name", name);
+		}
+		userJson.put("user", userJsonObject);
+		return userJson;
+	}
+	
+	public static JSONObject getUserJsonWithoutBio(User user) throws JSONException {
+		JSONObject userJsonObject = new JSONObject();
+		JSONObject userJson = new JSONObject();
+
+		userJsonObject.put("user_id", user.getUserId());
+		userJsonObject.put("is_verified", user.getIsVerified());
+		userJsonObject.put("address", user.getAddress());
+		userJsonObject.put("email", user.getEmail());
+		userJsonObject.put("phone", user.getPhone());
+		userJsonObject.put("profile_pic", user.getProfilePic());
+		userJsonObject.put("fbId", user.getFacebookId());
 		userJsonObject.put("contact", user.getPhone());
 		if (user.getUserName() == null || user.getUserName().equals("")) {
 
