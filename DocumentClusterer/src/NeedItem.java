@@ -8,7 +8,7 @@ import java.util.List;
 
 public class NeedItem {
 
-	public static String filepath = "C:/Copy of DocumentClusterer/src/Resources/example";
+	public static String filepath = "C:/DocumentClusterer/src/Resources/example";
 	
 	public static Item buildItem(String fileurl)
 	{
