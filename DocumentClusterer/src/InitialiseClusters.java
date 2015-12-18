@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 
 public class InitialiseClusters {
 
-	public static String foldername = "C:/Copy of DocumentClusterer/src/Resources";
+	public static String foldername = "C:/DocumentClusterer/src/Resources";
 	public static String readFiles(final String fileName) throws FileNotFoundException 
 	{
 		 File fileEntry = new File(fileName);
