@@ -6,7 +6,7 @@
 <hibernate-configuration>
 	<session-factory>
 		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/BaatnaServer</property>
+		<property name="hibernate.connection.url">jdbc:mysql://localhost:8889/BaatnaServer</property>
 		<property name="hibernate.connection.username">root</property>
 		<property name="hibernate.connection.password">root</property>
 		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
@@ -22,5 +22,6 @@
 		<mapping resource="com/application/baatna/bean/newsfeed.hbm.xml" />
 		<mapping resource="com/application/baatna/bean/userwish.hbm.xml" />
 		<mapping resource="com/application/baatna/bean/coupon.hbm.xml" />
+		<mapping resource="com/application/baatna/bean/userrating.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>
