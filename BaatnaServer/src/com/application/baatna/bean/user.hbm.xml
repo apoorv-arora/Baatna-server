@@ -27,6 +27,8 @@
 		<property column="STUDENTID" name="studentId" type="java.lang.String" />
 		<property column="TimeStamp" name="timestamp" type="java.lang.Long" />
 		<property column="MODIFIED" name="modified" type="java.lang.Long" />
+	    <property column="Rating" name="rating" type="java.lang.Double" />
+		
 		
 	</class>
 </hibernate-mapping>

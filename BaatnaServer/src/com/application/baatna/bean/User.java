@@ -26,7 +26,8 @@ public class User implements Serializable {
 	private String studentId;
 	private long timestamp;
 	private long modified;
-	
+	private double rating;
+
 	public User() {
 	}
 
@@ -196,6 +197,13 @@ public class User implements Serializable {
 
 	public void setModified(long modified) {
 		this.modified = modified;
+	}
+	public double getRating() {
+		return rating;
+	}
+
+	public void setRating(double rating) {
+		this.rating = rating;
 	}
 	
 }
