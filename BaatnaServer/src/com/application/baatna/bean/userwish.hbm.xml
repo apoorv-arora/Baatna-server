@@ -10,6 +10,9 @@
 		<property name="userId" column="USERID" type="java.lang.Integer" />
 		<property name="wishStatus" column="WISH_STATUS" type="java.lang.Integer" />
 		<property name="userTwoId" column="USER_TWO_ID" type="java.lang.Integer" />
+		<property name="delivery_opt" column="DELIVERY_OPTION" type="java.lang.Integer" />
+		<property name="time_post" column="TIMEPOST" type="java.lang.Long" />
+		<property name="return_deadline" column="RETURN_DEADLINE" type="java.lang.Integer" />
 	</class>
 
 </hibernate-mapping>

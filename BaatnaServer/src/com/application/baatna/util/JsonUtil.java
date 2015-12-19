@@ -9,6 +9,8 @@ import org.codehaus.jettison.json.JSONObject;
 import com.application.baatna.bean.Categories;
 import com.application.baatna.bean.Coupon;
 import com.application.baatna.bean.Institution;
+import com.application.baatna.bean.Logistics;
+import com.application.baatna.bean.ReturnTable;
 import com.application.baatna.bean.Session;
 import com.application.baatna.bean.User;
 import com.application.baatna.bean.UserCompactMessage;
@@ -17,6 +19,34 @@ import com.application.baatna.dao.WishDAO;
 
 public class JsonUtil {
 
+	public static JSONObject getLogisticJson(Logistics logistic) throws JSONException{
+		JSONObject logisticJsonObj=new JSONObject();
+		JSONObject logisticJson=new JSONObject();
+		
+		logisticJsonObj.put("logistic_id",logistic.getLogistic_id());
+		logisticJsonObj.put("userid_one",logistic.getUserid_one());
+		logisticJsonObj.put("userid_two",logistic.getUserid_two());
+		logisticJsonObj.put("type",logistic.getType());
+	
+		
+		logisticJson.put("logistic",logisticJsonObj);
+		return logisticJson;
+		
+	}
+	public static JSONObject getReturnJson(ReturnTable return_obj) throws JSONException{
+		JSONObject returnJsonObj=new JSONObject();
+		JSONObject returnJson=new JSONObject();
+		
+		returnJsonObj.put("logistic_id",return_obj.getReturn_id());
+		returnJsonObj.put("userid_one",return_obj.getUser_id_one());
+		returnJsonObj.put("userid_two",return_obj.getUser_id_two());
+		returnJsonObj.put("type",return_obj.getReturn_type());
+	
+		
+		returnJson.put("logistic",returnJsonObj);
+		return returnJson;
+		
+	}
 	public static JSONObject getUserJson(User user) throws JSONException {
 		JSONObject userJsonObject = new JSONObject();
 		JSONObject userJson = new JSONObject();

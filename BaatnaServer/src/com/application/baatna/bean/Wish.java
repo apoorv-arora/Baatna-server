@@ -15,7 +15,7 @@ public class Wish implements Serializable {
 	private int wishId;
 	private int userId; // wish posting user
 	private int status;
-
+	private int no_of_days;
 	public Wish() {
 	}
 
@@ -65,6 +65,14 @@ public class Wish implements Serializable {
 
 	public void setStatus(int status) {
 		this.status = status;
+	}
+
+	public int getNo_of_days() {
+		return no_of_days;
+	}
+
+	public void setNo_of_days(int no_of_days) {
+		this.no_of_days = no_of_days;
 	}
 
 }

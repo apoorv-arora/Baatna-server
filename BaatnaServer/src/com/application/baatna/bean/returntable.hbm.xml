@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.application.baatna.bean.ReturnTable" table="RETURNTABLE">
+		
+		<id column="RETURNID" name="return_id" type="java.lang.Integer">
+			<generator class="native" />
+		</id>
+		<property column="BORROWID" name="user_id_one" type="java.lang.Integer" />
+		<property column="LENDERID" name="user_id_two" type="java.lang.Integer" />
+		<property column="WISHID" name="wishid" type="java.lang.Integer" />
+		<property column="RETURNDATE" name="return_date" type="java.lang.Long" />
+		<property column="DEADLINE" name="return_deadline" type="java.lang.Long" />
+		<property column="R_PICKUPADDRESS" name="return_pickup" type="java.lang.String" />
+		<property column="R_DELIVERYADDRESS" name="return_delivery" type="java.lang.String" />
+		<property column="TYPE" name="return_type" type="java.lang.Integer" />
+		
+	</class>
+</hibernate-mapping>

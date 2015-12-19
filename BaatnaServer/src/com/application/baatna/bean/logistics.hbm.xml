@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.application.baatna.bean.Logistics" table="LOGISTICS">
+		
+		<id column="LOGISTICID" name="Logistic_id" type="java.lang.Integer" >
+			<generator class="native" />
+		</id>
+		<property column="USERID_ONE" name="Userid_one" type="java.lang.Integer" />
+		<property column="USERID_TWO" name="Userid_two" type="java.lang.Integer" />
+		<property column="TYPE" name="type" type="java.lang.Integer" />
+		<property column="PICKUPTIME" name="pick_up_time" type="java.lang.Long" />
+		<property column="DELIVERYTIME" name="delivery_time" type="java.lang.Long" />
+		<property column="STATUSHOST" name="status" type="java.lang.Integer" />
+		<property column="AMOUNT" name="amount" type="java.lang.String" />
+		<property column="WISHID" name="wishid" type="java.lang.Integer" />
+	</class>
+
+</hibernate-mapping>
