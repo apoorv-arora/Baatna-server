@@ -25,6 +25,7 @@ public class CommonLib {
 	public static final int RESPONSE_INVALID_PARAMS = 203;
 	public static final int RESPONSE_INVALID_APP_TYPE = 204;
 	public static final int RESPONSE_INVALID_CLIENT_ID = 205;
+	public static final int RESPONSE_RATED_FAILURE = 206;
 	
 	public static final String BAPP_ID = "hello@baatna.com";
 	public static final String BAPP_PWD = "hello.baatna";
@@ -118,6 +119,16 @@ public class CommonLib {
 				responseObject.put("status", "failure");
 				responseObject.put("errorCode", RESPONSE_INVALID_CLIENT_ID);
 				responseObject.put("errorMessage", errorMessage);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			break;
+		case RESPONSE_RATED_FAILURE:
+			try {
+				responseObject.put("response", responseJson);
+				responseObject.put("status", "failure");
+				responseObject.put("errorCode", RESPONSE_RATED_FAILURE);
+				responseObject.put("errorMessage", "ALREADY RATED");
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}

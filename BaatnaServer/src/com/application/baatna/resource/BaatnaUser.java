@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -25,8 +26,10 @@ import org.codehaus.jettison.json.JSONObject;
 
 import com.application.baatna.bean.Institution;
 import com.application.baatna.bean.User;
+import com.application.baatna.bean.Wish;
 import com.application.baatna.dao.FeedDAO;
 import com.application.baatna.dao.UserDAO;
+import com.application.baatna.dao.WishDAO;
 import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.CryptoHelper;
 import com.application.baatna.util.JsonUtil;
@@ -291,7 +294,7 @@ public class BaatnaUser {
 			return CommonLib.getResponseString("", "Something went wrong", CommonLib.RESPONSE_FAILURE);
 		}
 	}
-
+	
 	@Path("/institution")
 	@POST
 	@Produces("application/json")
@@ -439,5 +442,143 @@ public class BaatnaUser {
 		} else
 			return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_FAILURE);
 	}
+	@Path("/rating")
+	@POST
+	@Produces("application/json")
+	@Consumes("application/x-www-form-urlencoded")
+	public JSONObject updateRating(@FormParam("client_id") String clientId,
+			@FormParam("app_type") String appType,
+			@FormParam("access_token") String accessToken,
+			@FormParam("userId") int userId, @FormParam("rating") double rating) {
 
+		// null checks, invalid request
+		if (clientId == null || appType == null)
+			return CommonLib.getResponseString("Invalid params", "",
+					CommonLib.RESPONSE_INVALID_PARAMS);
+
+		// check for client_id
+		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
+			return CommonLib.getResponseString("Invalid client id", "",
+					CommonLib.RESPONSE_INVALID_CLIENT_ID);
+
+		// check for app type
+		if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
+			return CommonLib.getResponseString("Invalid params", "",
+					CommonLib.RESPONSE_INVALID_APP_TYPE);
+
+		UserDAO dao= new UserDAO();
+		int userIdtwo=dao.userActive(accessToken);
+		boolean retValue=false;
+		boolean userCanRate=false;
+		if(dao.usersEverInteracted(userIdtwo,userId))
+		{
+			userCanRate=true;
+		}
+		if(userId>0 )
+		{
+
+			if(userIdtwo > 0 && userCanRate){
+				retValue = dao.setRatingForUser(userIdtwo,userId, rating);
+			}
+		}
+		if(retValue)
+		{
+		return CommonLib.getResponseString("success", "success", CommonLib.RESPONSE_SUCCESS);
+		}
+	 else
+		return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_RATED_FAILURE);
+}
+	@Path("/editrating")
+	@POST
+	@Produces("application/json")
+	@Consumes("application/x-www-form-urlencoded")
+	public JSONObject editRating(@FormParam("client_id") String clientId,
+			@FormParam("app_type") String appType,
+			@FormParam("access_token") String accessToken,
+			@FormParam("userId") int userId, @FormParam("rating") double rating) {
+
+		// null checks, invalid request
+		if (clientId == null || appType == null)
+			return CommonLib.getResponseString("Invalid params", "",
+					CommonLib.RESPONSE_INVALID_PARAMS);
+
+		// check for client_id
+		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
+			return CommonLib.getResponseString("Invalid client id", "",
+					CommonLib.RESPONSE_INVALID_CLIENT_ID);
+
+		// check for app type
+		if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
+			return CommonLib.getResponseString("Invalid params", "",
+					CommonLib.RESPONSE_INVALID_APP_TYPE);
+
+		
+		boolean retValue=false;
+		if(userId>0 )
+		{
+			UserDAO dao= new UserDAO();
+			int userIdtwo=dao.userActive(accessToken);
+
+			if(userIdtwo > 0){
+				retValue = dao.editRatingForUser(userIdtwo,userId, rating);
+			}
+		}
+		if(retValue)
+		{
+		return CommonLib.getResponseString("success", "success", CommonLib.RESPONSE_SUCCESS);
+		}
+	 else
+		return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_RATED_FAILURE);
+}
+	@Path("/viewrating")
+	@POST
+	@Produces("application/json")
+	@Consumes("application/x-www-form-urlencoded")
+	public JSONObject viewRating(@FormParam("client_id") String clientId,
+			@FormParam("app_type") String appType,
+			@FormParam("access_token") String accessToken,
+			@QueryParam("userId") int userId) {
+
+		// null checks, invalid request
+		if (clientId == null || appType == null)
+			return CommonLib.getResponseString("Invalid params", "",
+					CommonLib.RESPONSE_INVALID_PARAMS);
+
+		// check for client_id
+		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
+			return CommonLib.getResponseString("Invalid client id", "",
+					CommonLib.RESPONSE_INVALID_CLIENT_ID);
+
+		// check for app type
+		if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
+			return CommonLib.getResponseString("Invalid params", "",
+					CommonLib.RESPONSE_INVALID_APP_TYPE);
+
+		
+		UserDAO dao= new UserDAO();
+		// check if user exists
+		User userExists = dao.getUserDetails(userId);
+		if(dao.userActive(accessToken)>0 && userExists!=null)
+		{
+			JSONObject returnObject= new JSONObject();
+			
+			try{
+			//JSONObject user=JsonUtil.getUserJson(userExists);
+		    JSONObject ratingJson=JsonUtil.getRatingJson(userExists);
+			returnObject.put("rating",ratingJson);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			return CommonLib.getResponseString(returnObject, "success", CommonLib.RESPONSE_SUCCESS);
+		}
+		return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_RATED_FAILURE);
+		
+		
+		
+		
+		
+		
+		
+	
+}
 }
