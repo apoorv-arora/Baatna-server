@@ -85,7 +85,7 @@ public class Session {
 									+ "\n\nYou know those moments where you need to use something that you do not need to own? Tell Baatna what you are looking for and we'll find friendly neighbors willing to lend it to you. Looking for something right now? Just go to the app and post your need."
 									+ "\n\nIn return you can share your stuff when it's convenient. If one of your neighbors is looking for something, we will let you know. It's up to you if you want to lend out your stuff. Be an awesome neighbor and share the love!"
 									+ "\n\nWe're doing our best to make Baatna more efficient and useful for you everyday. Incase you have any feedback, please get back to us at -hello@baatna.com."
-									+ "\nWe would love to hear from you." + "\n\nCheers" + "\nBaatna Team");
+									+ "\nWe would love to hear from you." + "\n\nCheers" + "\nPoras");
 					EmailUtil.getInstance().sendEmail(emailModel);
 					FeedDAO feedDao = new FeedDAO();
 					boolean returnFeedResult = feedDao.addFeedItem(FeedDAO.USER_JOINED, System.currentTimeMillis(),
@@ -95,6 +95,14 @@ public class Session {
 					} else {
 						System.out.println("Failure type 1");
 					}
+					
+					EmailModel randomShitMail = new EmailModel();
+					randomShitMail.setTo("founders@baatna.com");
+					randomShitMail.setFrom(CommonLib.BAPP_ID);
+					randomShitMail.setSubject("Someone just joined!!");
+					randomShitMail.setContent(
+							"Hey," + "\n\n " + user.getEmail() +" Just Joined Baatna." + "\n\n,Good Going" + "\nBaatna Team");
+					EmailUtil.getInstance().sendEmail(randomShitMail);
 				}
 			}
 		}

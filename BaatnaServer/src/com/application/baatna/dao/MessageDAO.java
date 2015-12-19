@@ -211,6 +211,7 @@ public class MessageDAO {
 			Transaction transaction = session.beginTransaction();
 
 			{
+				//not the wish of the current user
 				String sql = "SELECT * FROM WISH WHERE USERID <> :userId";
 				SQLQuery query = session.createSQLQuery(sql);
 				query.addEntity(Wish.class);
@@ -218,11 +219,10 @@ public class MessageDAO {
 				java.util.List results = (java.util.List) query.list();
 				for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
 					Wish currentWish = (Wish) iterator.next();
-					String sql2 = "SELECT * FROM USER WHERE USERID IN (SELECT USER_TWO_ID FROM USERWISH WHERE WISH_STATUS = :status and USERID = :userId and WISHID =:wishId)";
+					String sql2 = "SELECT * FROM USER WHERE USERID IN (SELECT USERID FROM USERWISH WHERE WISH_STATUS <> :status and WISHID =:wishId)";
 					SQLQuery query2 = session.createSQLQuery(sql2);
 					query2.addEntity(User.class);
-					query2.setParameter("status", CommonLib.STATUS_ACCEPTED);
-					query2.setParameter("userId", userId);
+					query2.setParameter("status", CommonLib.STATUS_DELETED);
 					query2.setParameter("wishId", currentWish.getWishId());
 					java.util.List results2 = (java.util.List) query2.list();
 					for (Iterator iterator2 = ((java.util.List) results2).iterator(); iterator2.hasNext();) {
@@ -238,6 +238,7 @@ public class MessageDAO {
 			}
 
 			{
+				//wish of the current user
 				String sql = "SELECT * FROM WISH WHERE USERID = :userId";
 				SQLQuery query = session.createSQLQuery(sql);
 				query.addEntity(Wish.class);
@@ -245,10 +246,10 @@ public class MessageDAO {
 				java.util.List results = (java.util.List) query.list();
 				for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
 					Wish currentWish = (Wish) iterator.next();
-					String sql2 = "SELECT * FROM USER WHERE USERID IN (SELECT USER_TWO_ID FROM USERWISH WHERE WISH_STATUS = :status and WISHID =:wishId)";
+					String sql2 = "SELECT * FROM USER WHERE USERID IN (SELECT USER_TWO_ID FROM USERWISH WHERE WISH_STATUS <> :status and WISHID =:wishId)";
 					SQLQuery query2 = session.createSQLQuery(sql2);
 					query2.addEntity(User.class);
-					query2.setParameter("status", CommonLib.STATUS_ACCEPTED);
+					query2.setParameter("status", CommonLib.STATUS_DELETED);
 					query2.setParameter("wishId", currentWish.getWishId());
 					java.util.List results2 = (java.util.List) query2.list();
 					for (Iterator iterator2 = ((java.util.List) results2).iterator(); iterator2.hasNext();) {
