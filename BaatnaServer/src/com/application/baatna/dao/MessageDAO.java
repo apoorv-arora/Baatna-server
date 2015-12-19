@@ -237,6 +237,7 @@ public class MessageDAO {
 				}
 			}
 
+			
 			{
 				String sql = "SELECT * FROM WISH WHERE USERID = :userId";
 				SQLQuery query = session.createSQLQuery(sql);

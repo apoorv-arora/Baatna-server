@@ -86,6 +86,7 @@ public class Messaging {
 					e.printStackTrace();
 				}
 
+				if(!userDao.isUserBlocked(fromUser.getUserId(),toUser.getUserId()) && !userDao.isUserBlocked(toUser.getUserId(), fromUser.getUserId()))
 				messageDao.sendPushToNearbyUsers(messageJson, toUser.getUserId());
 
 				JSONObject messageJsonCustom = new JSONObject();

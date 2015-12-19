@@ -573,12 +573,46 @@ public class BaatnaUser {
 		}
 		return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_RATED_FAILURE);
 		
-		
-		
-		
-		
-		
-		
+}
 	
+	@Path("/block")
+	@POST
+	@Produces("application/json")
+	@Consumes("application/x-www-form-urlencoded")
+	public JSONObject blockUser(@FormParam("client_id") String clientId,
+			@FormParam("app_type") String appType,
+			@FormParam("access_token") String accessToken,
+			@QueryParam("userId") int userId) {
+
+		// null checks, invalid request
+		if (clientId == null || appType == null)
+			return CommonLib.getResponseString("Invalid params", "",
+					CommonLib.RESPONSE_INVALID_PARAMS);
+
+		// check for client_id
+		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
+			return CommonLib.getResponseString("Invalid client id", "",
+					CommonLib.RESPONSE_INVALID_CLIENT_ID);
+
+		// check for app type
+		if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
+			return CommonLib.getResponseString("Invalid params", "",
+					CommonLib.RESPONSE_INVALID_APP_TYPE);
+
+		
+		UserDAO dao= new UserDAO();
+		boolean retVal=false;
+		// check if user exists
+		//User userExists = dao.getUserDetails(userId);
+		int blockingUserId=dao.userActive(accessToken);
+		if(blockingUserId>0 && userId>0)
+		{
+			retVal=dao.addUserToBlockedList(blockingUserId,userId);
+		}
+		if(retVal)
+			return CommonLib.getResponseString("success", "success", CommonLib.RESPONSE_SUCCESS);
+		else
+		return CommonLib.getResponseString("failure", "user does not exist", CommonLib.RESPONSE_FAILURE);
+		
 }
 }

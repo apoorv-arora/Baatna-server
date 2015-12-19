@@ -348,6 +348,8 @@ public class WishDAO {
 
 		for (com.application.baatna.bean.Session nearbyUser : nearbyUsers) {
 			// send push notif to all
+			//UserDAO dao= new UserDAO();
+			if(!userDao.isUserBlocked(nearbyUser.getUserId(),userId) && !userDao.isUserBlocked(userId, nearbyUser.getUserId()))
 			ccsClient.send(GCM.createJsonMessage(nearbyUser.getPushId(), messageId, payload, null, timeToLive,
 					delayWhileIdle));
 		}
@@ -392,6 +394,8 @@ public class WishDAO {
 		// this will change
 		for (com.application.baatna.bean.Session nearbyUser : nearbyUsers) {
 			// send push notif to all
+			
+			//if(!userDao.isUserBlocked(nearbyUser.getUserId(),userId))
 			ccsClient.send(GCM.createJsonMessage(nearbyUser.getPushId(), messageId, payload, null, timeToLive,
 					delayWhileIdle));
 		}
@@ -418,8 +422,9 @@ public class WishDAO {
 
 			if (type == CommonLib.ACTION_ACCEPT_WISH) {
 
-				String sql3 = "INSERT INTO USERWISH (WISHID, USERID, WISH_STATUS, USER_TWO_ID) VALUES (:WISHID,:USERID,:WISH_STATUS,:USER_TWO_ID);";
+				String sql3 = "INSERT INTO USERWISH (WISHID,USERID,WISH_STATUS,USER_TWO_ID) VALUES (:WISHID,:USERID,:WISH_STATUS,:USER_TWO_ID)";
 				SQLQuery query3 = session.createSQLQuery(sql3);
+				query3.addEntity(UserWish.class);
 				query3.setParameter("WISHID", wishId);
 				query3.setParameter("USERID", wish.getUserId());
 				query3.setParameter("WISH_STATUS", CommonLib.STATUS_ACCEPTED);
@@ -450,8 +455,9 @@ public class WishDAO {
 
 			} else if (type == CommonLib.ACTION_DECLINE_WISH) {
 
-				String sql3 = "INSERT INTO USERWISH (WISHID, USERID, WISH_STATUS, USER_TWO_ID) VALUES (:WISHID,:USERID,:WISH_STATUS,:USER_TWO_ID);";
+				String sql3 = "INSERT INTO USERWISH (WISHID, USERID, WISH_STATUS, USER_TWO_ID) VALUES (:WISHID,:USERID,:WISH_STATUS,:USER_TWO_ID)";
 				SQLQuery query3 = session.createSQLQuery(sql3);
+				query3.addEntity(UserWish.class);
 				query3.setParameter("WISHID", wishId);
 				query3.setParameter("USERID", wish.getUserId());
 				query3.setParameter("WISH_STATUS", CommonLib.STATUS_DELETED);
