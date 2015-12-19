@@ -2,36 +2,48 @@ package com.application.baatna.bean;
 
 import java.io.Serializable;
 
-public class UserRating implements Serializable
-{
+/**
+ * User Rating table. Stores the user rating values.
+ */
+public class UserRating implements Serializable {
 	private int serial;
-	private int userIdOne;
-	private int userIdTwo;
+	private int reviewer; // One who has rated
+	private int reviewed; // One who has been rated
 	private double rating;
-	
-	
-	public int getUserIdOne() {
-		return userIdOne;
+
+	public UserRating() {
 	}
-	public void setUserIdOne(int userIdOne) {
-		this.userIdOne = userIdOne;
-	}
-	public int getUserIdTwo() {
-		return userIdTwo;
-	}
-	public void setUserIdTwo(int userIdTwo) {
-		this.userIdTwo = userIdTwo;
-	}
-	public double getRating() {
-		return rating;
-	}
-	public void setRating(double rating) {
-		this.rating = rating;
-	}
+
 	public int getSerial() {
 		return serial;
 	}
+
 	public void setSerial(int serial) {
 		this.serial = serial;
 	}
+
+	public int getReviewer() {
+		return reviewer;
+	}
+
+	public void setReviewer(int reviewer) {
+		this.reviewer = reviewer;
+	}
+
+	public int getReviewed() {
+		return reviewed;
+	}
+
+	public void setReviewed(int reviewed) {
+		this.reviewed = reviewed;
+	}
+
+	public double getRating() {
+		return rating;
+	}
+
+	public void setRating(double rating) {
+		this.rating = rating;
+	}
+
 }

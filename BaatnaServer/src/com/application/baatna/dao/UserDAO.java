@@ -847,238 +847,270 @@ public class UserDAO {
 			return true;
 		return false;
 	}
-	
-	public boolean setRatingForUser(int userIdtwo,int userId,double rating)
-	{
+
+	public boolean setRatingForUser(int currentUser, int userId, double rating) {
 		Session session = null;
-		boolean retVal=false;
+		boolean retVal = false;
 
 		try {
 
 			session = DBUtil.getSessionFactory().openSession();
 
 			Transaction transaction = session.beginTransaction();
- 
-			String sql="SELECT count(*) FROM USERRATING WHERE USERID_ONE= :userId AND USERID_TWO= :userIdtwo";
-			//String sql = "UPDATE USERRATING SET Rating = :rating,   WHERE USERID = :user_id";
+
+			String sql = "SELECT count(*) FROM USERRATING WHERE Reviewed= :userId AND Reviewer= :userIdtwo";
 			SQLQuery query = session.createSQLQuery(sql);
-//			query.addEntity(com.application.baatna.bean.UserRating.class);
 			query.setParameter("userId", userId);
-			query.setParameter("userIdtwo", userIdtwo);
+			query.setParameter("userIdtwo", currentUser);
 			java.util.List results = (java.util.List) query.list();
-			if(results.get(0) instanceof BigInteger){
-				int count= ((BigInteger)results.get(0)).intValue();
-			if(count==0){
-				String sql2 = "INSERT INTO USERRATING(USERID_ONE,USERID_TWO,RATING) VALUES(:userId,:userIdtwo,:rating)";
-				SQLQuery query2=session.createSQLQuery(sql2);
-				query2.addEntity(com.application.baatna.bean.UserRating.class);
-				query2.setParameter("userId", userId);
-				query2.setParameter("userIdtwo", userIdtwo);
-				query2.setParameter("rating", rating);
-				query2.executeUpdate();
-				retVal=true;
-			}
-			}
-			transaction.commit();
-			session.close();
-		
-	}catch (HibernateException e) {
-		System.out.println(e.getMessage());
-		System.out.println("error");
-		e.printStackTrace();
-
-	} finally {
-		if (session != null && session.isOpen())
-			session.close();
-	}
-		return retVal;
-
-	}
-
-	public boolean editRatingForUser(int userIdtwo,int userId,double rating)
-	{
-		Session session = null;
-		boolean retVal=false;
-
-		try {
-
-			session = DBUtil.getSessionFactory().openSession();
-
-			Transaction transaction = session.beginTransaction();
- 
-			String sql="SELECT count(*) FROM USERRATING WHERE USERID_ONE= :userId AND USERID_TWO= :userIdtwo";
-			//String sql = "UPDATE USERRATING SET Rating = :rating,   WHERE USERID = :user_id";
-			SQLQuery query = session.createSQLQuery(sql);
-//			query.addEntity(com.application.baatna.bean.UserRating.class);
-			query.setParameter("userId", userId);
-			query.setParameter("userIdtwo", userIdtwo);
-			java.util.List results = (java.util.List) query.list();
-			if(results.get(0) instanceof BigInteger){
-				int count= ((BigInteger)results.get(0)).intValue();
-			if(count!=0){
-				String sql2 = "UPDATE USERRATING SET RATING= :rating WHERE USERID_ONE= :userId AND USERID_TWO= :userIdtwo";
-				SQLQuery query2=session.createSQLQuery(sql2);
-				query2.addEntity(com.application.baatna.bean.UserRating.class);
-				query2.setParameter("userId", userId);
-				query2.setParameter("userIdtwo", userIdtwo);
-				query2.setParameter("rating", rating);
-				query2.executeUpdate();
-				retVal=true;
-			}
-			}
-			transaction.commit();
-			session.close();
-		
-	}catch (HibernateException e) {
-		System.out.println(e.getMessage());
-		System.out.println("error");
-		e.printStackTrace();
-
-	} finally {
-		if (session != null && session.isOpen())
-			session.close();
-	}
-		return retVal;
-
-	}
-	public void setUserDayRating(int userId)
-	{
-		Session session = null;
-
-		ArrayList<Double> ratings;
-		double rating=0;
-		UserRating userRating;
-		try {
-
-			session = DBUtil.getSessionFactory().openSession();
-
-			Transaction transaction = session.beginTransaction();
- 
-			ratings= new ArrayList<>();
-		userRating=new UserRating();
-			String sql="SELECT count(*) FROM USERRATING WHERE USERID_ONE= :userId";
-			SQLQuery query = session.createSQLQuery(sql);
-//			query.addEntity(com.application.baatna.bean.UserRating.class);
-			query.setParameter("userId", userId);
-			//query.setParameter("userIdtwo", userIdtwo);
-			java.util.List results = (java.util.List) query.list();
-			//if(results.get(0) instanceof BigInteger){
-				int count= ((BigInteger)results.get(0)).intValue();
-			if(count!=0){
-				String sql2 = "SELECT * FROM USERRATING WHERE USERID_ONE= :userId";
-				SQLQuery query2=session.createSQLQuery(sql2);
-				query2.addEntity(com.application.baatna.bean.UserRating.class);
-				query2.setParameter("userId", userId);
-				
-				java.util.List results_second=(java.util.List)query2.list();
-			double sum=0;
-				for (Iterator iterator = ((java.util.List) results_second).iterator(); iterator.hasNext();) {
-					userRating=(com.application.baatna.bean.UserRating)iterator.next();
-					if(userRating!=null)
-						sum+=userRating.getRating();
+			if (results.get(0) instanceof BigInteger) {
+				int count = ((BigInteger) results.get(0)).intValue();
+				retVal = true;
+				if (count == 0) {
+					String sql2 = "INSERT INTO USERRATING(Reviewer,Reviewed,Rating) VALUES(:reviewer,:reviewed,:rating)";
+					SQLQuery query2 = session.createSQLQuery(sql2);
+					query2.addEntity(com.application.baatna.bean.UserRating.class);
+					query2.setParameter("reviewer", currentUser);
+					query2.setParameter("reviewed", userId);
+					query2.setParameter("rating", rating);
+					query2.executeUpdate();
+				} else if (count == 1) {
+					String sql2 = "Update USERRATING Set Rating = :rating where Reviewer = :reviewer and Reviewed = :reviewed";
+					SQLQuery query2 = session.createSQLQuery(sql2);
+					query2.addEntity(com.application.baatna.bean.UserRating.class);
+					query2.setParameter("rating", rating);
+					query2.setParameter("reviewer", currentUser);
+					query2.setParameter("reviewed", userId);
+					query2.executeUpdate();
+					retVal = true;
 				}
-			rating=sum/count;	
-			
-			String sql3 = "UPDATE USER SET Rating= :rating WHERE USERID= :userId";
-			SQLQuery query3=session.createSQLQuery(sql3);
-			query3.addEntity(User.class);
-			query3.setParameter("rating", rating);
-			query3.setParameter("userId",userId);
-			int result4=query3.executeUpdate();
 			}
 			transaction.commit();
 			session.close();
-		
-	}catch (HibernateException e) {
-		System.out.println(e.getMessage());
-		System.out.println("error");
-		e.printStackTrace();
 
-	} finally {
-		if (session != null && session.isOpen())
-			session.close();
+		} catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			System.out.println("error");
+			e.printStackTrace();
+
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
+		return retVal;
+
 	}
 
-	}
-
-	public double viewUserRating(int userId)
-	{
+	public boolean editRatingForUser(int userIdtwo, int userId, double rating) {
 		Session session = null;
-		UserRating userRating;
-		double rating=0;
+		boolean retVal = false;
+
 		try {
 
 			session = DBUtil.getSessionFactory().openSession();
 
 			Transaction transaction = session.beginTransaction();
 
-			userRating= new UserRating();
-			String sql="SELECT * FROM USER WHERE USERID= :userId";
+			String sql = "SELECT count(*) FROM USERRATING WHERE USERID_ONE= :userId AND USERID_TWO= :userIdtwo";
+			// String sql = "UPDATE USERRATING SET Rating = :rating, WHERE
+			// USERID = :user_id";
+			SQLQuery query = session.createSQLQuery(sql);
+			// query.addEntity(com.application.baatna.bean.UserRating.class);
+			query.setParameter("userId", userId);
+			query.setParameter("userIdtwo", userIdtwo);
+			java.util.List results = (java.util.List) query.list();
+			if (results.get(0) instanceof BigInteger) {
+				int count = ((BigInteger) results.get(0)).intValue();
+				if (count != 0) {
+					String sql2 = "UPDATE USERRATING SET RATING= :rating WHERE USERID_ONE= :userId AND USERID_TWO= :userIdtwo";
+					SQLQuery query2 = session.createSQLQuery(sql2);
+					query2.addEntity(com.application.baatna.bean.UserRating.class);
+					query2.setParameter("userId", userId);
+					query2.setParameter("userIdtwo", userIdtwo);
+					query2.setParameter("rating", rating);
+					query2.executeUpdate();
+					retVal = true;
+				}
+			}
+			transaction.commit();
+			session.close();
+
+		} catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			System.out.println("error");
+			e.printStackTrace();
+
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
+		return retVal;
+
+	}
+
+	public void setUserDayRating() {
+
+		Session session = null;
+		ArrayList<Double> ratings;
+		double rating = 0;
+		UserRating userRating;
+
+		try {
+			session = DBUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+
+			ratings = new ArrayList<>();
+			userRating = new UserRating();
+			String sql = "SELECT er.Reviewed, ( Select avg(Rating) as AvgRating from UserRating ur where ur.Reviewed = er.Reviewed) from UserRating er";
+			SQLQuery query = session.createSQLQuery(sql);
+			java.util.List results = (java.util.List) query.list();
+			// int count = ((BigInteger) results.get(0)).intValue();
+			// if (count != 0) {
+			// String sql3 = "UPDATE USER SET Rating= :rating WHERE USERID=
+			// :userId";
+			// SQLQuery query3 = session.createSQLQuery(sql3);
+			// query3.addEntity(User.class);
+			// query3.setParameter("rating", rating);
+			// query3.setParameter("userId", userId);
+			// int result4 = query3.executeUpdate();
+			// }
+			transaction.commit();
+			session.close();
+
+		} catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			System.out.println("error");
+			e.printStackTrace();
+
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
+
+	}
+
+	public double viewUserRating(int userId) {
+		Session session = null;
+		UserRating userRating;
+		double rating = 0;
+		try {
+
+			session = DBUtil.getSessionFactory().openSession();
+
+			Transaction transaction = session.beginTransaction();
+
+			userRating = new UserRating();
+			String sql = "SELECT * FROM USER WHERE USERID= :userId";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(User.class);
 			query.setParameter("userId", userId);
-			java.util.List result=(java.util.List)query.list();
+			java.util.List result = (java.util.List) query.list();
 			for (Iterator iterator = ((java.util.List) result).iterator(); iterator.hasNext();) {
-				userRating=(com.application.baatna.bean.UserRating)iterator.next();
-				if(userRating!=null)
-					rating=userRating.getRating();
+				userRating = (com.application.baatna.bean.UserRating) iterator.next();
+				if (userRating != null)
+					rating = userRating.getRating();
 			}
-			
+
 			transaction.commit();
 			session.close();
-		
-	}catch (HibernateException e) {
-		System.out.println(e.getMessage());
-		System.out.println("error");
-		e.printStackTrace();
 
-	} finally {
-		if (session != null && session.isOpen())
-			session.close();
-	}
+		} catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			System.out.println("error");
+			e.printStackTrace();
+
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
 		return rating;
 
 	}
 
-	public boolean usersEverInteracted(int userIdtwo, int userId)
-	{
+	public boolean usersEverInteracted(int currentUserId, int userId) {
 		Session session = null;
-		//UserRating userRating;
-		//double rating=0;
-		boolean retVal=false;
+		boolean retVal = false;
 		try {
 
 			session = DBUtil.getSessionFactory().openSession();
 
 			Transaction transaction = session.beginTransaction();
 
-			String sql="SELECT count(*) FROM USERWISH WHERE USERID= :userId AND USER_TWO_ID= :userIdtwo";
-			//String sql = "UPDATE USERRATING SET Rating = :rating,   WHERE USERID = :user_id";
+			String sql = "SELECT count(*) FROM USERWISH WHERE ( USERID = :currentUserId and USER_TWO_ID =:userId) or (USERID = :currentUserId1 and USER_TWO_ID =:userId1)";
 			SQLQuery query = session.createSQLQuery(sql);
-//			query.addEntity(com.application.baatna.bean.UserRating.class);
+			query.addEntity(User.class);
+			query.setParameter("currentUserId", currentUserId);
 			query.setParameter("userId", userId);
-			query.setParameter("userIdtwo", userIdtwo);
+			query.setParameter("currentUserId1", userId);
+			query.setParameter("userId1", currentUserId);
+
 			java.util.List results = (java.util.List) query.list();
-			int count;
-			//if(results.get(0) instanceof BigInteger){
-				 count= ((BigInteger)results.get(0)).intValue();
-			//}
-			if(count!=0)
-				retVal=true;
+			// check if the current user can rate the userId.
+			if (results.get(0) instanceof BigInteger && ((BigInteger) results.get(0)).intValue() > 0) {
+				retVal = true;
+			}
+
 			transaction.commit();
 			session.close();
-		
-	}catch (HibernateException e) {
-		System.out.println(e.getMessage());
-		System.out.println("error");
-		e.printStackTrace();
 
-	} finally {
-		if (session != null && session.isOpen())
-			session.close();
-	}
+		} catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			System.out.println("error");
+			e.printStackTrace();
+
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
 		return retVal;
-			
-}
-}
 
+	}
+
+	/**
+	 * Get the user details based on the userId
+	 */
+	public Object[] getRating(int currentUserId, int userId) {
+
+		Object[] objects = new Object[2];
+		Session session = null;
+		try {
+			session = DBUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+
+			String sql = "SELECT count(*) FROM USERWISH WHERE ( USERID = :currentUserId and USER_TWO_ID =:userId) or (USERID = :currentUserId1 and USER_TWO_ID =:userId1)";
+			SQLQuery query = session.createSQLQuery(sql);
+			query.addEntity(User.class);
+			query.setParameter("currentUserId", currentUserId);
+			query.setParameter("userId", userId);
+			query.setParameter("currentUserId1", userId);
+			query.setParameter("userId1", currentUserId);
+
+			java.util.List results = (java.util.List) query.list();
+			// check if the current user can rate the userId.
+			if (results.get(0) instanceof BigInteger && ((BigInteger) results.get(0)).intValue() > 0) {
+				objects[0] = true;
+				// fetch the previous rating value
+				String userRatingSql = "SELECT Rating FROM UserRating WHERE Reviewer =:reviewer and Reviewed = :reviewed";
+				SQLQuery userRatingQuery = session.createSQLQuery(userRatingSql);
+				userRatingQuery.addEntity(User.class);
+				userRatingQuery.setParameter("reviewer", currentUserId);
+				userRatingQuery.setParameter("reviewed", userId);
+				java.util.List userRatingResults = (java.util.List) query.list();
+				if (userRatingResults.get(0) instanceof BigInteger) {
+					objects[1] = ((BigInteger) results.get(0)).intValue();
+				}
+			}
+			transaction.commit();
+			session.close();
+
+		} catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			System.out.println("error");
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
+
+		return objects;
+	}
+}
