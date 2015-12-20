@@ -24,8 +24,8 @@ public class JsonUtil {
 		JSONObject logisticJson=new JSONObject();
 		
 		logisticJsonObj.put("logistic_id",logistic.getLogistic_id());
-		logisticJsonObj.put("userid_one",logistic.getUserid_one());
-		logisticJsonObj.put("userid_two",logistic.getUserid_two());
+		logisticJsonObj.put("borrow_id",logistic.getBorrower_id());
+		logisticJsonObj.put("lender_id",logistic.getLender_id());
 		logisticJsonObj.put("type",logistic.getType());
 	
 		
@@ -38,8 +38,8 @@ public class JsonUtil {
 		JSONObject returnJson=new JSONObject();
 		
 		returnJsonObj.put("logistic_id",return_obj.getReturn_id());
-		returnJsonObj.put("userid_one",return_obj.getUser_id_one());
-		returnJsonObj.put("userid_two",return_obj.getUser_id_two());
+		returnJsonObj.put("borrow_id",return_obj.getBorrow_id());
+		returnJsonObj.put("lender_id",return_obj.getLender_id());
 		returnJsonObj.put("type",return_obj.getReturn_type());
 	
 		

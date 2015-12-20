@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import com.application.baatna.dao.LogisticsDAO;
 import com.application.baatna.dao.UserDAO;
 
 public class Bapp implements ServletContextListener {
@@ -20,15 +21,20 @@ public class Bapp implements ServletContextListener {
 		if (executorService2 != null) {
 			executorService2.shutdown();
 		}
+		if(executorService3 !=null){
+			executorService3.shutdown();
+		}
 	}
 
 	ScheduledExecutorService executorService;
 	ScheduledExecutorService executorService2;
+	ScheduledExecutorService executorService3;
 
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
 		executorService = Executors.newScheduledThreadPool(1);
 		executorService2 = Executors.newScheduledThreadPool(1);
+		executorService3 = Executors.newScheduledThreadPool(1);
 
 		executorService.scheduleAtFixedRate(new Runnable() {
 			public void run() {
@@ -43,12 +49,23 @@ public class Bapp implements ServletContextListener {
 				zappObject.updateRating();
 			}
 		}, 0, 24, TimeUnit.HOURS);
+		
+		executorService3.scheduleAtFixedRate(new Runnable() {
+			public void run() {
+				Bapp zappObject = new Bapp();
+				zappObject.returncheck();
+			}
+		}, 0, 24, TimeUnit.HOURS);
 
 	}
 
 	private void archiveOperation() {
 		 UserDAO storeItemDao = new UserDAO();
 		 storeItemDao.nullifyPushId(-1);
+	}
+	private void returncheck(){
+		LogisticsDAO logisticdao=new LogisticsDAO();
+		logisticdao.getdafaultUser();
 	}
 
 	/**

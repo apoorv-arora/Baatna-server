@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 public class Logistics implements Serializable {
 	private int Logistic_id;
-	private int Userid_one; //user_id of borrower
-	private int Userid_two;//user_id of lender
+	private int borrower_id; //user_id of borrower
+	private int lender_id;//user_id of lender
 	private int type;
 	// self delivered=1 and baatnadelivery=2
 	private int status;
@@ -20,7 +20,8 @@ public class Logistics implements Serializable {
 	private long delivery_time;
 	private int amount;
 	private int wishid;
-	
+	private long return_deadline;
+	private int user_verification;
 	
 	public int getWishid() {
 		return wishid;
@@ -29,7 +30,7 @@ public class Logistics implements Serializable {
 		this.wishid = wishid;
 	}
 	public Logistics(){	
-	
+
 	}
 	/*public int getStatus() {
 		return status;
@@ -49,8 +50,8 @@ public class Logistics implements Serializable {
 	public void setAmount(int amount) {
 		this.amount = amount;
 	}
-	
-	
+
+
 	public Long getPick_up_time() {
 		return pick_up_time;
 	}
@@ -69,17 +70,18 @@ public class Logistics implements Serializable {
 	public void setLogistic_id(int logistic_id) {
 		this.Logistic_id = logistic_id;
 	}
-	public int getUserid_one() {
-		return Userid_one;
+
+	public int getBorrower_id() {
+		return borrower_id;
 	}
-	public void setUserid_one(int userid_one) {
-		this.Userid_one = userid_one;
+	public void setBorrower_id(int borrower_id) {
+		this.borrower_id = borrower_id;
 	}
-	public int getUserid_two() {
-		return Userid_two;
+	public int getLender_id() {
+		return lender_id;
 	}
-	public void setUserid_two(int userid_two) {
-		this.Userid_two = userid_two;
+	public void setLender_id(int lender_id) {
+		this.lender_id = lender_id;
 	}
 	public int getType() {
 		return type;
@@ -87,5 +89,17 @@ public class Logistics implements Serializable {
 	public void setType(int type) {
 		this.type = type;
 	}
-	
+	public long getReturn_deadline() {
+		return return_deadline;
+	}
+	public void setReturn_deadline(long return_deadline) {
+		this.return_deadline = return_deadline;
+	}
+	public int getUser_verification() {
+		return user_verification;
+	}
+	public void setUser_verification(int user_verification) {
+		this.user_verification = user_verification;
+	}
+
 }

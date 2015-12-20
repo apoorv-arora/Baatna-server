@@ -16,6 +16,15 @@ public class Wish implements Serializable {
 	private int userId; // wish posting user
 	private int requiredFor; // Number of days for which the wish is required
 	private int status;
+	private long timeof_fulfill;
+	public long getTimeof_fulfill() {
+		return timeof_fulfill;
+	}
+
+	public void setTimeof_fulfill(long timeof_fulfill) {
+		this.timeof_fulfill = timeof_fulfill;
+	}
+
 	public Wish() {
 	}
 

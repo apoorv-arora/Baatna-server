@@ -13,8 +13,6 @@ public class UserWish implements Serializable {
 	// accepting or declining user
 //	private String couponId;
 	private int delivery_opt;
-	private long time_post;
-	private long return_deadline;
 	
 	//1 for self pickup and 2 for baatna delivery
 	
@@ -70,21 +68,7 @@ public class UserWish implements Serializable {
 	}
 	
 
-	public long getTime_post() {
-		return time_post;
-	}
-
-	public void setTime_post(long time_post) {
-		this.time_post = time_post;
-	}
-
-	public long getReturn_deadline() {
-		return return_deadline;
-	}
-
-	public void setReturn_deadline(long return_deadline) {
-		this.return_deadline = return_deadline;
-	}
+	
 	
 	
 //

@@ -37,6 +37,21 @@ public class CommonLib {
 	public static final int STATUS_RECEIVED = 4;
 	public static final int STATUS_FULLFILLED = 5;
 	
+	public static final int SELF_DELIVERY=1;
+	public static final int BAATNA_DELIVERY=2;
+	public static final int PRODUCT_RECIEVED=3;
+	public static final int PRODUCT_GIVEN=4;
+	
+	public static final int RETURN_SELF=1;
+	public static final int RETURN_BAATNA=2;
+	
+	public static final int ACTION_SELF_PICK_UP=1;
+	public static final int ACTION_BAATNA_DELIVERY=2;
+	public static final int ACTION_DELIVERY=3;
+	public static final int ACTION_PRODUCT_RECEIVED=4;
+	public static final int ACTION_PRODUCT_GIVEN=5;
+	public static final int ACTION_RETURN=6;
+	
 	public static final int MESSAGE_STATUS_INACTIVE = 0;
 	public static final int MESSAGE_STATUS_ARCHIVE_FROM = 1;
 	public static final int MESSAGE_STATUS_ARCHIVE_TO = 2;

@@ -422,14 +422,14 @@ public class WishDAO {
 
 			if (type == CommonLib.ACTION_ACCEPT_WISH) {
 
-				String sql3 = "INSERT INTO USERWISH (WISHID, USERID, WISH_STATUS, USER_TWO_ID) VALUES (:WISHID,:USERID,:WISH_STATUS,:USER_TWO_ID);";
+				String sql3 = "INSERT INTO USERWISH (WISHID, USERID, WISH_STATUS, USER_TWO_ID) VALUES (:WISHID,:USERID,:WISH_STATUS,:USER_TWO_ID)";
 				SQLQuery query3 = session.createSQLQuery(sql3);
 				query3.setParameter("WISHID", wishId);
 				query3.setParameter("USERID", wish.getUserId());
 				query3.setParameter("WISH_STATUS", CommonLib.STATUS_ACCEPTED);
 				query3.setParameter("USER_TWO_ID", userId);
 
-				query3.executeUpdate();
+				int result=query3.executeUpdate();
 
 				String sql2 = "SELECT * FROM USER WHERE USERID = :userid";
 				SQLQuery query4 = session.createSQLQuery(sql2);
@@ -574,7 +574,7 @@ public class WishDAO {
 		return size;
 	}
 
-	public boolean updateWishStatus(int userId, int type, int wishId, int offered) {
+	public boolean updateWishStatus(int userId, int wishId, int offered) {
 
 		Session session = null;
 		Wish wish = null;
@@ -597,12 +597,17 @@ public class WishDAO {
 
 			if (offered == CommonLib.ACTION_WISH_OFFERED) {
 				if (wish.getStatus() == CommonLib.STATUS_RECEIVED)
+				{
 					wish.setStatus(CommonLib.STATUS_FULLFILLED);
+					wish.setTimeof_fulfill(System.currentTimeMillis());
+				}
 				else
 					wish.setStatus(CommonLib.STATUS_OFFERED);
 			} else if (offered == CommonLib.ACTION_WISH_RECEIVED) {
-				if (wish.getStatus() == CommonLib.STATUS_OFFERED)
+				if (wish.getStatus() == CommonLib.STATUS_OFFERED){
 					wish.setStatus(CommonLib.STATUS_FULLFILLED);
+					wish.setTimeof_fulfill(System.currentTimeMillis());
+				}
 				else
 					wish.setStatus(CommonLib.STATUS_RECEIVED);
 			}

@@ -422,7 +422,7 @@ public class WishPost {
 
 			WishDAO wishdao = new WishDAO();
 			boolean value = false;
-			value = wishdao.updateWishStatus(userId, actionType, wishId, actionType);
+			value = wishdao.updateWishStatus(userId, wishId, actionType);
 
 			return CommonLib.getResponseString(String.valueOf(wishId),
 					"success", CommonLib.RESPONSE_SUCCESS);

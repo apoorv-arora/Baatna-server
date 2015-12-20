@@ -5,8 +5,8 @@ import java.io.Serializable;
 public class ReturnTable implements Serializable{
 	
 	private int return_id;
-	private int user_id_one;
-	private int user_id_two;
+	private int borrow_id;
+	private int lender_id;
 	private int wishid;
 	private long return_date;
 	private long return_deadline;
@@ -26,19 +26,20 @@ public class ReturnTable implements Serializable{
 		this.return_id = return_id;
 	}
 	
-	public int getUser_id_one() {
-		return user_id_one;
-	}
-	public void setUser_id_one(int user_id_one) {
-		this.user_id_one = user_id_one;
-	}
-	public int getUser_id_two() {
-		return user_id_two;
-	}
-	public void setUser_id_two(int user_id_two) {
-		this.user_id_two = user_id_two;
-	}
 	
+	
+	public int getBorrow_id() {
+		return borrow_id;
+	}
+	public void setBorrow_id(int borrow_id) {
+		this.borrow_id = borrow_id;
+	}
+	public int getLender_id() {
+		return lender_id;
+	}
+	public void setLender_id(int lender_id) {
+		this.lender_id = lender_id;
+	}
 	public int getWishid() {
 		return wishid;
 	}

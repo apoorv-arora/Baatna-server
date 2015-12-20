@@ -7,14 +7,16 @@
 		<id column="LOGISTICID" name="Logistic_id" type="java.lang.Integer" >
 			<generator class="native" />
 		</id>
-		<property column="USERID_ONE" name="Userid_one" type="java.lang.Integer" />
-		<property column="USERID_TWO" name="Userid_two" type="java.lang.Integer" />
+		<property column="BORROWERID" name="borrower_id" type="java.lang.Integer" />
+		<property column="LENDERID" name="lender_id" type="java.lang.Integer" />
 		<property column="TYPE" name="type" type="java.lang.Integer" />
 		<property column="PICKUPTIME" name="pick_up_time" type="java.lang.Long" />
 		<property column="DELIVERYTIME" name="delivery_time" type="java.lang.Long" />
 		<property column="STATUSHOST" name="status" type="java.lang.Integer" />
-		<property column="AMOUNT" name="amount" type="java.lang.String" />
+		<property column="AMOUNT" name="amount" type="java.lang.Integer" />
 		<property column="WISHID" name="wishid" type="java.lang.Integer" />
+		<property column="RETURN_DEADLINE" name="return_deadline" type="java.lang.Long" />
+		<property column="USER_VERIFICATION" name="user_verification" type="java.lang.Integer" />
 	</class>
 
 </hibernate-mapping>
