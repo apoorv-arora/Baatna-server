@@ -238,14 +238,17 @@ public class FeedDAO {
 			query.setParameter("user_id", currentUserId);
 			query.setParameter("current_user", currentUserId);
 			java.util.List results = (java.util.List) query.list();
-			if (results != null && results.size() > 0) {
-				Object resultValue = results.get(0);
-				if (resultValue instanceof BigInteger)
-					count = ((BigInteger) results.get(0)).intValue();
-				else
-					count = 0;
-			} else
+			Object resultValue = results.get(0);
+			if (resultValue instanceof BigInteger)
+				count = ((BigInteger) results.get(0)).intValue();
+			else
 				count = 0;
+			// count= ((java.langng.Number) query.).intValue();
+			/*
+			 * for (Iterator iterator = ((java.util.List) results).iterator();
+			 * iterator.hasNext();) { iterator.next(); count++; }
+			 */
+
 			transaction.commit();
 			session.close();
 

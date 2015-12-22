@@ -683,7 +683,7 @@ public class UserDAO {
 	/**
 	 * Get nearby user's session, so as to provide location
 	 */
-	public ArrayList<com.application.baatna.bean.Session> getNearbyUsers() {
+	public ArrayList<com.application.baatna.bean.Session> getNearbyUsers(double latitude, double longitude) {
 
 		ArrayList<com.application.baatna.bean.Session> users = null;
 
@@ -694,9 +694,15 @@ public class UserDAO {
 			Transaction transaction = session.beginTransaction();
 			users = new ArrayList<com.application.baatna.bean.Session>();
 
-			String sql = "SELECT * FROM SESSION LIMIT 900";
+			String sql = "Select * from SESSION order by "
+					+ "3956 * 2 * ASIN(SQRT(POWER(SIN((:latitude - SESSION.LATITUDE) * pi()/180 / 2), 2) + COS(:latitude * pi()/180) * COS(SESSION.LATITUDE * pi()/180) * POWER(SIN((:longitude - SESSION.LONGITUDE) * pi()/180 / 2), 2)))"
+					+ "limit :count";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(com.application.baatna.bean.Session.class);
+			query.setParameter("latitude", latitude);
+			query.setParameter("longitude", longitude);
+			query.setParameter("count", 1000);
+			
 			java.util.List results = (java.util.List) query.list();
 
 			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {

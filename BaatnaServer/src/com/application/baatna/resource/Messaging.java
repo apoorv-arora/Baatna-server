@@ -64,7 +64,7 @@ public class Messaging {
 		int userId = userDao.userActive(accessToken);
 
 		if (userId > 0) {
-			MessageDAO messageDao = new MessageDAO();
+			final MessageDAO messageDao = new MessageDAO();
 
 			Message messageObj = messageDao.addMessage(message, false, "" + System.currentTimeMillis(), userId,
 					Integer.parseInt(toUserId), Integer.parseInt(wishId));
