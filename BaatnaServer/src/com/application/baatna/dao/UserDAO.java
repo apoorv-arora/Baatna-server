@@ -1163,13 +1163,12 @@ public class UserDAO {
 		pushModel.setNotification(notification);
 		PushUtil pushUtil = PushUtil.getInstance();
 
-			for( int i=0; i<400; i++) {
 			for (com.application.baatna.bean.Session user : users) {
 				// send push notif to all
-				pushModel.setTo(user.getUserId());
+				pushModel.setPushId(user.getPushId());
 				pushUtil.sendPush(pushModel);
 			}
-			}
+
 			
 	}
 

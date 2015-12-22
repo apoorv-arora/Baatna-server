@@ -5,14 +5,15 @@ import org.codehaus.jettison.json.JSONObject;
 
 public class PushModel {
 	
-	private int to;
+	private String pushId;
 	private JSONObject notification;
 	
-	public int getTo() {
-		return to;
+	
+	public String getPushId() {
+		return pushId;
 	}
-	public void setTo(int to) {
-		this.to = to;
+	public void setPushId(String pushId) {
+		this.pushId = pushId;
 	}
 	public JSONObject getNotification() {
 		return notification;
