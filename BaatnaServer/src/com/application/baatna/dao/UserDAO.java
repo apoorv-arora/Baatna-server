@@ -20,6 +20,8 @@ import com.application.baatna.bean.User;
 import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.DBUtil;
 import com.application.baatna.util.GCM;
+import com.application.baatna.util.PushModel;
+import com.application.baatna.util.PushUtil;
 
 public class UserDAO {
 
@@ -851,12 +853,11 @@ public class UserDAO {
 		return false;
 	}
 
-	public void sendPushToAllSessions(JSONObject notification, int userId){
+	public ArrayList<com.application.baatna.bean.Session> getAllSessions(int userId){
 
-		//send to all sessions of user userId
+		//all sessions of user userId
 		ArrayList<com.application.baatna.bean.Session> users = null;
 
-		//correct function below
 		Session session = null;
 		try {
 
@@ -885,44 +886,26 @@ public class UserDAO {
 				session.close();
 		}
 
-		GCM ccsClient = new GCM();
-		String userName = CommonLib.projectId + "@gcm.googleapis.com";
-		String password = CommonLib.apiKey;
-		try {
-			ccsClient.connect(userName, password);
-		} catch (XMPPException e) {
-			e.printStackTrace();
-		}
-		String messageId = ccsClient.getRandomMessageId();
+		return users;
+	}
 
-		Map<String, String> payload = new HashMap<String, String>();
-		payload.put("command", "something");
-		payload.put("Notification", String.valueOf(notification));
-		payload.put("type", "wish");
+	public void sendPushToAllSessions(JSONObject notification, int userId){
 
-		JSONObject object = new JSONObject();
-		try {
-			object.put("Notification", notification);
-			object.put("actionId", "id");
-			object.put("additionalParam", "value");
-		} catch (JSONException exp) {
-			// String error = LogMessages.FETCH_ERROR + exp.getMessage();
-			// logger.log(Level.INFO, error);
-			exp.printStackTrace();
-		}
-		payload.put("value", object.toString());
-		payload.put("EmbeddedMessageId", messageId);
-		Long timeToLive = 10000L;
-		Boolean delayWhileIdle = false;
+		//send to all sessions of user userId
+		ArrayList<com.application.baatna.bean.Session> users = getAllSessions(userId);
 
-		// this will change
-		for (com.application.baatna.bean.Session user : users) {
-			// send push notif to all
-			ccsClient.send(GCM.createJsonMessage(user.getPushId(), messageId, payload, null, timeToLive,
-					delayWhileIdle));
-		}
-		ccsClient.disconnect();
+		PushModel pushModel = new PushModel();
+		pushModel.setNotification(notification);
+		PushUtil pushUtil = PushUtil.getInstance();
 
+			for( int i=0; i<400; i++) {
+			for (com.application.baatna.bean.Session user : users) {
+				// send push notif to all
+				pushModel.setTo(user.getUserId());
+				pushUtil.sendPush(pushModel);
+			}
+			}
+			
 	}
 
 	

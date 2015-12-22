@@ -233,8 +233,13 @@ public class Messaging {
 						} else
 							notificationString = user.getUserName();
 					}
-					notificationString = notificationString + " wants to set the negotiation amount of " +  wish.getTitle() 
-					+ " at Rs. " + negAmount + ".";
+					
+					if(actionType == CommonLib.ACTION_NEGOTIATION_ACCEPTED)
+						notificationString = notificationString + " has accepted the negotiation amount of " +  wish.getTitle() 
+						+ " at Rs. " + negAmount + ".";
+					else
+						notificationString = notificationString + " wants to set the negotiation amount of " +  wish.getTitle() 
+						+ " at Rs. " + negAmount + ".";
 					
 					JSONObject negJson = new JSONObject();
 					try {
