@@ -9,6 +9,7 @@ import org.dom4j.Branch;
 
 import com.application.baatna.bean.Categories;
 import com.application.baatna.bean.Institution;
+import com.application.baatna.bean.User;
 
 public class CommonLib {
 
@@ -197,6 +198,23 @@ public class CommonLib {
 		finalCategoryList.add("COE");
 		finalCategoryList.add("BT");
 		return finalCategoryList;
+	}
+	
+	public static String getUserName(User user)
+	{
+		
+			if(user.getUserName()==null)
+			try{
+			JSONObject data=new JSONObject(user.getFacebookData());
+			if(data.has("name"))
+			return String.valueOf(data.get("name")).split(" ")[0];
+			}catch(JSONException e){
+				System.out.println("error");
+			}
+			else
+				return user.getUserName().split(" ")[0];
+			return "";
+		
 	}
 
 

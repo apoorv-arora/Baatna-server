@@ -460,7 +460,7 @@ public class WishDAO {
 					emailModel.setFrom(CommonLib.BAPP_ID);
 					emailModel.setTo(mUser.getEmail());
 					emailModel.setSubject("There is a new response to your request for " + wish.getTitle());
-					emailModel.setContent("Hi" + mUser.getUserName() + "\n" + currentUser.getUserName() + " replied to your request for (a) " + wish.getTitle() + "!\n\n Let " + currentUser.getUserName() + " know if you're interested.\nHave you found what you're looking for?\n\nSee you around the neighbourhood.\n\n,Cheers\nBaatna Team");
+					emailModel.setContent("Hi " + CommonLib.getUserName(mUser) + "\n\n" + CommonLib.getUserName(currentUser) + " replied to your request for (a) " + wish.getTitle() + "!\n\nLet " + CommonLib.getUserName(currentUser) + " know if you're interested.\nHave you found what you're looking for?\n\nSee you around the neighbourhood.\n\nCheers\nBaatna Team");
 					EmailUtil.getInstance().sendEmail(emailModel);
 
 				}

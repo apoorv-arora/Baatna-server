@@ -219,11 +219,13 @@ public class MessageDAO {
 				java.util.List results = (java.util.List) query.list();
 				for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
 					Wish currentWish = (Wish) iterator.next();
-					String sql2 = "SELECT * FROM USER WHERE USERID IN (SELECT USERID FROM USERWISH WHERE WISH_STATUS <> :status and WISHID =:wishId)";
+					String sql2 = "SELECT * FROM USER WHERE USERID IN (SELECT USERID FROM USERWISH WHERE USER_TWO_ID= :userId AND WISH_STATUS NOT IN (:status_deleted AND :status_active) and WISHID =:wishId)";
 					SQLQuery query2 = session.createSQLQuery(sql2);
 					query2.addEntity(User.class);
-					query2.setParameter("status", CommonLib.STATUS_DELETED);
+					query2.setParameter("status_deleted", CommonLib.STATUS_DELETED);
 					query2.setParameter("wishId", currentWish.getWishId());
+					query2.setParameter("status_active", CommonLib.STATUS_ACTIVE);
+					query2.setParameter("userId", userId);
 					java.util.List results2 = (java.util.List) query2.list();
 					for (Iterator iterator2 = ((java.util.List) results2).iterator(); iterator2.hasNext();) {
 						User acceptedUser = (User) iterator2.next();
@@ -246,11 +248,12 @@ public class MessageDAO {
 				java.util.List results = (java.util.List) query.list();
 				for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
 					Wish currentWish = (Wish) iterator.next();
-					String sql2 = "SELECT * FROM USER WHERE USERID IN (SELECT USER_TWO_ID FROM USERWISH WHERE WISH_STATUS <> :status and WISHID =:wishId)";
+					String sql2 = "SELECT * FROM USER WHERE USERID IN (SELECT USER_TWO_ID FROM USERWISH WHERE WISH_STATUS NOT IN (:status_deleted AND :status_active) and WISHID =:wishId)";
 					SQLQuery query2 = session.createSQLQuery(sql2);
 					query2.addEntity(User.class);
-					query2.setParameter("status", CommonLib.STATUS_DELETED);
+					query2.setParameter("status_deleted", CommonLib.STATUS_DELETED);
 					query2.setParameter("wishId", currentWish.getWishId());
+					query2.setParameter("status_active", CommonLib.STATUS_ACTIVE);
 					java.util.List results2 = (java.util.List) query2.list();
 					for (Iterator iterator2 = ((java.util.List) results2).iterator(); iterator2.hasNext();) {
 						User acceptedUser = (User) iterator2.next();
