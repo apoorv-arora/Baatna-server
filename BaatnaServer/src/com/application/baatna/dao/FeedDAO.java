@@ -196,14 +196,18 @@ public class FeedDAO {
 			// check if the newsfeed wish is accepted by the current user, if it
 			// is, do not add a specific type
 			// sort the feed by distance
-
-			String sql = "SELECT * FROM NEWSFEED WHERE USER_ID_FIRST <>:user_id and FEEDID NOT IN (Select FEEDID FROM NEWSFEED WHERE WISHID IN (Select WISHID FROM NEWSFEED WHERE USER_ID_SECOND = :current_user)) ORDER BY TIMESTAMP DESC LIMIT :start , :count";
+//SELECT * FROM NEWSFEED WHERE USER_ID_FIRST <> 9 and FEEDID NOT IN (Select FEEDID FROM NEWSFEED WHERE WISHID IN (Select WISHID FROM NEWSFEED WHERE USER_ID_SECOND = 9)) and USER_ID_SECOND NOT IN (SELECT BLOCKING_USERID FROM BLOCKING WHERE BLOCKING_USERID = 9 or BLOCKED_USERID= 9) and USER_ID_FIRST NOT IN(SELECT BLOCKED_USERID FROM BLOCKING WHERE BLOCKING_USERID= 9 or BLOCKED_USERID =9) ORDER BY TIMESTAMP DESC LIMIT 0 , 27
+			String sql = "SELECT * FROM NEWSFEED WHERE USER_ID_FIRST <>:user_id and USER_ID_SECOND NOT IN(SELECT BLOCKED_USERID FROM BLOCKING WHERE BLOCKING_USERID= :blockingUserId) and USER_ID_SECOND NOT IN(SELECT BLOCKING_USERID FROM BLOCKING WHERE BLOCKED_USERID= :blockedUserId)  and USER_ID_FIRST NOT IN(SELECT BLOCKED_USERID FROM BLOCKING WHERE BLOCKING_USERID= :blockingUserIdOne) and USER_ID_FIRST NOT IN(SELECT BLOCKING_USERID FROM BLOCKING WHERE BLOCKED_USERID= :blockedUserIdOne) and FEEDID NOT IN (Select FEEDID FROM NEWSFEED WHERE WISHID IN (Select WISHID FROM NEWSFEED WHERE USER_ID_SECOND = :current_user)) ORDER BY TIMESTAMP DESC LIMIT :start , :count";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(NewsFeed.class);
 			query.setParameter("user_id", currentUserId);
 			query.setParameter("start", start);
 			query.setParameter("count", count);
 			query.setParameter("current_user", currentUserId);
+			query.setParameter("blockingUserId", currentUserId);
+			query.setParameter("blockedUserId", currentUserId);
+			query.setParameter("blockingUserIdOne", currentUserId);
+			query.setParameter("blockedUserIdOne", currentUserId);
 			java.util.List results = (java.util.List) query.list();
 
 			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
@@ -233,10 +237,14 @@ public class FeedDAO {
 			session = DBUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
 
-			String sql = "SELECT COUNT(*) FROM NEWSFEED WHERE USER_ID_FIRST <>:user_id and FEEDID NOT IN (Select FEEDID FROM NEWSFEED WHERE WISHID IN (Select WISHID FROM NEWSFEED WHERE USER_ID_SECOND = :current_user))";
+			String sql = "SELECT COUNT(*) FROM NEWSFEED WHERE USER_ID_FIRST <>:user_id and USER_ID_SECOND NOT IN(SELECT BLOCKED_USERID FROM BLOCKING WHERE BLOCKING_USERID= :blockingUserId) and USER_ID_SECOND NOT IN(SELECT BLOCKING_USERID FROM BLOCKING WHERE BLOCKED_USERID= :blockedUserId)  and USER_ID_FIRST NOT IN(SELECT BLOCKED_USERID FROM BLOCKING WHERE BLOCKING_USERID= :blockingUserIdOne) and USER_ID_FIRST NOT IN(SELECT BLOCKING_USERID FROM BLOCKING WHERE BLOCKED_USERID= :blockedUserIdOne) and FEEDID NOT IN (Select FEEDID FROM NEWSFEED WHERE WISHID IN (Select WISHID FROM NEWSFEED WHERE USER_ID_SECOND = :current_user))";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.setParameter("user_id", currentUserId);
 			query.setParameter("current_user", currentUserId);
+			query.setParameter("blockedUserId", currentUserId);
+			query.setParameter("blockingUserId", currentUserId);
+			query.setParameter("blockingUserIdOne", currentUserId);
+			query.setParameter("blockedUserIdOne", currentUserId);
 			java.util.List results = (java.util.List) query.list();
 			Object resultValue = results.get(0);
 			if (resultValue instanceof BigInteger)
