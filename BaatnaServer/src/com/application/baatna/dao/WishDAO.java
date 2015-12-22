@@ -657,7 +657,7 @@ public class WishDAO {
 
 	}
 	
-	public boolean updateWishedNegotiation(int userId, int actionType, int wishId, int negAmount ) {
+	public boolean updateWishedNegotiation( int actionType, int wishId, int negAmount ) {
 		
 		Session session = null;
 		Wish wish = null;
