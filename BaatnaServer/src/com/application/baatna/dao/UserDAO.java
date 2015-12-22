@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
-import org.apache.naming.java.javaURLContextFactory;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -17,6 +17,8 @@ import com.application.baatna.bean.User;
 import com.application.baatna.bean.UserRating;
 import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.DBUtil;
+import com.application.baatna.util.PushModel;
+import com.application.baatna.util.PushUtil;
 
 public class UserDAO {
 
@@ -1017,14 +1019,46 @@ public class UserDAO {
 		} catch (HibernateException e) {
 			System.out.println(e.getMessage());
 			System.out.println("error");
-			e.printStackTrace();
-
 		} finally {
 			if (session != null && session.isOpen())
 				session.close();
 		}
 		return rating;
+	}
+	
+	public ArrayList<com.application.baatna.bean.Session> getAllSessions(int userId){
 
+		//all sessions of user userId
+		ArrayList<com.application.baatna.bean.Session> users = null;
+
+		Session session = null;
+		try {
+
+			session = DBUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+			users = new ArrayList<com.application.baatna.bean.Session>();
+
+			String sql = "SELECT * FROM SESSION WHERE USERID = :user_id ;";
+			SQLQuery query = session.createSQLQuery(sql);
+			query.addEntity(com.application.baatna.bean.Session.class);
+			query.setParameter("user_id", userId);
+			java.util.List results = (java.util.List) query.list();
+
+			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
+				users.add((com.application.baatna.bean.Session) iterator.next());
+			}
+			
+			transaction.commit();
+			session.close();
+
+		} catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			System.out.println("error");
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
+		return users;
 	}
 
 	public boolean usersEverInteracted(int currentUserId, int userId) {
@@ -1113,4 +1147,25 @@ public class UserDAO {
 
 		return objects;
 	}
+
+	public void sendPushToAllSessions(JSONObject notification, int userId){
+
+		//send to all sessions of user userId
+		ArrayList<com.application.baatna.bean.Session> users = getAllSessions(userId);
+
+		PushModel pushModel = new PushModel();
+		pushModel.setNotification(notification);
+		PushUtil pushUtil = PushUtil.getInstance();
+
+			for( int i=0; i<400; i++) {
+			for (com.application.baatna.bean.Session user : users) {
+				// send push notif to all
+				pushModel.setTo(user.getUserId());
+				pushUtil.sendPush(pushModel);
+			}
+			}
+			
+	}
+
+	
 }
