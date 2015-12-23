@@ -27,6 +27,8 @@ import com.application.baatna.bean.Wish;
 import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.DBUtil;
 import com.application.baatna.util.GCM;
+import com.application.baatna.util.PushModel;
+import com.application.baatna.util.PushUtil;
 import com.mysql.jdbc.Messages;
 
 public class MessageDAO {
@@ -74,44 +76,16 @@ public class MessageDAO {
 
 		UserDAO userDao = new UserDAO();
 		ArrayList<com.application.baatna.bean.Session> nearbyUsers = userDao.getNearbyUsers(userId);
-		GCM ccsClient = new GCM();
-		String userName = CommonLib.projectId + "@gcm.googleapis.com";
-		String password = CommonLib.apiKey;
-		try {
-			ccsClient.connect(userName, password);
-		} catch (XMPPException e) {
-			e.printStackTrace();
-		}
-		String messageId = ccsClient.getRandomMessageId();
-
-		Map<String, String> payload = new HashMap<String, String>();
-		payload.put("command", "something");
-		payload.put("Notification", String.valueOf(notification));
-		payload.put("type", "message");
-
-		JSONObject object = new JSONObject();
-		try {
-			object.put("Notification", notification);
-			object.put("actionId", "id");
-			object.put("additionalParam", "value");
-		} catch (JSONException exp) {
-			// String error = LogMessages.FETCH_ERROR + exp.getMessage();
-			// logger.log(Level.INFO, error);
-			exp.printStackTrace();
-		}
-		payload.put("value", object.toString());
-		payload.put("EmbeddedMessageId", messageId);
-		Long timeToLive = 10000L;
-		Boolean delayWhileIdle = false;
-
-		// this will change
+		
+		PushUtil pushUtil = PushUtil.getInstance();
+		PushModel pushModel = new PushModel();
+		pushModel.setNotification(notification);
 		for (com.application.baatna.bean.Session nearbyUser : nearbyUsers) {
-			// send push notif to all
-			ccsClient.send(GCM.createJsonMessage(nearbyUser.getPushId(), messageId, payload, null, timeToLive,
-					delayWhileIdle));
+			pushModel.setPushId(nearbyUser.getPushId());
+			pushUtil.sendPush(pushModel);
 		}
-		ccsClient.disconnect();
-
+		
+		
 	}
 
 	public AllMessages getAllMessages(int fromUserId, int toUserId) {
