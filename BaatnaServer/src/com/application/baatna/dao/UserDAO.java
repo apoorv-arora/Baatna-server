@@ -2,9 +2,13 @@ package com.application.baatna.dao;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
 
+import org.apache.commons.collections.IteratorUtils;
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
@@ -15,8 +19,11 @@ import com.application.baatna.bean.Institution;
 import com.application.baatna.bean.Location;
 import com.application.baatna.bean.User;
 import com.application.baatna.bean.UserRating;
+import com.application.baatna.bean.UserWish;
+import com.application.baatna.bean.Wish;
 import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.DBUtil;
+import com.application.baatna.util.JsonUtil;
 import com.application.baatna.util.PushModel;
 import com.application.baatna.util.PushUtil;
 
@@ -1167,5 +1174,168 @@ public class UserDAO {
 			
 	}
 
+	/*public ArrayList<com.application.baatna.bean.User> usersToBeRated(int userId) {
+		
+		Session session=null;
+		ArrayList<com.application.baatna.bean.User>users=null;
+		try
+		{
+			session = DBUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+
+			users= new ArrayList<com.application.baatna.bean.User>();
+			String sql = "SELECT * FROM USER WHERE USERID IN (SELECT USER_TWO_ID FROM USERWISH WHERE USERID= :userId AND WISH_STATUS= :status)";
+			SQLQuery query = session.createSQLQuery(sql);
+			query.addEntity(com.application.baatna.bean.User.class);
+			query.setParameter("userId", userId);
+			query.setParameter("status", CommonLib.STATUS_ACCEPTED);
+			
+
+			java.util.List results = (java.util.List) query.list();
+			UserDAO dao= new UserDAO();
+			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
+				users.add((com.application.baatna.bean.User)iterator.next());
+			}
+			
+			String sql2="SELECT * FROM USER WHERE USERID IN (SELECT USERID FROM USERWISH WHERE USER_TWO_ID= :userIdone AND WISH_STATUS= :statusone)";
+			SQLQuery query2=session.createSQLQuery(sql2);
+			query2.addEntity(com.application.baatna.bean.User.class);
+			query2.setParameter("userIdone",userId);
+			query2.setParameter("statusone",CommonLib.STATUS_ACCEPTED);
+			
+			java.util.List results2=(java.util.List)query2.list();
+			for (Iterator iterator = ((java.util.List) results2).iterator(); iterator.hasNext();) {
+				users.add((com.application.baatna.bean.User)iterator.next());
+			}
+			transaction.commit();
+			session.close();
+		}catch (HibernateException e) {
+			System.out.println(e.getMessage());
+			System.out.println("error");
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
+
+		return users;
+	}*/
+	public JSONArray usersToBeRated(int userId)
+	{
+		Session session=null;
+		JSONArray usersJson= new JSONArray();
+		ArrayList<com.application.baatna.bean.User>users=null;
+		try
+		{
+			session = DBUtil.getSessionFactory().openSession();
+			Transaction transaction = session.beginTransaction();
+			
+			{
+			String sql = "SELECT * FROM USERWISH WHERE USERID=:userId AND WISH_STATUS= :status";
+			SQLQuery query = session.createSQLQuery(sql);
+			query.addEntity(com.application.baatna.bean.UserWish.class);
+			query.setParameter("userId", userId);
+			query.setParameter("status", CommonLib.STATUS_FULLFILLED); 
+			
+			
+			java.util.List results= (java.util.List)query.list();
+			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
+				User user= null;
+				Wish wish= null;
+				UserWish userWish= (UserWish)iterator.next();
+				String sql2="SELECT * FROM USER WHERE USERID= :userId";
+				SQLQuery query2 = session.createSQLQuery(sql2);
+				query2.addEntity(User.class);
+				query2.setParameter("userId",userWish.getUserTwoId());
+				
+				java.util.List results2=(java.util.List)query2.list();
+				for (Iterator iterator2 = ((java.util.List) results2).iterator(); iterator2.hasNext();)
+				{
+					user=(User)iterator2.next();
+					break;
+				}
+				
+				String sql3="SELECT * FROM WISH WHERE USERID= :userId AND WISHID= :wishId";
+				SQLQuery query3=session.createSQLQuery(sql3);
+				query3.addEntity(Wish.class);
+				query3.setParameter("userId",userWish.getUserId());
+				query3.setParameter("wishId", userWish.getWishId());
+				
+				java.util.List results3=(java.util.List)query3.list();
+				for (Iterator iterator3 = ((java.util.List) results3).iterator(); iterator3.hasNext();)
+				{
+					wish=(Wish)iterator3.next();
+					break;
+				}
+				
+				try{
+					if(user!=null && wish!=null){
+				JSONObject userWishJson=JsonUtil.getUserWishJson(user, wish);
+				usersJson.put(userWishJson);}
+				}catch(JSONException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			}
+			{
+				String sql = "SELECT * FROM USERWISH WHERE USER_TWO_ID=:userId AND WISH_STATUS= :status";
+				SQLQuery query = session.createSQLQuery(sql);
+				query.addEntity(com.application.baatna.bean.UserWish.class);
+				query.setParameter("userId", userId);
+				query.setParameter("status", CommonLib.STATUS_FULLFILLED); 
+				
+				
+				java.util.List results= (java.util.List)query.list();
+				for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
+					User user= null;
+					Wish wish= null;
+					UserWish userWish= (UserWish)iterator.next();
+					String sql2="SELECT * FROM USER WHERE USERID= :userId";
+					SQLQuery query2 = session.createSQLQuery(sql2);
+					query2.addEntity(User.class);
+					query2.setParameter("userId",userWish.getUserId());
+					
+					java.util.List results2=(java.util.List)query2.list();
+					for (Iterator iterator2 = ((java.util.List) results2).iterator(); iterator2.hasNext();)
+					{
+						user=(User)iterator2.next();
+						break;
+					}
+					
+					String sql3="SELECT * FROM WISH WHERE USERID= :userId AND WISHID= :wishId";
+					SQLQuery query3=session.createSQLQuery(sql3);
+					query3.addEntity(Wish.class);
+					query3.setParameter("userId",userWish.getUserId());
+					query3.setParameter("wishId", userWish.getWishId());
+					
+					java.util.List results3=(java.util.List)query3.list();
+					for (Iterator iterator3 = ((java.util.List) results3).iterator(); iterator3.hasNext();)
+					{
+						wish=(Wish)iterator3.next();
+						break;
+					}
+					
+					try{
+						if(user!=null && wish!=null){
+					JSONObject userWishJson=JsonUtil.getUserWishJson(user, wish);
+					usersJson.put(userWishJson);}
+					}catch(JSONException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			}
+		
+	} catch (HibernateException e) {
+		System.out.println(e.getMessage());
+		System.out.println("error");
+		e.printStackTrace();
+
+	} finally {
+		if (session != null && session.isOpen())
+			session.close();
+	}
+		return usersJson;
 	
+}
 }
