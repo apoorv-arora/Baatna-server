@@ -13,22 +13,28 @@
 		<property column="EMAIL" name="email" type="java.lang.String" />
 		<property column="ADDRESS" name="address" type="java.lang.String" />
 		<property column="PHONE" name="phone" type="java.lang.String" />
-		<property column="BIO" name="bio" type="text" length="10000"/>
+		<property column="BIO" name="bio" type="text" length="10000" />
 		<property column="ISVERIFIED" name="isVerified" type="java.lang.Integer" />
 		<property column="FACEBOOKID" name="facebookId" type="java.lang.String" />
-		<property column="FACEBOOKDATA" type="text" length="10000" name="facebookData" />
+		<property column="FACEBOOKDATA" type="text" length="10000"
+			name="facebookData" />
 		<property column="FACEBOOKTOKEN" name="facebookToken" type="java.lang.String" />
-		<property column="FACEBOOKPERMISSION" name="fbPermission" type="java.lang.String" />
-		<property column="ISINSTITUTIONVERIFIED" name="isInstitutionVerified" type="java.lang.Integer" />
-		<property column="INSTITUTIONNAME" name="institutionName" type="java.lang.String" />
+		<property column="FACEBOOKPERMISSION" name="fbPermission"
+			type="java.lang.String" />
+		<property column="ISINSTITUTIONVERIFIED" name="isInstitutionVerified"
+			type="java.lang.Integer" />
+		<property column="INSTITUTIONNAME" name="institutionName"
+			type="java.lang.String" />
 		<property column="BranchName" name="branchName" type="java.lang.String" />
 		<property column="PhoneNumber" name="phoneNumber" type="java.lang.String" />
 		<property column="Year" name="year" type="java.lang.Integer" />
 		<property column="STUDENTID" name="studentId" type="java.lang.String" />
 		<property column="TimeStamp" name="timestamp" type="java.lang.Long" />
 		<property column="MODIFIED" name="modified" type="java.lang.Long" />
-	    <property column="Rating" name="rating" type="java.lang.Double" />
-		
-		
+		<property name="rating" type="java.lang.Double">
+			<column name="rating" not-null="true" default="0" />
+		</property>
+
+
 	</class>
 </hibernate-mapping>

@@ -35,7 +35,8 @@ public class JsonUtil {
 
 			JSONObject data = null;
 			try {
-				data = new JSONObject(user.getFacebookData());
+				if(user.getFacebookData() != null)
+					data = new JSONObject(user.getFacebookData());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
