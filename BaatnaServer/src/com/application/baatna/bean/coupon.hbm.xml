@@ -10,7 +10,9 @@
 		<property column="Validity" name="validity" type="java.lang.String" />
 		<property column="Name" name="name" type="java.lang.String" />
 		<property column="Terms" name="terms" type="java.lang.String" />
-		<property column="Count" name="count" type="java.lang.Integer" />
+		<property name="count" type="java.lang.Integer">
+			<column name="Count" not-null="true" default="0" />
+		</property>
 		<property column="Image" name="image" type="java.lang.String" />
 
 	</class>

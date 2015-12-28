@@ -6,12 +6,22 @@
 		<id column="SERIAL" name="serial" type="java.lang.Integer">
 			<generator class="native" />
 		</id>
-		<property name="wishId" column="WISHID" type="java.lang.Integer" />
-		<property name="userId" column="USERID" type="java.lang.Integer" />
-		<property name="wishStatus" column="WISH_STATUS" type="java.lang.Integer" />
-		<property name="userTwoId" column="USER_TWO_ID" type="java.lang.Integer" />
+		<property name="wishId" type="java.lang.Integer">
+			<column name="WISHID" not-null="true" default="0" />
+		</property>
+		<property name="userId" type="java.lang.Integer">
+			<column name="USERID" not-null="true" default="0" />
+		</property>
+		<property name="wishStatus" type="java.lang.Integer">
+			<column name="WISH_STATUS" not-null="true" default="0" />
+		</property>
+		<property name="userTwoId" type="java.lang.Integer">
+			<column name="USER_TWO_ID" not-null="true" default="0" />
+		</property>
 		<property name="negotiationStatus" column="NEGOTIATION_STATUS" type="java.lang.Boolean" />
-		<property name="negotiationAmount" column="NEGOTIATION_AMOUNT" type="java.lang.Integer" />
+		<property name="negotiationAmount" type="java.lang.Integer">
+			<column name="NEGOTIATION_AMOUNT" not-null="true" default="0" />
+		</property>
 		<property name="u1ratedu2" type="java.lang.Double">
  		<column name="U1RATEDU2" not-null="true" default="0" />
  		</property>

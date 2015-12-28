@@ -7,9 +7,15 @@
 		<id column="SERIAL" name="serial" type="java.lang.Integer">
 			<generator class="native" />
 		</id>
-		<property name="rating" column="Rating" type="java.lang.Double" />
-		<property name="reviewer" column="Reviewer" type="java.lang.Integer" />
-		<property name="reviewed" column="Reviewed" type="java.lang.Integer" />
+		 <property name="rating" type="java.lang.Double">
+ 		<column name="Rating" not-null="true" default="0" />  
+ 		</property> 
+		 <property name="reviewer" type="java.lang.Integer">
+ 		<column name="Reviewer" not-null="true" default="0" />  
+ 		</property> 
+		 <property name="reviewed" type="java.lang.Integer">
+ 		<column name="Reviewed" not-null="true" default="0" />  
+ 		</property> 
 
 	</class>
 
