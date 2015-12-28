@@ -2,6 +2,7 @@ package com.application.baatna.resource;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -74,9 +75,12 @@ public class Feed {
 			JSONObject newsFeedJsonObject = new JSONObject();
 			JSONArray feedItemJson = new JSONArray();
 			try {
-				for (NewsFeed feedItem : feedItems) {
-					JSONObject feedJsonObject = new JSONObject();
 
+				HashMap<Integer, Integer> hm = new HashMap<Integer,Integer>();
+				for (int i=0; i<feedItems.size(); i++) {
+					
+					JSONObject feedJsonObject = new JSONObject();
+					NewsFeed feedItem = feedItems.get(i);
 					int type = feedItem.getType();
 
 					if (type == 1) {
@@ -180,26 +184,48 @@ public class Feed {
 						
 						if (shouldAdd) {
 							
-							WishDAO wishDao = new WishDAO();
-							Wish wish = wishDao.getWish(wishId);
-							feedJsonObject.put("timestamp", wish.getTimeOfPost());
-							feedJsonObject.put("userFirst", JsonUtil.getUserJson(userFirst));
-							feedJsonObject.put("userSecond", JsonUtil.getUserJson(userSecond));
+							if( !hm.containsKey(feedItem.getWishId()) ) {
+					
 
-							feedJsonObject.put("wish", JsonUtil.getWishJson(wish));
-							feedJsonObject.put("type", 3);
-
-							try {
-								Session session = userDao.getSession(userFirst.getUserId());
-								if (session.getLocation() != null) {
-									feedJsonObject.put("latitude", session.getLocation().getLatitude());
-									feedJsonObject.put("longitude", session.getLocation().getLongitude());
+								WishDAO wishDao = new WishDAO();
+								Wish wish = wishDao.getWish(wishId);
+								feedJsonObject.put("timestamp", wish.getTimeOfPost());
+								feedJsonObject.put("userFirst", JsonUtil.getUserJson(userFirst));
+								
+								JSONArray jsonArray = new JSONArray();
+								jsonArray.put(JsonUtil.getUserJson(userSecond));
+								
+								feedJsonObject.put("users", jsonArray);
+	
+								feedJsonObject.put("wish", JsonUtil.getWishJson(wish));
+								feedJsonObject.put("type", 3);
+	
+								try {
+									Session session = userDao.getSession(userFirst.getUserId());
+									if (session.getLocation() != null) {
+										feedJsonObject.put("latitude", session.getLocation().getLatitude());
+										feedJsonObject.put("longitude", session.getLocation().getLongitude());
+									}
+								} catch (Exception e) {
+									e.printStackTrace();
 								}
-							} catch (Exception e) {
-								e.printStackTrace();
+	
+								feedItemJson.put(feedJsonObject);
+								hm.put(feedItem.getWishId(), feedItemJson.length()-1);
+							
 							}
-
-							feedItemJson.put(feedJsonObject);
+							
+							else {
+								JSONObject jsonObject;
+								jsonObject = feedItemJson.getJSONObject(feedItem.getWishId());
+								if( jsonObject != null & jsonObject.has("users") ) {
+									JSONArray jsonArray;
+									jsonArray = jsonObject.getJSONArray("users");
+									jsonArray.put(JsonUtil.getUserJson(userSecond));
+									total--;
+								}
+								
+							}
 						} else 
 							total--;
 					}

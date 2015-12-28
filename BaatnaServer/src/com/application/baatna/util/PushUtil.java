@@ -79,7 +79,7 @@ public class PushUtil {
 
 				//for (com.application.baatna.bean.Session user : users) {
 					// send push notif to all
-					ccsClient.send(GCM.createJsonMessage(Integer.toString(pushModel.getTo()), messageId, payload, null, timeToLive,
+					ccsClient.send(GCM.createJsonMessage(pushModel.getPushId(), messageId, payload, null, timeToLive,
 							delayWhileIdle));
 				//}
 				ccsClient.disconnect();

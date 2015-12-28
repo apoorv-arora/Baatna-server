@@ -286,8 +286,9 @@ public class BaatnaUser {
 	@POST
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
-	public JSONObject getNearbyUsers(@FormParam("client_id") String clientId, @FormParam("app_type") String appType,
-			@FormParam("access_token") String accessToken) {
+	public JSONObject getNearbyUsers(@FormParam("client_id") String clientId, 
+			@FormParam("app_type") String appType, @FormParam("access_token") String accessToken, 
+			@FormParam("latitude") double latitude, @FormParam("longitude") double longitude) {
 
 		// check for client_id
 		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
@@ -302,7 +303,7 @@ public class BaatnaUser {
 		int userId = dao.userActive(accessToken);
 		// create the user if the user does not exist.
 		if (userId > 0) {
-			ArrayList<com.application.baatna.bean.Session> nearbyUsers = dao.getNearbyUsers();
+			ArrayList<com.application.baatna.bean.Session> nearbyUsers = dao.getNearbyUsers(latitude, longitude);
 			JSONObject nearbyUsersJson = new JSONObject();
 			JSONArray userArr = new JSONArray();
 			try {

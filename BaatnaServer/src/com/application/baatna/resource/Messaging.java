@@ -215,7 +215,7 @@ public class Messaging {
 				WishDAO wishDao = new WishDAO();
 				Wish wish  = wishDao.getWish(wishId);
 
-				boolean value = wishDao.updateWishedNegotiation(userId, actionType, wishId, negAmount );
+				boolean value = wishDao.updateWishedNegotiation(actionType, wishId, negAmount );
 
 					// get all sessions of toUserId from sessions table
 					// create your own JSON object
