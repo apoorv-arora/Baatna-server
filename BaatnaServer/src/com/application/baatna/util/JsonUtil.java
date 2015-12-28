@@ -205,6 +205,7 @@ public class JsonUtil {
 		userWishJsonObject.put("rating", user.getRating());
 		userWishJsonObject.put("contact", user.getPhone());
 		userWishJsonObject2.put("wishId", wish.getWishId());
+		userWishJsonObject2.put("user_wish_id", wish.getUserId());
 		if (user.getUserName() == null || user.getUserName().equals("")) {
 
 			JSONObject data = null;
@@ -225,7 +226,7 @@ public class JsonUtil {
 			userWishJsonObject.put("user_name", name);
 		}
 		usersJson.put("user_details", userWishJsonObject);
-		userWishJson.put("user_wishid", userWishJsonObject2);
+		userWishJson.put("user_wish_details", userWishJsonObject2);
 		userWishJson.put("user",usersJson);
 		return userWishJson;
 	}

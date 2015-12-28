@@ -857,7 +857,7 @@ public class UserDAO {
 		return false;
 	}
 
-	public boolean setRatingForUser(int currentUser, int userId, double rating) {
+	public boolean setRatingForUser(int currentUser, int userId, double rating,int wishId,int userWishId) {
 		Session session = null;
 		boolean retVal = false;
 
@@ -866,7 +866,34 @@ public class UserDAO {
 			session = DBUtil.getSessionFactory().openSession();
 
 			Transaction transaction = session.beginTransaction();
+			
+			{
+				if(currentUser==userWishId)
+				{
+				String sql="UPDATE USERWISH SET U1RATEDU2= :rating WHERE USERID= :currentUser AND USER_TWO_ID= :userId AND WISHID= :wishId";
+				SQLQuery query = session.createSQLQuery(sql);
+				query.addEntity(UserWish.class);
+				query.setParameter("userId", userId);
+				query.setParameter("currentUser", currentUser);
+				query.setParameter("wishId",wishId);
+				query.setParameter("rating", rating);
+				
+				query.executeUpdate();
+				}
+				else if(userId==userWishId)
+				{
+					String sql="UPDATE USERWISH SET U2RATEDU1= :rating WHERE USERID= :userId AND USER_TWO_ID= :currentUser AND WISHID= :wishId";
+					SQLQuery query = session.createSQLQuery(sql);
+					query.addEntity(UserWish.class);
+					query.setParameter("userId", userId);
+					query.setParameter("currentUser", currentUser);
+					query.setParameter("wishId",wishId);
+					query.setParameter("rating", rating);
+					query.executeUpdate();	
+				}
+			}
 
+			{
 			String sql = "SELECT count(*) FROM USERRATING WHERE Reviewed= :userId AND Reviewer= :userIdtwo";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.setParameter("userId", userId);
@@ -893,6 +920,7 @@ public class UserDAO {
 					query2.executeUpdate();
 					retVal = true;
 				}
+			}
 			}
 			transaction.commit();
 			session.close();
@@ -1234,7 +1262,7 @@ public class UserDAO {
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(com.application.baatna.bean.UserWish.class);
 			query.setParameter("userId", userId);
-			query.setParameter("status", CommonLib.STATUS_FULLFILLED); 
+			query.setParameter("status", CommonLib.STATUS_ACCEPTED); 
 			
 			
 			java.util.List results= (java.util.List)query.list();
@@ -1282,7 +1310,7 @@ public class UserDAO {
 				SQLQuery query = session.createSQLQuery(sql);
 				query.addEntity(com.application.baatna.bean.UserWish.class);
 				query.setParameter("userId", userId);
-				query.setParameter("status", CommonLib.STATUS_FULLFILLED); 
+				query.setParameter("status", CommonLib.STATUS_ACCEPTED); 
 				
 				
 				java.util.List results= (java.util.List)query.list();

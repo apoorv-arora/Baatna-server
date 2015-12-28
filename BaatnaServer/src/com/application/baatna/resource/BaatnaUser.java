@@ -474,7 +474,7 @@ public class BaatnaUser {
 	@Consumes("application/x-www-form-urlencoded")
 	public JSONObject updateRating(@FormParam("client_id") String clientId, @FormParam("app_type") String appType,
 			@FormParam("access_token") String accessToken, @FormParam("userId") int userId,
-			@FormParam("rating") double rating) {
+			@FormParam("rating") double rating, @FormParam("wish_id") int wishId, @FormParam("user_wish_id") int userWishId) {
 
 		// null checks, invalid request
 		if (clientId == null || appType == null)
@@ -492,17 +492,17 @@ public class BaatnaUser {
 		int currentUserId = dao.userActive(accessToken);
 		if (currentUserId > 0 && userId > 0) {
 			boolean retValue = false;
-			boolean userCanRate = false;
-			userCanRate = dao.usersEverInteracted(currentUserId, userId);
-			if (userCanRate) {
-				retValue = dao.setRatingForUser(currentUserId, userId, rating);
+			//boolean userCanRate = false;
+			//userCanRate = dao.usersEverInteracted(currentUserId, userId);
+			//if (userCanRate) {
+				retValue = dao.setRatingForUser(currentUserId, userId,rating,wishId,userWishId);
 				if (retValue)
 					return CommonLib.getResponseString("success", "success", CommonLib.RESPONSE_SUCCESS);
 				else
 					return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_RATED_FAILURE);
-			} else {
-				return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_RATED_FAILURE);
-			}
+		//	} else {
+				//return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_RATED_FAILURE);
+			//}
 		}
 
 		return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_RATED_FAILURE);
