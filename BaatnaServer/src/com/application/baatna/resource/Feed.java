@@ -220,7 +220,7 @@ public class Feed {
 							
 							else {
 								JSONObject jsonObject;
-								jsonObject = feedItemJson.getJSONObject(feedItem.getWishId());
+								jsonObject = feedItemJson.getJSONObject(hm.get(feedItem.getWishId()));
 								if( jsonObject != null & jsonObject.has("users") ) {
 									JSONArray jsonArray;
 									jsonArray = jsonObject.getJSONArray("users");
