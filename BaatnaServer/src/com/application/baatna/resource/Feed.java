@@ -133,33 +133,36 @@ public class Feed {
 						if (shouldAdd) {
 							WishDAO wishDao = new WishDAO();
 							Wish wish = wishDao.getWish(wishId);
-
-							feedJsonObject.put("userFirst", JsonUtil.getUserJson(userFirst));
-							feedJsonObject.put("timestamp", wish.getTimeOfPost());
-							JSONObject wishJson = JsonUtil.getWishJson(wish);
 							
-							JSONArray userArr = new JSONArray();
-							List<User> acceptedUsers = wishDao.getWishedUsers(1, wishId);
-							for (User acceptedUser : acceptedUsers) {
-								userArr.put(JsonUtil.getUserJson(acceptedUser));
-							}
-							wishJson.getJSONObject("wish").put("accepted_users", userArr);
-							
-							
-							feedJsonObject.put("wish", wishJson);
-							feedJsonObject.put("type", 2);
-
-							try {
-								Session session = userDao.getSession(userIdFirst);
-								if (session.getLocation() != null) {
-									feedJsonObject.put("latitude", session.getLocation().getLatitude());
-									feedJsonObject.put("longitude", session.getLocation().getLongitude());
+							if(wish != null) {
+								feedJsonObject.put("userFirst", JsonUtil.getUserJson(userFirst));
+								feedJsonObject.put("timestamp", wish.getTimeOfPost());
+								JSONObject wishJson = JsonUtil.getWishJson(wish);
+								
+								JSONArray userArr = new JSONArray();
+								List<User> acceptedUsers = wishDao.getWishedUsers(1, wishId);
+								for (User acceptedUser : acceptedUsers) {
+									userArr.put(JsonUtil.getUserJson(acceptedUser));
 								}
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-
-							feedItemJson.put(feedJsonObject);
+								wishJson.getJSONObject("wish").put("accepted_users", userArr);
+								
+								
+								feedJsonObject.put("wish", wishJson);
+								feedJsonObject.put("type", 2);
+	
+								try {
+									Session session = userDao.getSession(userIdFirst);
+									if (session.getLocation() != null) {
+										feedJsonObject.put("latitude", session.getLocation().getLatitude());
+										feedJsonObject.put("longitude", session.getLocation().getLongitude());
+									}
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+	
+								feedItemJson.put(feedJsonObject);
+							} else
+								total--;
 						} else
 							total--;
 					} else if (type == 3) {
@@ -224,7 +227,6 @@ public class Feed {
 									jsonArray.put(JsonUtil.getUserJson(userSecond));
 									total--;
 								}
-								
 							}
 						} else 
 							total--;
