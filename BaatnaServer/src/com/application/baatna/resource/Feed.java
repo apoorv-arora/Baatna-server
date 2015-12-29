@@ -134,7 +134,7 @@ public class Feed {
 							WishDAO wishDao = new WishDAO();
 							Wish wish = wishDao.getWish(wishId);
 							
-							if(wish != null) {
+							if(wish != null && userFirst!=null) { //makeshift check
 								feedJsonObject.put("userFirst", JsonUtil.getUserJson(userFirst));
 								feedJsonObject.put("timestamp", wish.getTimeOfPost());
 								JSONObject wishJson = JsonUtil.getWishJson(wish);
