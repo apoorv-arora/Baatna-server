@@ -253,7 +253,7 @@ public class WishDAO {
 			// query.setParameter("status", CommonLib.STATUS_FULLFILLED);
 
 			java.util.List results = (java.util.List) query.list();
-
+				
 			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
 
 				wish = (Wish) iterator.next();
