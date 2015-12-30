@@ -417,70 +417,78 @@ public class WishDAO {
 			query.setParameter("wishId", wishId);
 
 			java.util.List results = (java.util.List) query.list();
-
-			wish = (Wish) results.get(0);
-
-			if (type == CommonLib.ACTION_ACCEPT_WISH) {
-
-				String sql3 = "INSERT INTO USERWISH (WISHID, USERID, WISH_STATUS, USER_TWO_ID) VALUES (:WISHID,:USERID,:WISH_STATUS,:USER_TWO_ID)";
-				SQLQuery query3 = session.createSQLQuery(sql3);
-				query3.setParameter("WISHID", wishId);
-				query3.setParameter("USERID", wish.getUserId());
-				query3.setParameter("WISH_STATUS", CommonLib.STATUS_ACCEPTED);
-				query3.setParameter("USER_TWO_ID", userId);
-
-				query3.executeUpdate();
-
-				String sql2 = "SELECT * FROM USER WHERE USERID = :userid";
-				SQLQuery query4 = session.createSQLQuery(sql2);
-				query4.addEntity(User.class);
-				query4.setParameter("userid", wish.getUserId());
-				java.util.List results4 = (java.util.List) query4.list();
-
-				User mUser = null;
-				for (Iterator iterator = ((java.util.List) results4).iterator(); iterator.hasNext();) {
-					mUser = (User) iterator.next();
-					break;
-				}
+			
+			if(results!=null && results.size()>0) //temporary makeshift check
+			{
+				wish = (Wish) results.get(0);
+					
+	
+				if (type == CommonLib.ACTION_ACCEPT_WISH) {
+	
+					String sql3 = "INSERT INTO USERWISH (WISHID, USERID, WISH_STATUS, USER_TWO_ID) VALUES (:WISHID,:USERID,:WISH_STATUS,:USER_TWO_ID)";
+					SQLQuery query3 = session.createSQLQuery(sql3);
+					query3.setParameter("WISHID", wishId);
+					query3.setParameter("USERID", wish.getUserId());
+					query3.setParameter("WISH_STATUS", CommonLib.STATUS_ACCEPTED);
+					query3.setParameter("USER_TWO_ID", userId);
+	
+					query3.executeUpdate();
+	
+					String sql2 = "SELECT * FROM USER WHERE USERID = :userid";
+					SQLQuery query4 = session.createSQLQuery(sql2);
+					query4.addEntity(User.class);
+					query4.setParameter("userid", wish.getUserId());
+					java.util.List results4 = (java.util.List) query4.list();
+	
+					User mUser = null;
+					for (Iterator iterator = ((java.util.List) results4).iterator(); iterator.hasNext();) {
+						mUser = (User) iterator.next();
+						break;
+					}
+					
+					String currentSqlQuery = "SELECT * FROM USER WHERE USERID = :userid";
+					SQLQuery currentQuery = session.createSQLQuery(currentSqlQuery);
+					currentQuery.addEntity(User.class);
+					currentQuery.setParameter("userid", userId);
+					java.util.List currentResults = (java.util.List) currentQuery.list();
+	
+					User currentUser = null;
+					for (Iterator iterator = ((java.util.List) currentResults).iterator(); iterator.hasNext();) {
+						currentUser = (User) iterator.next();
+						break;
+					}
+	
+					if (mUser != null && currentUser != null) {
+						EmailModel emailModel = new EmailModel();
+						emailModel.setFrom(CommonLib.BAPP_ID);
+						emailModel.setTo(mUser.getEmail());
+						emailModel.setSubject("There is a new response to your request for " + wish.getTitle());
+						emailModel.setContent("Hi " + CommonLib.getUserName(mUser) + "\n\n" + CommonLib.getUserName(currentUser) + " replied to your request for (a) " + wish.getTitle() + "!\n\nLet " + CommonLib.getUserName(currentUser) + " know if you're interested.\nHave you found what you're looking for?\n\nSee you around the neighbourhood.\n\nCheers\nBaatna Team");
+						EmailUtil.getInstance().sendEmail(emailModel);
+	
+					}
 				
-				String currentSqlQuery = "SELECT * FROM USER WHERE USERID = :userid";
-				SQLQuery currentQuery = session.createSQLQuery(currentSqlQuery);
-				currentQuery.addEntity(User.class);
-				currentQuery.setParameter("userid", userId);
-				java.util.List currentResults = (java.util.List) currentQuery.list();
-
-				User currentUser = null;
-				for (Iterator iterator = ((java.util.List) currentResults).iterator(); iterator.hasNext();) {
-					currentUser = (User) iterator.next();
-					break;
+				
+				} else if (type == CommonLib.ACTION_DECLINE_WISH) {
+	
+					String sql3 = "INSERT INTO USERWISH (WISHID, USERID, WISH_STATUS, USER_TWO_ID) VALUES (:WISHID,:USERID,:WISH_STATUS,:USER_TWO_ID);";
+					SQLQuery query3 = session.createSQLQuery(sql3);
+					query3.setParameter("WISHID", wishId);
+					query3.setParameter("USERID", wish.getUserId());
+					query3.setParameter("WISH_STATUS", CommonLib.STATUS_DELETED);
+					query3.setParameter("USER_TWO_ID", userId);
+	
+					query3.executeUpdate();
 				}
-
-				if (mUser != null && currentUser != null) {
-					EmailModel emailModel = new EmailModel();
-					emailModel.setFrom(CommonLib.BAPP_ID);
-					emailModel.setTo(mUser.getEmail());
-					emailModel.setSubject("There is a new response to your request for " + wish.getTitle());
-					emailModel.setContent("Hi " + CommonLib.getUserName(mUser) + "\n\n" + CommonLib.getUserName(currentUser) + " replied to your request for (a) " + wish.getTitle() + "!\n\nLet " + CommonLib.getUserName(currentUser) + " know if you're interested.\nHave you found what you're looking for?\n\nSee you around the neighbourhood.\n\nCheers\nBaatna Team");
-					EmailUtil.getInstance().sendEmail(emailModel);
-
-				}
-
-			} else if (type == CommonLib.ACTION_DECLINE_WISH) {
-
-				String sql3 = "INSERT INTO USERWISH (WISHID, USERID, WISH_STATUS, USER_TWO_ID) VALUES (:WISHID,:USERID,:WISH_STATUS,:USER_TWO_ID);";
-				SQLQuery query3 = session.createSQLQuery(sql3);
-				query3.setParameter("WISHID", wishId);
-				query3.setParameter("USERID", wish.getUserId());
-				query3.setParameter("WISH_STATUS", CommonLib.STATUS_DELETED);
-				query3.setParameter("USER_TWO_ID", userId);
-
-				query3.executeUpdate();
+	
+				transaction.commit();
+				session.close();
+				return true;
 			}
-
-			transaction.commit();
-			session.close();
-			return true;
-
+			else{
+				System.out.println("wish does not exist!!!");
+				return false;
+			}
 		} catch (HibernateException e) {
 			System.out.println(e.getMessage());
 			System.out.println("error");
