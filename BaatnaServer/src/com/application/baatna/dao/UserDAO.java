@@ -4,12 +4,15 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.apache.commons.collections.IteratorUtils;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -994,20 +997,73 @@ public class UserDAO {
 	public void setUserDayRating() {
 
 		Session session = null;
-		ArrayList<Double> ratings;
+		//ArrayList<Double> ratings;
 		double rating = 0;
-		UserRating userRating;
+		//UserRating userRating;
+		int userId;
+		double avg1;
+		double avg2;
+		//double final_avg;
 
 		try {
 			session = DBUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
 
-			ratings = new ArrayList<>();
-			userRating = new UserRating();
-			String sql = "SELECT er.Reviewed, ( Select avg(Rating) as AvgRating from UserRating ur where ur.Reviewed = er.Reviewed) from UserRating er";
+			//ratings = new ArrayList<>();
+			//userRating = new UserRating();
+			//String sql = "SELECT er.Reviewed, (Select avg(Rating) as AvgRating from UserRating ur where ur.Reviewed = er.Reviewed) temp from UserRating er";
+		    String sql="SELECT er.USERID,(SELECT avg(U2RATEDU1) AS AvgRating from USERWISH uw where uw.USERID=er.USERID and uw.Wish_Status=er.Wish_Status and uw.U2RATEDU1<>:b) avg1, (SELECT avg(U1RATEDU2) AS AvgRatingTwo from USERWISH aw WHERE aw.USER_TWO_ID=er.USERID and aw.Wish_Status=er.Wish_Status and aw.U1RATEDU2<>:a) avg2 from USERWISH er WHERE er.WISH_STATUS= :status";
 			SQLQuery query = session.createSQLQuery(sql);
-			java.util.List results = (java.util.List) query.list();
-			// int count = ((BigInteger) results.get(0)).intValue();
+			//query.addEntity(UserRating.class);
+			query.setParameter("a", 0);
+			query.setParameter("b", 0);
+			query.setParameter("status",CommonLib.STATUS_FULLFILLED);
+		    query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+			//java.util.List results = (java.util.List) query.list();
+			List results=query.list();
+			for(Object object:results)
+			{
+				Map row=(Map)object;
+				userId=(int)row.get("USERID");
+				if(row.get("avg1")!=null)
+				avg1=(double)row.get("avg1");
+				else
+					avg1=0;
+				if(row.get("avg2")!=null)
+				avg2=(double)row.get("avg2");
+				else
+					avg2=0;
+				if(avg1!=0 && avg2 !=0)
+				rating=(avg1+avg2)/2;
+				else
+					rating=Math.max(avg1, avg2);
+				if(rating!= 0){
+				String sql2="UPDATE USER SET RATING= :rating WHERE USERID= :userId";
+				SQLQuery query2=session.createSQLQuery(sql2);
+				query2.addEntity(User.class);
+				query2.setParameter("rating", rating);
+				query2.setParameter("userId", userId);
+				
+				query2.executeUpdate();
+				}
+				
+				
+			}
+			/*for(Object object:results)
+			{
+				Map row= (Map)object;
+				userId=(int)row.get("Reviewed");
+				rating=(double)row.get("temp");
+				String sql2="UPDATE USER SET RATING= :rating WHERE USERID= :userId";
+				SQLQuery query2=session.createSQLQuery(sql2);
+				query2.addEntity(User.class);
+				query2.setParameter("rating", rating);
+				query2.setParameter("userId", userId);
+				
+				query2.executeUpdate();
+				
+			}*/
+			//int count = ((BigInteger) results.get(0)).intValue();
 			// if (count != 0) {
 			// String sql3 = "UPDATE USER SET Rating= :rating WHERE USERID=
 			// :userId";
