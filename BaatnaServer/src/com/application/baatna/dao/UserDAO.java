@@ -902,7 +902,7 @@ public class UserDAO {
 				}
 			}
 
-			{
+			/*{
 			String sql = "SELECT count(*) FROM USERRATING WHERE Reviewed= :userId AND Reviewer= :userIdtwo";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.setParameter("userId", userId);
@@ -930,7 +930,7 @@ public class UserDAO {
 					retVal = true;
 				}
 			}
-			}
+			}*/
 			transaction.commit();
 			session.close();
 
@@ -947,7 +947,7 @@ public class UserDAO {
 
 	}
 
-	public boolean editRatingForUser(int userIdtwo, int userId, double rating) {
+	/*public boolean editRatingForUser(int userIdtwo, int userId, double rating) {
 		Session session = null;
 		boolean retVal = false;
 
@@ -992,34 +992,28 @@ public class UserDAO {
 		}
 		return retVal;
 
-	}
+	}*/
 
 	public void setUserDayRating() {
 
 		Session session = null;
-		//ArrayList<Double> ratings;
 		double rating = 0;
-		//UserRating userRating;
 		int userId;
 		double avg1;
 		double avg2;
-		//double final_avg;
 
 		try {
 			session = DBUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
 
-			//ratings = new ArrayList<>();
-			//userRating = new UserRating();
 			//String sql = "SELECT er.Reviewed, (Select avg(Rating) as AvgRating from UserRating ur where ur.Reviewed = er.Reviewed) temp from UserRating er";
 		    String sql="SELECT er.USERID,(SELECT avg(U2RATEDU1) AS AvgRating from USERWISH uw where uw.USERID=er.USERID and uw.Wish_Status=er.Wish_Status and uw.U2RATEDU1<>:b) avg1, (SELECT avg(U1RATEDU2) AS AvgRatingTwo from USERWISH aw WHERE aw.USER_TWO_ID=er.USERID and aw.Wish_Status=er.Wish_Status and aw.U1RATEDU2<>:a) avg2 from USERWISH er WHERE er.WISH_STATUS= :status";
 			SQLQuery query = session.createSQLQuery(sql);
-			//query.addEntity(UserRating.class);
 			query.setParameter("a", 0);
 			query.setParameter("b", 0);
 			query.setParameter("status",CommonLib.STATUS_FULLFILLED);
 		    query.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
-			//java.util.List results = (java.util.List) query.list();
+	
 			List results=query.list();
 			for(Object object:results)
 			{
@@ -1049,30 +1043,6 @@ public class UserDAO {
 				
 				
 			}
-			/*for(Object object:results)
-			{
-				Map row= (Map)object;
-				userId=(int)row.get("Reviewed");
-				rating=(double)row.get("temp");
-				String sql2="UPDATE USER SET RATING= :rating WHERE USERID= :userId";
-				SQLQuery query2=session.createSQLQuery(sql2);
-				query2.addEntity(User.class);
-				query2.setParameter("rating", rating);
-				query2.setParameter("userId", userId);
-				
-				query2.executeUpdate();
-				
-			}*/
-			//int count = ((BigInteger) results.get(0)).intValue();
-			// if (count != 0) {
-			// String sql3 = "UPDATE USER SET Rating= :rating WHERE USERID=
-			// :userId";
-			// SQLQuery query3 = session.createSQLQuery(sql3);
-			// query3.addEntity(User.class);
-			// query3.setParameter("rating", rating);
-			// query3.setParameter("userId", userId);
-			// int result4 = query3.executeUpdate();
-			// }
 			transaction.commit();
 			session.close();
 
