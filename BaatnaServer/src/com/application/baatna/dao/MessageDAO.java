@@ -1,35 +1,24 @@
 package com.application.baatna.dao;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
-import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
-import org.jivesoftware.smack.XMPPException;
 
 import com.application.baatna.bean.AllMessages;
 import com.application.baatna.bean.Message;
 import com.application.baatna.bean.User;
 import com.application.baatna.bean.UserCompactMessage;
-import com.application.baatna.bean.UserWish;
 import com.application.baatna.bean.Wish;
 import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.DBUtil;
-import com.application.baatna.util.GCM;
 import com.application.baatna.util.PushModel;
 import com.application.baatna.util.PushUtil;
-import com.mysql.jdbc.Messages;
 
 public class MessageDAO {
 
@@ -72,7 +61,7 @@ public class MessageDAO {
 		return message;
 	}
 
-	public void sendPushToNearbyUsers(JSONObject notification, int userId) {
+	public void sendPushToNearbyUsers(JSONObject notification, int userId, String type) {
 
 		UserDAO userDao = new UserDAO();
 		ArrayList<com.application.baatna.bean.Session> nearbyUsers = userDao.getNearbyUsers(userId);
@@ -82,7 +71,7 @@ public class MessageDAO {
 		pushModel.setNotification(notification);
 		for (com.application.baatna.bean.Session nearbyUser : nearbyUsers) {
 			pushModel.setPushId(nearbyUser.getPushId());
-			pushUtil.sendPush(pushModel);
+			pushUtil.sendPush(pushModel, type);
 		}
 		
 		
