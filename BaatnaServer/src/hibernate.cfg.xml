@@ -22,6 +22,5 @@
 		<mapping resource="com/application/baatna/bean/newsfeed.hbm.xml" />
 		<mapping resource="com/application/baatna/bean/userwish.hbm.xml" />
 		<mapping resource="com/application/baatna/bean/coupon.hbm.xml" />
-		<mapping resource="com/application/baatna/bean/userrating.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>

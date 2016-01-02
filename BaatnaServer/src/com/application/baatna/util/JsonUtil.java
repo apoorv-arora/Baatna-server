@@ -197,16 +197,11 @@ public class JsonUtil {
 		JSONObject userWishJson= new JSONObject();
 		
 		userWishJsonObject.put("user_id", user.getUserId());
-		userWishJsonObject.put("is_verified", user.getIsVerified());
 		userWishJsonObject.put("email", user.getEmail());
-		userWishJsonObject.put("phone", user.getPhone());
 		userWishJsonObject.put("profile_pic", user.getProfilePic());
 		userWishJsonObject.put("fbId", user.getFacebookId());
-		userWishJsonObject.put("bio", user.getBio());
 		userWishJsonObject.put("rating", user.getRating());
-		userWishJsonObject.put("contact", user.getPhone());
-		userWishJsonObject2.put("wishId", wish.getWishId());
-		userWishJsonObject2.put("user_wish_id", wish.getUserId());
+		userWishJsonObject2.put("wish", getWishJson(wish));
 		if (user.getUserName() == null || user.getUserName().equals("")) {
 
 			JSONObject data = null;
@@ -227,7 +222,7 @@ public class JsonUtil {
 			userWishJsonObject.put("user_name", name);
 		}
 		usersJson.put("user_details", userWishJsonObject);
-		userWishJson.put("user_wish_details", userWishJsonObject2);
+		userWishJson.put("wish_details", userWishJsonObject2);
 		userWishJson.put("user",usersJson);
 		return userWishJson;
 	}
