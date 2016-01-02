@@ -11,10 +11,18 @@
 		<property column="MESSAGE" name="message" type="java.lang.String" />
 		<property column="STATUS" name="status" type="java.lang.Boolean" />
 		<property column="TIME_OF_MESSAGE" name="timeOfMessage" type="java.lang.String" />
-		<property column="WISHID" name="wishId" type="java.lang.Integer" />
-		<property column="FROMUSERID" name="fromUserId" type="java.lang.Integer" />
-		<property column="TOUSERID" name="toUserId" type="java.lang.Integer" />
-		<property column="STATUSFLAG" name="statusFlag" type="java.lang.Integer" />
+		<property name="wishId" type="java.lang.Integer">
+			<column name="WISHID" not-null="true" default="0" />
+		</property>
+		<property name="fromUserId" type="java.lang.Integer">
+			<column name="FROMUSERID" not-null="true" default="0" />
+		</property>
+		<property name="toUserId" type="java.lang.Integer">
+			<column name="TOUSERID" not-null="true" default="0" />
+		</property>
+		<property name="statusFlag" type="java.lang.Integer">
+			<column name="STATUSFLAG" not-null="true" default="0" />
+		</property>
 
 	</class>
 </hibernate-mapping>

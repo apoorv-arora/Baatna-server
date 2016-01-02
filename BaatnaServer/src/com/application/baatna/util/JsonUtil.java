@@ -188,5 +188,48 @@ public class JsonUtil {
 		couponJson.put("coupon", couponJsonObject);
 		return couponJson;
 	}
+	
+	public static JSONObject getUserWishJson(User user,Wish wish) throws JSONException
+	{
+		JSONObject userWishJsonObject= new JSONObject();
+		JSONObject userWishJsonObject2= new JSONObject();
+		JSONObject usersJson= new JSONObject();
+		JSONObject userWishJson= new JSONObject();
+		
+		userWishJsonObject.put("user_id", user.getUserId());
+		userWishJsonObject.put("is_verified", user.getIsVerified());
+		userWishJsonObject.put("email", user.getEmail());
+		userWishJsonObject.put("phone", user.getPhone());
+		userWishJsonObject.put("profile_pic", user.getProfilePic());
+		userWishJsonObject.put("fbId", user.getFacebookId());
+		userWishJsonObject.put("bio", user.getBio());
+		userWishJsonObject.put("rating", user.getRating());
+		userWishJsonObject.put("contact", user.getPhone());
+		userWishJsonObject2.put("wishId", wish.getWishId());
+		userWishJsonObject2.put("user_wish_id", wish.getUserId());
+		if (user.getUserName() == null || user.getUserName().equals("")) {
+
+			JSONObject data = null;
+			try {
+				data = new JSONObject(user.getFacebookData());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			if (data != null && data.has("name")) {
+				String name = String.valueOf(data.get("name"));
+				name = name.split(" ")[0];
+				userWishJsonObject.put("user_name", name);
+			}
+		} else {
+			String name = user.getUserName();
+			name = name.split(" ")[0];
+			userWishJsonObject.put("user_name", name);
+		}
+		usersJson.put("user_details", userWishJsonObject);
+		userWishJson.put("user_wish_details", userWishJsonObject2);
+		userWishJson.put("user",usersJson);
+		return userWishJson;
+	}
 
 }

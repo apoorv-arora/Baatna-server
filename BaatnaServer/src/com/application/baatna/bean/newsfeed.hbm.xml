@@ -7,11 +7,21 @@
 		<id column="FEEDID" name="feedId" type="java.lang.Integer">
 			<generator class="native" />
 		</id>
-		<property column="TYPE" name="type" type="java.lang.Integer" />
-		<property column="TIMESTAMP" name="timestamp" type="java.lang.Long" />
-		<property column="USER_ID_FIRST" name="userIdFirst" type="java.lang.Integer" />
-		<property column="USER_ID_SECOND" name="userIdSecond" type="java.lang.Integer" />
-		<property column="WISHID" name="wishId" type="java.lang.Integer" />
+		<property name="type" type="java.lang.Integer">
+ 		<column name="TYPE" not-null="true" default="0" />  
+ 		</property>
+		<property name="timestamp" type="java.lang.Long">
+ 		<column name="TIMESTAMP" not-null="true" default="0" />  
+ 		</property>
+		<property name="userIdFirst" type="java.lang.Integer">
+ 		<column name="USER_ID_FIRST" not-null="true" default="0" />  
+ 		</property>
+		<property name="userIdSecond" type="java.lang.Integer">
+ 		<column name="USER_ID_SECOND" not-null="true" default="0" />  
+ 		</property>
+	    <property name="wishId" type="java.lang.Integer">
+ 		<column name="WISHID" not-null="true" default="0" />  
+ 		</property>
 		
 	</class>
 </hibernate-mapping>

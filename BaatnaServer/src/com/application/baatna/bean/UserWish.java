@@ -12,10 +12,30 @@ public class UserWish implements Serializable {
 	private int userTwoId; // accepting or declining user
 	private boolean negotiationStatus;
 	private int negotiationAmount;
+	private double u1ratedu2;
+	private double u2ratedu1;
 //	private String couponId;
+
+	
 
 	public int getSerial() {
 		return serial;
+	}
+
+	public double getU1ratedu2() {
+		return u1ratedu2;
+	}
+
+	public void setU1ratedu2(double u1ratedu2) {
+		this.u1ratedu2 = u1ratedu2;
+	}
+
+	public double getU2ratedu1() {
+		return u2ratedu1;
+	}
+
+	public void setU2ratedu1(double u2ratedu1) {
+		this.u2ratedu1 = u2ratedu1;
 	}
 
 	public void setSerial(int serial) {
