@@ -1293,7 +1293,7 @@ public class UserDAO {
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(com.application.baatna.bean.UserWish.class);
 			query.setParameter("userId", userId);
-			query.setParameter("status", CommonLib.STATUS_ACCEPTED); 
+			query.setParameter("status", CommonLib.STATUS_FULLFILLED); 
 			
 			
 			java.util.List results= (java.util.List)query.list();
@@ -1341,7 +1341,7 @@ public class UserDAO {
 				SQLQuery query = session.createSQLQuery(sql);
 				query.addEntity(com.application.baatna.bean.UserWish.class);
 				query.setParameter("userId", userId);
-				query.setParameter("status", CommonLib.STATUS_ACCEPTED); 
+				query.setParameter("status", CommonLib.STATUS_FULLFILLED); 
 				
 				
 				java.util.List results= (java.util.List)query.list();
