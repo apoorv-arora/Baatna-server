@@ -26,6 +26,7 @@ import com.application.baatna.util.DBUtil;
 import com.application.baatna.util.JsonUtil;
 import com.application.baatna.util.PushModel;
 import com.application.baatna.util.PushUtil;
+import com.application.baatna.util.facebook.Friends;
 
 public class UserDAO {
 
@@ -734,22 +735,46 @@ public class UserDAO {
 		ArrayList<com.application.baatna.bean.Session> users = null;
 
 		Session session = null;
+		User user;
+		boolean shouldAdd= false;
+		UserDAO dao= new UserDAO();
+		User currentUser= new User();
+		currentUser=dao.getUserDetails(userId);
 		try {
 
 			session = DBUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
 			users = new ArrayList<com.application.baatna.bean.Session>();
 
-			String sql = "SELECT * FROM SESSION WHERE USERID <> :user_id LIMIT 900";
+			user= new User();
+			
+			
+			com.application.baatna.bean.Session userSession = dao.getAllSessions(userId).get(0);
+			String sql = "Select * from SESSION order by"
+					+"3956 * 2 * ASIN(SQRT(POWER(SIN((:latitude - SESSION.LATITUDE) * pi()/180 / 2), 2) + COS(:latitude * pi()/180) * COS(SESSION.LATITUDE * pi()/180) * POWER(SIN((longitude - SESSION.LONGITUDE) * pi()/180 / 2), 2)))"
+					+"limit 500";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(com.application.baatna.bean.Session.class);
 			query.setParameter("user_id", userId);
+			query.setParameter("latitude",userSession.getLocation().getLatitude());
+			query.setParameter("longitude", userSession.getLocation().getLongitude());
 			java.util.List results2 = (java.util.List) query.list();
 
+			
 			for (Iterator iterator = ((java.util.List) results2).iterator(); iterator.hasNext();) {
 				com.application.baatna.bean.Session currentSesion = (com.application.baatna.bean.Session) iterator
 						.next();
-				users.add(currentSesion);
+				user=(User)iterator.next();
+				if( CommonLib.isFacebookCheckValid ) {
+					shouldAdd = Friends.isFriendOnFacebook(user.getFacebookId(),
+							currentUser.getFacebookId(), user.getFacebookToken());
+				}
+				if (shouldAdd)
+				{
+					users.add(currentSesion);
+				}
+				
+//				users.add(currentSesion);
 			}
 
 			transaction.commit();
