@@ -88,7 +88,7 @@ public class Messaging {
 
 				Runnable runnable = new Runnable() {
 					public void run() {
-						messageDao.sendPushToNearbyUsers(messageJson, toUser.getUserId());						
+						messageDao.sendPushToNearbyUsers(messageJson, toUser.getUserId(), "message");						
 					}
 				};
 				Thread thread = new Thread(runnable);

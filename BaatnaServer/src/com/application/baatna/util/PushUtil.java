@@ -10,7 +10,6 @@ import org.jivesoftware.smack.XMPPException;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-
 /**
  * Singleton class for sending push notifications.
  */
@@ -20,10 +19,11 @@ public class PushUtil {
 	private static volatile PushUtil sInstance;
 	private static ExecutorService executorService;
 	private static Future<?> runnableFuture;
+
 	/**
 	 * Empty constructor to prevent multiple objects in memory
 	 */
-	private PushUtil(){
+	private PushUtil() {
 	}
 
 	/**
@@ -42,9 +42,9 @@ public class PushUtil {
 		return sInstance;
 	}
 
-	public void sendPush(final PushModel pushModel) {
+	public void sendPush(final PushModel pushModel, String type) {
 
-			Runnable runnable = new Runnable() {
+		Runnable runnable = new Runnable() {
 			public void run() {
 
 				GCM ccsClient = new GCM();
@@ -60,7 +60,7 @@ public class PushUtil {
 				Map<String, String> payload = new HashMap<String, String>();
 				payload.put("command", "something");
 				payload.put("Notification", String.valueOf(pushModel.getNotification()));
-				payload.put("type", "wish");
+				payload.put("type", type);
 
 				JSONObject object = new JSONObject();
 				try {
@@ -68,7 +68,8 @@ public class PushUtil {
 					object.put("actionId", "id");
 					object.put("additionalParam", "value");
 				} catch (JSONException exp) {
-					// String error = LogMessages.FETCH_ERROR + exp.getMessage();
+					// String error = LogMessages.FETCH_ERROR +
+					// exp.getMessage();
 					// logger.log(Level.INFO, error);
 					exp.printStackTrace();
 				}
@@ -77,17 +78,17 @@ public class PushUtil {
 				Long timeToLive = 10000L;
 				Boolean delayWhileIdle = false;
 
-				//for (com.application.baatna.bean.Session user : users) {
-					// send push notif to all
-					ccsClient.send(GCM.createJsonMessage(pushModel.getPushId(), messageId, payload, null, timeToLive,
-							delayWhileIdle));
-				//}
+				// for (com.application.baatna.bean.Session user : users) {
+				// send push notif to all
+				ccsClient.send(GCM.createJsonMessage(pushModel.getPushId(), messageId, payload, null, timeToLive,
+						delayWhileIdle));
+				// }
 				ccsClient.disconnect();
 			}
 		};
-		//Thread newThread = new Thread(runnable);
-		//newThread.start();
+		// Thread newThread = new Thread(runnable);
+		// newThread.start();
 		runnableFuture = executorService.submit(runnable);
 	}
-	
+
 }

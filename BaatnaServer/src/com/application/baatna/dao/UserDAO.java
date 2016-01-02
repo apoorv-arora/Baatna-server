@@ -1189,7 +1189,7 @@ public class UserDAO {
 			for (com.application.baatna.bean.Session user : users) {
 				// send push notif to all
 				pushModel.setPushId(user.getPushId());
-				pushUtil.sendPush(pushModel);
+				pushUtil.sendPush(pushModel, "wish");
 			}
 
 			
