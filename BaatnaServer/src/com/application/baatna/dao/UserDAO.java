@@ -1384,4 +1384,71 @@ public class UserDAO {
 		return usersJson;
 	
 }
-}
+	public boolean addUserToBlockedList(int blockingUserId, int userId) {
+				Session session= null;
+				boolean retVal=false;
+				try
+				{
+					session = DBUtil.getSessionFactory().openSession();
+		
+					Transaction transaction = session.beginTransaction();
+					
+					String sql = "INSERT INTO BLOCKING(BLOCKING_USERID,BLOCKED_USERID) VALUES(:blockingUserId,:userId)";
+					SQLQuery query=session.createSQLQuery(sql);
+					query.addEntity(com.application.baatna.bean.Blocking.class);
+					query.setParameter("userId", userId);
+					query.setParameter("blockingUserId",blockingUserId);
+		
+					query.executeUpdate();
+					retVal=true;
+					transaction.commit();
+					session.close();
+				}catch(HibernateException e)
+				{
+					System.out.println(e.getMessage());
+					System.out.println("error");
+					e.printStackTrace();
+				}finally{
+					if(session!=null && session.isOpen())
+						session.close();
+				}
+				return retVal;
+				
+			}
+		
+			public boolean isUserBlocked(int userId,int blockerId) {
+				Session session= null;
+				boolean retVal=false;
+				try
+				{
+					session = DBUtil.getSessionFactory().openSession();
+		
+					Transaction transaction = session.beginTransaction();
+					String sql = "SELECT count(*) FROM BLOCKING WHERE BLOCKING_USERID= :blockerId AND BLOCKED_USERID= :userId ";
+					SQLQuery query=session.createSQLQuery(sql);
+					//query.addEntity(com.application.baatna.bean.Blocking.class);
+					query.setParameter("userId", userId);
+					query.setParameter("blockerId",blockerId);
+		
+					java.util.List results= (java.util.List)query.list();
+					//query.executeUpdate();
+					if(results.get(0) instanceof BigInteger){
+						int count= ((BigInteger)results.get(0)).intValue();
+					if(count!=0)
+						retVal=true;
+					}
+					transaction.commit();
+					session.close();
+				}catch(HibernateException e)
+				{
+					System.out.println(e.getMessage());
+					System.out.println("error");
+					e.printStackTrace();
+				}finally{
+					if(session!=null && session.isOpen())
+						session.close();
+				}
+				return retVal;
+			}
+		}
+		 

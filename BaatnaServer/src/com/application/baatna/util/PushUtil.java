@@ -42,7 +42,7 @@ public class PushUtil {
 		return sInstance;
 	}
 
-	public void sendPush(final PushModel pushModel, String type) {
+	public void sendPush(final PushModel pushModel, final String type) {
 
 		Runnable runnable = new Runnable() {
 			public void run() {

@@ -352,6 +352,7 @@ public class WishDAO {
 
 		for (com.application.baatna.bean.Session nearbyUser : nearbyUsers) {
 			// send push notif to all
+			if(!userDao.isUserBlocked(nearbyUser.getUserId(),userId) && !userDao.isUserBlocked(userId, nearbyUser.getUserId()))
 			ccsClient.send(GCM.createJsonMessage(nearbyUser.getPushId(), messageId, payload, null, timeToLive,
 					delayWhileIdle));
 		}

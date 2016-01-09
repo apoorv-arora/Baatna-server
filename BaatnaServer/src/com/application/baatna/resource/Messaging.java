@@ -58,7 +58,7 @@ public class Messaging {
 		if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
 			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_APP_TYPE);
 
-		UserDAO userDao = new UserDAO();
+		final UserDAO userDao = new UserDAO();
 		WishDAO wishDao = new WishDAO();
 		// access token validity
 		int userId = userDao.userActive(accessToken);
@@ -71,7 +71,7 @@ public class Messaging {
 
 			if (messageObj != null) {
 
-				User fromUser = userDao.getUserDetails(messageObj.getFromUserId());
+				final User fromUser = userDao.getUserDetails(messageObj.getFromUserId());
 				final User toUser = userDao.getUserDetails(messageObj.getToUserId());
 				Wish wish = wishDao.getWish(messageObj.getWishId());
 				final JSONObject messageJson = new JSONObject();
