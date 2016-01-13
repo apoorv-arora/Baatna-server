@@ -18,7 +18,7 @@ public class CommonLib {
 	public static final String ANDROID_APP_TYPE = "bt_android";
 	public static String SERVER_WITHOUT_VERSION = "http://52.74.254.28:8080/BaatnaServer/rest/";
 
-	public static final String ANDROID_APP_VERSION = "1.21";
+	public static final String ANDROID_APP_VERSION = "1.22";
 	
 	public static final int RESPONSE_FAILURE = 200;
 	public static final int RESPONSE_SUCCESS = 201;
