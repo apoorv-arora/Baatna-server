@@ -1,8 +1,5 @@
 package com.application.baatna.resource;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -13,12 +10,8 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import com.application.baatna.bean.Coupon;
-import com.application.baatna.bean.User;
-import com.application.baatna.dao.RedeemDao;
 import com.application.baatna.dao.UserDAO;
 import com.application.baatna.util.CommonLib;
-import com.application.baatna.util.JsonUtil;
 
 @Path("/appConfig")
 public class AppConfig {

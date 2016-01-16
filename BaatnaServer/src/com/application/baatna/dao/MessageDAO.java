@@ -172,6 +172,7 @@ public class MessageDAO {
 		try {
 			session = DBUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
+			UserDAO dao= new UserDAO();
 
 			{
 				//not the wish of the current user
@@ -192,12 +193,13 @@ public class MessageDAO {
 					java.util.List results2 = (java.util.List) query2.list();
 					for (Iterator iterator2 = ((java.util.List) results2).iterator(); iterator2.hasNext();) {
 						User acceptedUser = (User) iterator2.next();
+						if(!dao.isUserBlocked(userId, acceptedUser.getUserId()) && !dao.isUserBlocked(acceptedUser.getUserId(), userId)){
 						UserCompactMessage compatMessage = new UserCompactMessage();
 						compatMessage.setUser(acceptedUser);
 						compatMessage.setWish(currentWish);
 						compatMessage.setType(CommonLib.WISH_ACCEPTED_CURRENT_USER);
 						compatMessage.setTimestamp(currentWish.getTimeOfPost());
-						acceptedUsers.add(compatMessage);
+						acceptedUsers.add(compatMessage);}
 					}
 				}
 			}
@@ -218,14 +220,16 @@ public class MessageDAO {
 					query2.setParameter("wishId", currentWish.getWishId());
 					query2.setParameter("status_active", CommonLib.STATUS_ACTIVE);
 					java.util.List results2 = (java.util.List) query2.list();
+					
 					for (Iterator iterator2 = ((java.util.List) results2).iterator(); iterator2.hasNext();) {
 						User acceptedUser = (User) iterator2.next();
+						if(!dao.isUserBlocked(userId, acceptedUser.getUserId()) && !dao.isUserBlocked(acceptedUser.getUserId(), userId)){
 						UserCompactMessage compatMessage = new UserCompactMessage();
 						compatMessage.setUser(acceptedUser);
 						compatMessage.setWish(currentWish);
 						compatMessage.setType(CommonLib.CURRENT_USER_WISH_ACCEPTED);
 						compatMessage.setTimestamp(currentWish.getTimeOfPost());
-						acceptedUsers.add(compatMessage);
+						acceptedUsers.add(compatMessage);}
 					}
 				}
 

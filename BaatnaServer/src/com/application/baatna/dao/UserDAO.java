@@ -26,6 +26,7 @@ import com.application.baatna.util.DBUtil;
 import com.application.baatna.util.JsonUtil;
 import com.application.baatna.util.PushModel;
 import com.application.baatna.util.PushUtil;
+import com.application.baatna.util.facebook.Friends;
 
 public class UserDAO {
 
@@ -734,22 +735,46 @@ public class UserDAO {
 		ArrayList<com.application.baatna.bean.Session> users = null;
 
 		Session session = null;
+		User user;
+		boolean shouldAdd= false;
+		UserDAO dao= new UserDAO();
+		User currentUser= new User();
+		currentUser=dao.getUserDetails(userId);
 		try {
 
 			session = DBUtil.getSessionFactory().openSession();
 			Transaction transaction = session.beginTransaction();
 			users = new ArrayList<com.application.baatna.bean.Session>();
 
-			String sql = "SELECT * FROM SESSION WHERE USERID <> :user_id LIMIT 900";
+			user= new User();
+			
+			
+			com.application.baatna.bean.Session userSession = dao.getAllSessions(userId).get(0);
+			String sql = "Select * from SESSION order by"
+					+"3956 * 2 * ASIN(SQRT(POWER(SIN((:latitude - SESSION.LATITUDE) * pi()/180 / 2), 2) + COS(:latitude * pi()/180) * COS(SESSION.LATITUDE * pi()/180) * POWER(SIN((longitude - SESSION.LONGITUDE) * pi()/180 / 2), 2)))"
+					+"limit 500";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(com.application.baatna.bean.Session.class);
 			query.setParameter("user_id", userId);
+			query.setParameter("latitude",userSession.getLocation().getLatitude());
+			query.setParameter("longitude", userSession.getLocation().getLongitude());
 			java.util.List results2 = (java.util.List) query.list();
 
+			
 			for (Iterator iterator = ((java.util.List) results2).iterator(); iterator.hasNext();) {
 				com.application.baatna.bean.Session currentSesion = (com.application.baatna.bean.Session) iterator
 						.next();
-				users.add(currentSesion);
+				user=(User)iterator.next();
+				if( CommonLib.isFacebookCheckValid ) {
+					shouldAdd = Friends.isFriendOnFacebook(user.getFacebookId(),
+							currentUser.getFacebookId(), user.getFacebookToken());
+				}
+				if (shouldAdd)
+				{
+					users.add(currentSesion);
+				}
+				
+//				users.add(currentSesion);
 			}
 
 			transaction.commit();
@@ -1251,11 +1276,12 @@ public class UserDAO {
 			Transaction transaction = session.beginTransaction();
 			
 			{
-			String sql = "SELECT * FROM USERWISH WHERE USERID=:userId AND WISH_STATUS= :status";
+			String sql = "SELECT * FROM USERWISH WHERE USERID=:userId AND WISH_STATUS= :status AND U1RATEDU2= :zero_rating";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(com.application.baatna.bean.UserWish.class);
 			query.setParameter("userId", userId);
 			query.setParameter("status", CommonLib.STATUS_FULLFILLED); 
+			query.setParameter("zero_rating", 0);
 			
 			
 			java.util.List results= (java.util.List)query.list();
@@ -1299,11 +1325,12 @@ public class UserDAO {
 			}
 			}
 			{
-				String sql = "SELECT * FROM USERWISH WHERE USER_TWO_ID=:userId AND WISH_STATUS= :status";
+				String sql = "SELECT * FROM USERWISH WHERE USER_TWO_ID=:userId AND WISH_STATUS= :status AND U2RATEDU1= :zero_rating";
 				SQLQuery query = session.createSQLQuery(sql);
 				query.addEntity(com.application.baatna.bean.UserWish.class);
 				query.setParameter("userId", userId);
 				query.setParameter("status", CommonLib.STATUS_FULLFILLED); 
+				query.setParameter("zero_rating", 0);
 				
 				
 				java.util.List results= (java.util.List)query.list();
@@ -1359,4 +1386,71 @@ public class UserDAO {
 		return usersJson;
 	
 }
-}
+	public boolean addUserToBlockedList(int blockingUserId, int userId) {
+				Session session= null;
+				boolean retVal=false;
+				try
+				{
+					session = DBUtil.getSessionFactory().openSession();
+		
+					Transaction transaction = session.beginTransaction();
+					
+					String sql = "INSERT INTO BLOCKING(BLOCKING_USERID,BLOCKED_USERID) VALUES(:blockingUserId,:userId)";
+					SQLQuery query=session.createSQLQuery(sql);
+					query.addEntity(com.application.baatna.bean.Blocking.class);
+					query.setParameter("userId", userId);
+					query.setParameter("blockingUserId",blockingUserId);
+		
+					query.executeUpdate();
+					retVal=true;
+					transaction.commit();
+					session.close();
+				}catch(HibernateException e)
+				{
+					System.out.println(e.getMessage());
+					System.out.println("error");
+					e.printStackTrace();
+				}finally{
+					if(session!=null && session.isOpen())
+						session.close();
+				}
+				return retVal;
+				
+			}
+		
+			public boolean isUserBlocked(int userId,int blockerId) {
+				Session session= null;
+				boolean retVal=false;
+				try
+				{
+					session = DBUtil.getSessionFactory().openSession();
+		
+					Transaction transaction = session.beginTransaction();
+					String sql = "SELECT count(*) FROM BLOCKING WHERE BLOCKING_USERID= :blockerId AND BLOCKED_USERID= :userId ";
+					SQLQuery query=session.createSQLQuery(sql);
+					//query.addEntity(com.application.baatna.bean.Blocking.class);
+					query.setParameter("userId", userId);
+					query.setParameter("blockerId",blockerId);
+		
+					java.util.List results= (java.util.List)query.list();
+					//query.executeUpdate();
+					if(results.get(0) instanceof BigInteger){
+						int count= ((BigInteger)results.get(0)).intValue();
+					if(count!=0)
+						retVal=true;
+					}
+					transaction.commit();
+					session.close();
+				}catch(HibernateException e)
+				{
+					System.out.println(e.getMessage());
+					System.out.println("error");
+					e.printStackTrace();
+				}finally{
+					if(session!=null && session.isOpen())
+						session.close();
+				}
+				return retVal;
+			}
+		}
+		 
