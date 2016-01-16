@@ -26,7 +26,7 @@ import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.JsonUtil;
 
 @Path("/wish")
-public class WishPost {
+public class WishPost extends BaseResource {
 
 	/**
 	 * Create a new wish
@@ -340,8 +340,9 @@ public class WishPost {
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				if(actionType == 1)
+				if(actionType == 1){
 					wishdao.sendPushToUsers(messageJson, currentWish.getUserId());
+				}
 				return CommonLib.getResponseString(String.valueOf(wishId),
 						"success", CommonLib.RESPONSE_SUCCESS);
 			}

@@ -35,6 +35,7 @@ import com.application.baatna.dao.WishDAO;
 import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.CryptoHelper;
 import com.application.baatna.util.JsonUtil;
+//import com.application.baatna.util.BaatnaExceptionHandler;
 //import com.application.baatna.util.mailer.DOCTYPE;
 import com.application.baatna.util.mailer.EmailModel;
 import com.application.baatna.util.mailer.EmailUtil;
@@ -42,7 +43,7 @@ import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
 @Path("/user")
-public class BaatnaUser {
+public class BaatnaUser extends BaseResource{
 
 	@Path("/signup")
 	@POST
@@ -550,6 +551,7 @@ public class BaatnaUser {
 				CommonLib.RESPONSE_RATED_FAILURE);
 
 	}
+	
 
 	@Path("/block")
 	@POST
@@ -590,4 +592,16 @@ public class BaatnaUser {
 		else
 		return CommonLib.getResponseString("failure", "user does not exist", CommonLib.RESPONSE_FAILURE);
 }
+
+	
+	//temporary test path
+		@Path("/exception")
+		@POST
+		@Produces("application/json")
+		@Consumes("application/x-www-form-urlencoded")
+		public JSONObject genException(@FormParam("abc") int abc) {
+			
+			throw new NullPointerException(); 
+		}
+	
 }

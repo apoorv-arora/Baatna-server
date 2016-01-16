@@ -29,7 +29,7 @@ import com.application.baatna.util.JsonUtil;
 import com.application.baatna.util.facebook.Friends;
 
 @Path("/newsfeed")
-public class Feed {
+public class Feed extends BaseResource {
 
 	@Path("/get")
 	@POST

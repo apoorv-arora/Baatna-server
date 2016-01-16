@@ -31,7 +31,7 @@ import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.JsonUtil;
 
 @Path("/messaging")
-public class Messaging {
+public class Messaging extends BaseResource {
 
 	final String GOOGLE_SERVER_KEY = "google";
 

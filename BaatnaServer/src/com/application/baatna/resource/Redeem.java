@@ -22,7 +22,7 @@ import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.JsonUtil;
 
 @Path("/redeem")
-public class Redeem {
+public class Redeem extends BaseResource {
 
 	/**
 	 * Create a new wish

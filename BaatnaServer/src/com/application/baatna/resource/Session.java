@@ -25,7 +25,7 @@ import com.application.baatna.util.mailer.EmailModel;
 import com.application.baatna.util.mailer.EmailUtil;
 
 @Path("/auth")
-public class Session {
+public class Session extends BaseResource {
 
 	/**
 	 * Login Api call.

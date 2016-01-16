@@ -14,7 +14,7 @@ import com.application.baatna.dao.UserDAO;
 import com.application.baatna.util.CommonLib;
 
 @Path("/appConfig")
-public class AppConfig {
+public class AppConfig extends BaseResource {
 
 	@Path("/version")
 	@POST
