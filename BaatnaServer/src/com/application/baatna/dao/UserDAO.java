@@ -1276,11 +1276,12 @@ public class UserDAO {
 			Transaction transaction = session.beginTransaction();
 			
 			{
-			String sql = "SELECT * FROM USERWISH WHERE USERID=:userId AND WISH_STATUS= :status";
+			String sql = "SELECT * FROM USERWISH WHERE USERID=:userId AND WISH_STATUS= :status AND U1RATEDU2= :zero_rating";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(com.application.baatna.bean.UserWish.class);
 			query.setParameter("userId", userId);
 			query.setParameter("status", CommonLib.STATUS_FULLFILLED); 
+			query.setParameter("zero_rating", 0);
 			
 			
 			java.util.List results= (java.util.List)query.list();
@@ -1324,11 +1325,12 @@ public class UserDAO {
 			}
 			}
 			{
-				String sql = "SELECT * FROM USERWISH WHERE USER_TWO_ID=:userId AND WISH_STATUS= :status";
+				String sql = "SELECT * FROM USERWISH WHERE USER_TWO_ID=:userId AND WISH_STATUS= :status AND U2RATEDU1= :zero_rating";
 				SQLQuery query = session.createSQLQuery(sql);
 				query.addEntity(com.application.baatna.bean.UserWish.class);
 				query.setParameter("userId", userId);
 				query.setParameter("status", CommonLib.STATUS_FULLFILLED); 
+				query.setParameter("zero_rating", 0);
 				
 				
 				java.util.List results= (java.util.List)query.list();
