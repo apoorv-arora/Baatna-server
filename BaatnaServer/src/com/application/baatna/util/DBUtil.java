@@ -9,22 +9,14 @@ import org.hibernate.service.ServiceRegistryBuilder;
 public class DBUtil {
 
 	private static SessionFactory sessionFactory;
-//	private static ServiceRegistry serviceRegistry;
-	
-	private static SessionFactory configureSessionFactory()
-			throws HibernateException {
-//		 Configuration configuration = new Configuration();
-//		 configuration.configure();
-//		 serviceRegistry = new ServiceRegistryBuilder().applySettings(
-//		 configuration.getProperties()).buildServiceRegistry();
-//		 sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-//		 return sessionFactory;
+
+	private static SessionFactory configureSessionFactory() throws HibernateException {
 
 		if (sessionFactory == null) {
 			Configuration configuration = new Configuration();
 			configuration.configure();
-			ServiceRegistry serviceRegistry = new ServiceRegistryBuilder().applySettings(
-					configuration.getProperties()).buildServiceRegistry();
+			ServiceRegistry serviceRegistry = new ServiceRegistryBuilder().applySettings(configuration.getProperties())
+					.buildServiceRegistry();
 			sessionFactory = configuration.buildSessionFactory(serviceRegistry);
 
 		}

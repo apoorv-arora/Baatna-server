@@ -10,7 +10,6 @@ import org.hibernate.Transaction;
 
 import com.application.baatna.bean.Coupon;
 import com.application.baatna.bean.UserWish;
-import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.DBUtil;
 
 public class RedeemDao {
@@ -104,46 +103,47 @@ public class RedeemDao {
 	// This is called when the user hit the redeem button.
 	public boolean updateCouponOnRedeem(int userId, int couponId) {
 
-//		Session session = null;
-//		UserWish userWish = null;
-//		try {
-//			session = DBUtil.getSessionFactory().openSession();
-//			Transaction transaction = session.beginTransaction();
-//
-//			String sql = "SELECT * FROM USERWISH WHERE USERID = :userId";
-//			SQLQuery query = session.createSQLQuery(sql);
-//			query.addEntity(UserWish.class);
-//			query.setParameter("userId", userId);
-//
-//			java.util.List results = (java.util.List) query.list();
-//
-//			boolean found = false;
-//			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
-//				userWish = (UserWish) iterator.next();
-//				// assign one coupon to this user
-//				if (userWish.getCouponId() == null){//CommonLib.INVALID_COUPON) {
-//					found = true;
-//					userWish.setCouponId(""+couponId);
-//					break;
-//				}
-//			}
-//
-//			if (found)
-//				session.update(userWish);
-//
-//			transaction.commit();
-//			session.close();
-//			return found;
-//
-//		} catch (HibernateException e) {
-//			System.out.println(e.getMessage());
-//			System.out.println("error");
-//			e.printStackTrace();
-//
-//		} finally {
-//			if (session != null && session.isOpen())
-//				session.close();
-//		}
+		// Session session = null;
+		// UserWish userWish = null;
+		// try {
+		// session = DBUtil.getSessionFactory().openSession();
+		// Transaction transaction = session.beginTransaction();
+		//
+		// String sql = "SELECT * FROM USERWISH WHERE USERID = :userId";
+		// SQLQuery query = session.createSQLQuery(sql);
+		// query.addEntity(UserWish.class);
+		// query.setParameter("userId", userId);
+		//
+		// java.util.List results = (java.util.List) query.list();
+		//
+		// boolean found = false;
+		// for (Iterator iterator = ((java.util.List) results).iterator();
+		// iterator.hasNext();) {
+		// userWish = (UserWish) iterator.next();
+		// // assign one coupon to this user
+		// if (userWish.getCouponId() == null){//CommonLib.INVALID_COUPON) {
+		// found = true;
+		// userWish.setCouponId(""+couponId);
+		// break;
+		// }
+		// }
+		//
+		// if (found)
+		// session.update(userWish);
+		//
+		// transaction.commit();
+		// session.close();
+		// return found;
+		//
+		// } catch (HibernateException e) {
+		// System.out.println(e.getMessage());
+		// System.out.println("error");
+		// e.printStackTrace();
+		//
+		// } finally {
+		// if (session != null && session.isOpen())
+		// session.close();
+		// }
 		return false;
 	}
 

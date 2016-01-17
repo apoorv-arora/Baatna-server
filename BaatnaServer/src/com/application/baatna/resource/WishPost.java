@@ -2,7 +2,6 @@ package com.application.baatna.resource;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -35,27 +34,21 @@ public class WishPost extends BaseResource {
 	@POST
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
-	public JSONObject postWish(@FormParam("client_id") String clientId,
-			@FormParam("app_type") String appType,
-			@FormParam("title") String title,
-			@FormParam("description") String description,
-			@FormParam("required_for") int requiredFor,
-			@FormParam("access_token") String accessToken) {
+	public JSONObject postWish(@FormParam("client_id") String clientId, @FormParam("app_type") String appType,
+			@FormParam("title") String title, @FormParam("description") String description,
+			@FormParam("required_for") int requiredFor, @FormParam("access_token") String accessToken) {
 
 		// null checks, invalid request
 		if (clientId == null || appType == null)
-			return CommonLib.getResponseString("Invalid params", "",
-					CommonLib.RESPONSE_INVALID_PARAMS);
+			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_PARAMS);
 
 		// check for client_id
 		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
-			return CommonLib.getResponseString("Invalid client id", "",
-					CommonLib.RESPONSE_INVALID_CLIENT_ID);
+			return CommonLib.getResponseString("Invalid client id", "", CommonLib.RESPONSE_INVALID_CLIENT_ID);
 
 		// check for app type
 		if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
-			return CommonLib.getResponseString("Invalid params", "",
-					CommonLib.RESPONSE_INVALID_APP_TYPE);
+			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_APP_TYPE);
 
 		UserDAO userDao = new UserDAO();
 
@@ -65,16 +58,13 @@ public class WishPost extends BaseResource {
 		if (userId > 0) {
 			final WishDAO wishdao = new WishDAO();
 
-			Wish wish = wishdao.addWishPost(title, description,
-					System.currentTimeMillis(), userId, requiredFor);
+			Wish wish = wishdao.addWishPost(title, description, System.currentTimeMillis(), userId, requiredFor);
 
 			if (wish != null) {
 
 				FeedDAO feedDao = new FeedDAO();
-				boolean returnFeedResult = feedDao.addFeedItem(
-						FeedDAO.USER_REQUESTED_WISH,
-						System.currentTimeMillis(), userId, -1,
-						wish.getWishId());
+				boolean returnFeedResult = feedDao.addFeedItem(FeedDAO.USER_REQUESTED_WISH, System.currentTimeMillis(),
+						userId, -1, wish.getWishId());
 				if (returnFeedResult) {
 					System.out.println("Success type 1");
 				} else {
@@ -87,24 +77,24 @@ public class WishPost extends BaseResource {
 				// SEND PUSH TO NEARBY USERS
 
 				String notificationString = "";
-				User user = userDao.getUserDetails(wish.getUserId()) ; 
-				if( user != null )  {
-					if( user.getUserName() == null || user.getUserName().equals("") ) {
-						try { 
+				User user = userDao.getUserDetails(wish.getUserId());
+				if (user != null) {
+					if (user.getUserName() == null || user.getUserName().equals("")) {
+						try {
 							JSONObject data = new JSONObject(user.getFacebookData());
-							if(data.has("name")) {
+							if (data.has("name")) {
 								String name = String.valueOf(data.get("name"));
 								name = name.split(" ")[0];
-								notificationString = name ;
+								notificationString = name;
 							}
-						} catch(JSONException e) {
+						} catch (JSONException e) {
 							e.printStackTrace();
 						}
 					} else
 						notificationString = user.getUserName();
 				}
-				notificationString = notificationString + " wants to borrow " +  wish.getTitle();
-				
+				notificationString = notificationString + " wants to borrow " + wish.getTitle();
+
 				final JSONObject wishJson = new JSONObject();
 				try {
 					wishJson.put("user", JsonUtil.getUserJsonWithoutBio(user));
@@ -122,14 +112,11 @@ public class WishPost extends BaseResource {
 				Thread thread = new Thread(runnable);
 				thread.start();
 
-				return CommonLib.getResponseString("success", "",
-						CommonLib.RESPONSE_SUCCESS);
+				return CommonLib.getResponseString("success", "", CommonLib.RESPONSE_SUCCESS);
 			} else
-				return CommonLib.getResponseString("failure", "",
-						CommonLib.RESPONSE_FAILURE);
+				return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_FAILURE);
 		} else
-			return CommonLib.getResponseString("failure", "",
-					CommonLib.RESPONSE_FAILURE);
+			return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_FAILURE);
 
 	}
 
@@ -137,8 +124,7 @@ public class WishPost extends BaseResource {
 	@POST
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
-	public JSONObject viewWishes(@FormParam("access_token") String accessToken,
-			@QueryParam("start") int start,
+	public JSONObject viewWishes(@FormParam("access_token") String accessToken, @QueryParam("start") int start,
 			@QueryParam("count") int count) {
 
 		UserDAO dao = new UserDAO();
@@ -168,22 +154,18 @@ public class WishPost extends BaseResource {
 			} catch (JSONException e) {
 
 			}
-			return CommonLib.getResponseString(returnObject, "success",
-					CommonLib.RESPONSE_SUCCESS);
+			return CommonLib.getResponseString(returnObject, "success", CommonLib.RESPONSE_SUCCESS);
 		}
-		return CommonLib.getResponseString("failure", "failure",
-				CommonLib.RESPONSE_FAILURE);
+		return CommonLib.getResponseString("failure", "failure", CommonLib.RESPONSE_FAILURE);
 
 	}
-	
+
 	@Path("/get")
 	@POST
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
-	public JSONObject getWishes(@FormParam("access_token") String accessToken,
-			@QueryParam("type") int type,
-			@QueryParam("another_user") int anotherUser,
-			@QueryParam("start") int start,
+	public JSONObject getWishes(@FormParam("access_token") String accessToken, @QueryParam("type") int type,
+			@QueryParam("another_user") int anotherUser, @QueryParam("start") int start,
 			@QueryParam("count") int count) {
 
 		UserDAO dao = new UserDAO();
@@ -192,7 +174,7 @@ public class WishPost extends BaseResource {
 		if (userId > 0) {
 
 			WishDAO wishdao = new WishDAO();
-			if(anotherUser != 0)
+			if (anotherUser != 0)
 				userId = anotherUser;
 			List<Wish> wishes = wishdao.getAllWishesBasedOnType(userId, start, count, type);
 			int size = wishdao.getAllWishesCountBasedOnType(userId, type);
@@ -216,11 +198,9 @@ public class WishPost extends BaseResource {
 			} catch (JSONException e) {
 
 			}
-			return CommonLib.getResponseString(returnObject, "success",
-					CommonLib.RESPONSE_SUCCESS);
+			return CommonLib.getResponseString(returnObject, "success", CommonLib.RESPONSE_SUCCESS);
 		}
-		return CommonLib.getResponseString("failure", "failure",
-				CommonLib.RESPONSE_FAILURE);
+		return CommonLib.getResponseString("failure", "failure", CommonLib.RESPONSE_FAILURE);
 
 	}
 
@@ -228,9 +208,7 @@ public class WishPost extends BaseResource {
 	@POST
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
-	public JSONObject deleteWishes(
-			@FormParam("access_token") String accessToken,
-			@FormParam("wishId") int wishId) {
+	public JSONObject deleteWishes(@FormParam("access_token") String accessToken, @FormParam("wishId") int wishId) {
 
 		UserDAO dao = new UserDAO();
 		int userId = dao.userActive(accessToken);
@@ -242,13 +220,11 @@ public class WishPost extends BaseResource {
 			value = wishdao.deleteWish(wishId);
 
 			if (value)
-				return CommonLib.getResponseString(String.valueOf(wishId),
-						"success", CommonLib.RESPONSE_SUCCESS);
+				return CommonLib.getResponseString(String.valueOf(wishId), "success", CommonLib.RESPONSE_SUCCESS);
 
 		}
 
-		return CommonLib.getResponseString("failure", "failure",
-				CommonLib.RESPONSE_FAILURE);
+		return CommonLib.getResponseString("failure", "failure", CommonLib.RESPONSE_FAILURE);
 
 	}
 
@@ -256,8 +232,7 @@ public class WishPost extends BaseResource {
 	@POST
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
-	public JSONObject getCategories(
-			@FormParam("access_token") String accessToken) {
+	public JSONObject getCategories(@FormParam("access_token") String accessToken) {
 
 		UserDAO dao = new UserDAO();
 		int userId = dao.userActive(accessToken);
@@ -276,12 +251,10 @@ public class WishPost extends BaseResource {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			return CommonLib.getResponseString(returnObject, "",
-					CommonLib.RESPONSE_SUCCESS);
+			return CommonLib.getResponseString(returnObject, "", CommonLib.RESPONSE_SUCCESS);
 		}
 
-		return CommonLib.getResponseString("failure", "",
-				CommonLib.RESPONSE_FAILURE);
+		return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_FAILURE);
 
 	}
 
@@ -289,25 +262,21 @@ public class WishPost extends BaseResource {
 	@POST
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
-	public JSONObject updateWishes(@FormParam("client_id") String clientId,
-			@FormParam("app_type") String appType,
-			@FormParam("access_token") String accessToken,
-			@FormParam("wishId") int wishId, @FormParam("action") int actionType) {
+	public JSONObject updateWishes(@FormParam("client_id") String clientId, @FormParam("app_type") String appType,
+			@FormParam("access_token") String accessToken, @FormParam("wishId") int wishId,
+			@FormParam("action") int actionType) {
 
 		// null checks, invalid request
 		if (clientId == null || appType == null)
-			return CommonLib.getResponseString("Invalid params", "",
-					CommonLib.RESPONSE_INVALID_PARAMS);
+			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_PARAMS);
 
 		// check for client_id
 		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
-			return CommonLib.getResponseString("Invalid client id", "",
-					CommonLib.RESPONSE_INVALID_CLIENT_ID);
+			return CommonLib.getResponseString("Invalid client id", "", CommonLib.RESPONSE_INVALID_CLIENT_ID);
 
 		// check for app type
 		if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
-			return CommonLib.getResponseString("Invalid params", "",
-					CommonLib.RESPONSE_INVALID_APP_TYPE);
+			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_APP_TYPE);
 
 		UserDAO dao = new UserDAO();
 		int userId = dao.userActive(accessToken);
@@ -322,10 +291,8 @@ public class WishPost extends BaseResource {
 
 				FeedDAO feedDao = new FeedDAO();
 				Wish currentWish = wishdao.getWish(wishId);
-				boolean returnFeedResult = feedDao.addFeedItem(
-						FeedDAO.USER_WISH_FULFILLED,
-						System.currentTimeMillis(), currentWish.getUserId(),
-						userId, wishId);
+				boolean returnFeedResult = feedDao.addFeedItem(FeedDAO.USER_WISH_FULFILLED, System.currentTimeMillis(),
+						currentWish.getUserId(), userId, wishId);
 				if (returnFeedResult) {
 					System.out.println("Success type 1");
 				} else {
@@ -340,19 +307,16 @@ public class WishPost extends BaseResource {
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				if(actionType == 1){
+				if (actionType == 1) {
 					wishdao.sendPushToUsers(messageJson, currentWish.getUserId());
 				}
-				return CommonLib.getResponseString(String.valueOf(wishId),
-						"success", CommonLib.RESPONSE_SUCCESS);
+				return CommonLib.getResponseString(String.valueOf(wishId), "success", CommonLib.RESPONSE_SUCCESS);
 			}
 
 		} else
-			return CommonLib.getResponseString("failure", "Invalid user",
-					CommonLib.RESPONSE_INVALID_USER);
+			return CommonLib.getResponseString("failure", "Invalid user", CommonLib.RESPONSE_INVALID_USER);
 
-		return CommonLib.getResponseString("failure", "failure",
-				CommonLib.RESPONSE_FAILURE);
+		return CommonLib.getResponseString("failure", "failure", CommonLib.RESPONSE_FAILURE);
 
 	}
 
@@ -362,14 +326,13 @@ public class WishPost extends BaseResource {
 	@Consumes("application/x-www-form-urlencoded")
 	public JSONObject getUpdateList(
 
-	@FormParam("access_token") String accessToken,
-			@FormParam("wishId") int wishId, @FormParam("type") int updateType) {
+	@FormParam("access_token") String accessToken, @FormParam("wishId") int wishId, @FormParam("type") int updateType) {
 
 		UserDAO dao = new UserDAO();
 		int userId = dao.userActive(accessToken);
 
 		if (userId > 0) {
-			List<User> users ;
+			List<User> users;
 			WishDAO wishdao = new WishDAO();
 			users = wishdao.getWishedUsers(updateType, wishId);
 			JSONObject returnJsonObject = new JSONObject();
@@ -383,38 +346,32 @@ public class WishPost extends BaseResource {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			return CommonLib.getResponseString(returnJsonObject, "success",
-					CommonLib.RESPONSE_SUCCESS);
+			return CommonLib.getResponseString(returnJsonObject, "success", CommonLib.RESPONSE_SUCCESS);
 		}
 
-		return CommonLib.getResponseString("failure", "failure",
-				CommonLib.RESPONSE_FAILURE);
+		return CommonLib.getResponseString("failure", "failure", CommonLib.RESPONSE_FAILURE);
 
 	}
-	
+
 	@Path("/updateStatus")
 	@POST
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
-	public JSONObject updateWishStatus(@FormParam("client_id") String clientId,
-			@FormParam("app_type") String appType,
-			@FormParam("access_token") String accessToken,
-			@FormParam("wishId") int wishId, @FormParam("action") int actionType) {
+	public JSONObject updateWishStatus(@FormParam("client_id") String clientId, @FormParam("app_type") String appType,
+			@FormParam("access_token") String accessToken, @FormParam("wishId") int wishId,
+			@FormParam("action") int actionType) {
 
 		// null checks, invalid request
 		if (clientId == null || appType == null)
-			return CommonLib.getResponseString("Invalid params", "",
-					CommonLib.RESPONSE_INVALID_PARAMS);
+			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_PARAMS);
 
 		// check for client_id
 		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
-			return CommonLib.getResponseString("Invalid client id", "",
-					CommonLib.RESPONSE_INVALID_CLIENT_ID);
+			return CommonLib.getResponseString("Invalid client id", "", CommonLib.RESPONSE_INVALID_CLIENT_ID);
 
 		// check for app type
 		if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
-			return CommonLib.getResponseString("Invalid params", "",
-					CommonLib.RESPONSE_INVALID_APP_TYPE);
+			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_APP_TYPE);
 
 		UserDAO dao = new UserDAO();
 		int userId = dao.userActive(accessToken);
@@ -425,12 +382,10 @@ public class WishPost extends BaseResource {
 			boolean value = false;
 			value = wishdao.updateWishStatus(userId, actionType, wishId, actionType);
 
-			return CommonLib.getResponseString(String.valueOf(wishId),
-					"success", CommonLib.RESPONSE_SUCCESS);
+			return CommonLib.getResponseString(String.valueOf(wishId), "success", CommonLib.RESPONSE_SUCCESS);
 		}
-		return CommonLib.getResponseString("failure", "failure",
-				CommonLib.RESPONSE_FAILURE);
+		return CommonLib.getResponseString("failure", "failure", CommonLib.RESPONSE_FAILURE);
 
 	}
-	
+
 }

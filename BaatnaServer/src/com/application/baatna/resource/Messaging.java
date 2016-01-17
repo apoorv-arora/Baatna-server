@@ -1,8 +1,6 @@
 package com.application.baatna.resource;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 
 import javax.ws.rs.Consumes;
@@ -16,14 +14,10 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import com.application.baatna.bean.AllMessages;
-import com.application.baatna.bean.Location;
 import com.application.baatna.bean.Message;
-import com.application.baatna.bean.NewsFeed;
-import com.application.baatna.bean.Session;
 import com.application.baatna.bean.User;
 import com.application.baatna.bean.UserCompactMessage;
 import com.application.baatna.bean.Wish;
-import com.application.baatna.dao.FeedDAO;
 import com.application.baatna.dao.MessageDAO;
 import com.application.baatna.dao.UserDAO;
 import com.application.baatna.dao.WishDAO;
@@ -88,7 +82,7 @@ public class Messaging extends BaseResource {
 
 				Runnable runnable = new Runnable() {
 					public void run() {
-						messageDao.sendPushToNearbyUsers(messageJson, toUser.getUserId(), "message");						
+						messageDao.sendPushToNearbyUsers(messageJson, toUser.getUserId(), "message");
 					}
 				};
 				Thread thread = new Thread(runnable);
@@ -178,107 +172,99 @@ public class Messaging extends BaseResource {
 		}
 		return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_FAILURE);
 	}
-	
+
 	// negotiation deposit amount
-		@Path("/negotiate")
-		@POST
-		@Produces("application/json")
-		@Consumes("application/x-www-form-urlencoded")
-		public JSONObject updateNegotiatedWishes(@FormParam("client_id") String clientId,
-				@FormParam("app_type") String appType, @FormParam("userId") int toUserId,
-				@FormParam("wishId") int wishId, @FormParam("access_token") String accessToken,
-				@FormParam("action") int actionType,
-				@FormParam("negAmount") int negAmount) {
+	@Path("/negotiate")
+	@POST
+	@Produces("application/json")
+	@Consumes("application/x-www-form-urlencoded")
+	public JSONObject updateNegotiatedWishes(@FormParam("client_id") String clientId,
+			@FormParam("app_type") String appType, @FormParam("userId") int toUserId, @FormParam("wishId") int wishId,
+			@FormParam("access_token") String accessToken, @FormParam("action") int actionType,
+			@FormParam("negAmount") int negAmount) {
 
-			// null checks, invalid request
-			if (clientId == null || appType == null)
-				return CommonLib.getResponseString("Invalid params", "",
-						CommonLib.RESPONSE_INVALID_PARAMS);
+		// null checks, invalid request
+		if (clientId == null || appType == null)
+			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_PARAMS);
 
-			// check for client_id
-			if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
-				return CommonLib.getResponseString("Invalid client id", "",
-						CommonLib.RESPONSE_INVALID_CLIENT_ID);
+		// check for client_id
+		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
+			return CommonLib.getResponseString("Invalid client id", "", CommonLib.RESPONSE_INVALID_CLIENT_ID);
 
-			// check for app type
-			if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
-				return CommonLib.getResponseString("Invalid params", "",
-						CommonLib.RESPONSE_INVALID_APP_TYPE);
+		// check for app type
+		if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
+			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_APP_TYPE);
 
-			UserDAO userDao = new UserDAO();
+		UserDAO userDao = new UserDAO();
 
-			// access token validity
-			int userId = userDao.userActive(accessToken);
-			
-			if (userId > 0) {
+		// access token validity
+		int userId = userDao.userActive(accessToken);
 
-				WishDAO wishDao = new WishDAO();
-				Wish wish  = wishDao.getWish(wishId);
+		if (userId > 0) {
 
-				boolean value = wishDao.updateWishedNegotiation(actionType, wishId, negAmount );
+			WishDAO wishDao = new WishDAO();
+			Wish wish = wishDao.getWish(wishId);
 
-					// get all sessions of toUserId from sessions table
-					// create your own JSON object
-					// send to all sessions
-				if( value == true ){
-					
-					String notificationString = "";
-					User user = userDao.getUserDetails(userId) ; 
-					if( user != null )  {
-						if( user.getUserName() == null || user.getUserName().equals("") ) {
-							try { 
-								JSONObject data = new JSONObject(user.getFacebookData());
-								if(data.has("name")) {
-									String name = String.valueOf(data.get("name"));
-									name = name.split(" ")[0];
-									notificationString = name ;
-								}
-							} catch(JSONException e) {
-								e.printStackTrace();
+			boolean value = wishDao.updateWishedNegotiation(actionType, wishId, negAmount);
+
+			// get all sessions of toUserId from sessions table
+			// create your own JSON object
+			// send to all sessions
+			if (value == true) {
+
+				String notificationString = "";
+				User user = userDao.getUserDetails(userId);
+				if (user != null) {
+					if (user.getUserName() == null || user.getUserName().equals("")) {
+						try {
+							JSONObject data = new JSONObject(user.getFacebookData());
+							if (data.has("name")) {
+								String name = String.valueOf(data.get("name"));
+								name = name.split(" ")[0];
+								notificationString = name;
 							}
-						} else
-							notificationString = user.getUserName();
-					}
-					
-					if(actionType == CommonLib.ACTION_NEGOTIATION_ACCEPTED)
-						notificationString = notificationString + " has accepted the negotiation amount of " +  wish.getTitle() 
-						+ " at Rs. " + negAmount + ".";
-					else
-						notificationString = notificationString + " wants to set the negotiation amount of " +  wish.getTitle() 
-						+ " at Rs. " + negAmount + ".";
-					
-					JSONObject negJson = new JSONObject();
-					try {
-						negJson.put("user", JsonUtil.getUserJson(user));
-						negJson.put("wish", JsonUtil.getWishJson(wish));
-						negJson.put("message", notificationString);
-						//negJson.put("type", value);
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-					
-					UserDAO userdao = new UserDAO();
-					userdao.sendPushToAllSessions(negJson, toUserId);
-					
-					
-					//MessageDAO messageDao = new MessageDAO();
-					//Message messageObj = messageDao.addMessage(notificationString, false, "" + System.currentTimeMillis(), userId,
-						//	toUserId, wishId);
-
-					return CommonLib.getResponseString("success", "",
-							CommonLib.RESPONSE_SUCCESS);
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					} else
+						notificationString = user.getUserName();
 				}
 
-				else{
-						return CommonLib.getResponseString("failure", "",
-						CommonLib.RESPONSE_FAILURE);
+				if (actionType == CommonLib.ACTION_NEGOTIATION_ACCEPTED)
+					notificationString = notificationString + " has accepted the negotiation amount of "
+							+ wish.getTitle() + " at Rs. " + negAmount + ".";
+				else
+					notificationString = notificationString + " wants to set the negotiation amount of "
+							+ wish.getTitle() + " at Rs. " + negAmount + ".";
+
+				JSONObject negJson = new JSONObject();
+				try {
+					negJson.put("user", JsonUtil.getUserJson(user));
+					negJson.put("wish", JsonUtil.getWishJson(wish));
+					negJson.put("message", notificationString);
+					// negJson.put("type", value);
+				} catch (JSONException e) {
+					e.printStackTrace();
 				}
-			} 
-			else
-			return CommonLib.getResponseString("failure", "",
-				CommonLib.RESPONSE_FAILURE);
 
-		}
+				UserDAO userdao = new UserDAO();
+				userdao.sendPushToAllSessions(negJson, toUserId);
 
+				// MessageDAO messageDao = new MessageDAO();
+				// Message messageObj =
+				// messageDao.addMessage(notificationString, false, "" +
+				// System.currentTimeMillis(), userId,
+				// toUserId, wishId);
+
+				return CommonLib.getResponseString("success", "", CommonLib.RESPONSE_SUCCESS);
+			}
+
+			else {
+				return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_FAILURE);
+			}
+		} else
+			return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_FAILURE);
+
+	}
 
 }

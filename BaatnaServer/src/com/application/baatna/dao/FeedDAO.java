@@ -285,7 +285,6 @@ public class FeedDAO {
 			query.addEntity(NewsFeed.class);
 			query.setParameter("wish_id", wishId);
 			int result = query.executeUpdate();
-			CommonLib.BLog(result + "");
 			session.flush();
 
 			transaction.commit();

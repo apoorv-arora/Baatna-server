@@ -16,26 +16,26 @@ import com.application.baatna.util.DBUtil;
 public class CategoryDAO {
 
 	public CategoryDAO() {
-		
+
 		initialize();
 	}
-	
+
 	private void initialize() {
 		Session session = null;
 		try {
 			session = DBUtil.getSessionFactory().openSession();
 
 			Transaction transaction = session.beginTransaction();
-			
+
 			String sql = "SELECT * FROM CATEGORIES";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(Categories.class);
 			java.util.List results = (java.util.List) query.list();
 
-			if(results != null && results.size() > 0)//already added.
+			if (results != null && results.size() > 0) // already added.
 				return;
-			
-			for(Categories category: CommonLib.getCategoriesList()) {
+
+			for (Categories category : CommonLib.getCategoriesList()) {
 				session.save(category);
 			}
 
@@ -46,15 +46,16 @@ public class CategoryDAO {
 			System.out.println(e.getMessage());
 			System.out.println("error");
 		} finally {
-			if(session != null && session.isOpen())
+			if (session != null && session.isOpen())
 				session.close();
 		}
 
 	}
+
 	/**
 	 * Get user details based on the email\password combo. Used in case of
 	 * login. TODO: Add check for access Token from session
-	 * */
+	 */
 	public List<Categories> getCategories() {
 
 		List<Categories> user = new ArrayList<Categories>();
@@ -69,8 +70,7 @@ public class CategoryDAO {
 			query.addEntity(Categories.class);
 			java.util.List results = (java.util.List) query.list();
 
-			for (Iterator iterator = ((java.util.List) results).iterator(); iterator
-					.hasNext();) {
+			for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
 				user.add((Categories) iterator.next());
 			}
 
@@ -81,7 +81,7 @@ public class CategoryDAO {
 			System.out.println(e.getMessage());
 			System.out.println("error");
 		} finally {
-			if(session != null && session.isOpen()) {
+			if (session != null && session.isOpen()) {
 				session.close();
 			}
 		}

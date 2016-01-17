@@ -1,14 +1,13 @@
 package com.application.baatna.util;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import org.jivesoftware.smack.XMPPException;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.jivesoftware.smack.XMPPException;
 
 /**
  * Singleton class for sending push notifications.
@@ -18,7 +17,6 @@ public class PushUtil {
 
 	private static volatile PushUtil sInstance;
 	private static ExecutorService executorService;
-	private static Future<?> runnableFuture;
 
 	/**
 	 * Empty constructor to prevent multiple objects in memory
@@ -42,7 +40,7 @@ public class PushUtil {
 		return sInstance;
 	}
 
-	public void sendPush( PushModel pushModel, String type) {
+	public void sendPush(PushModel pushModel, String type) {
 
 		Runnable runnable = new Runnable() {
 			public void run() {
@@ -68,9 +66,6 @@ public class PushUtil {
 					object.put("actionId", "id");
 					object.put("additionalParam", "value");
 				} catch (JSONException exp) {
-					// String error = LogMessages.FETCH_ERROR +
-					// exp.getMessage();
-					// logger.log(Level.INFO, error);
 					exp.printStackTrace();
 				}
 				payload.put("value", object.toString());
@@ -86,9 +81,7 @@ public class PushUtil {
 				ccsClient.disconnect();
 			}
 		};
-		// Thread newThread = new Thread(runnable);
-		// newThread.start();
-		runnableFuture = executorService.submit(runnable);
+		executorService.submit(runnable);
 	}
 
 }

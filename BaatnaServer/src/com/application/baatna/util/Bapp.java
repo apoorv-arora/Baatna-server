@@ -35,7 +35,7 @@ public class Bapp implements ServletContextListener {
 				zappObject.archiveOperation();
 			}
 		}, 0, 15, TimeUnit.MINUTES);
-		
+
 		executorService2.scheduleAtFixedRate(new Runnable() {
 			public void run() {
 				Bapp zappObject = new Bapp();
@@ -46,13 +46,14 @@ public class Bapp implements ServletContextListener {
 	}
 
 	private void archiveOperation() {
-		 UserDAO storeItemDao = new UserDAO();
-		 storeItemDao.nullifyPushId(-1);
+		UserDAO storeItemDao = new UserDAO();
+		storeItemDao.nullifyPushId(-1);
 	}
 
 	/**
-	 * Computes the average value of the user rating from the rating table and update the user rating
-	 * */
+	 * Computes the average value of the user rating from the rating table and
+	 * update the user rating
+	 */
 	private void updateRating() {
 		UserDAO dao = new UserDAO();
 		dao.setUserDayRating();

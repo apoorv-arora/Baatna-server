@@ -7,17 +7,14 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import com.application.baatna.bean.Coupon;
-import com.application.baatna.bean.Wish;
 import com.application.baatna.dao.RedeemDao;
 import com.application.baatna.dao.UserDAO;
-import com.application.baatna.dao.WishDAO;
 import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.JsonUtil;
 
@@ -142,7 +139,7 @@ public class Redeem extends BaseResource {
 
 			RedeemDao redeemDao = new RedeemDao();
 			boolean result = redeemDao.updateCouponOnRedeem(userId, couponId);
-			if(result)
+			if (result)
 				return CommonLib.getResponseString("success", "success", CommonLib.RESPONSE_SUCCESS);
 			else
 				return CommonLib.getResponseString("failure", "failure", CommonLib.RESPONSE_FAILURE);

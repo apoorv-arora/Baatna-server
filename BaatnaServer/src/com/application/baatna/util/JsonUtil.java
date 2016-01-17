@@ -35,7 +35,7 @@ public class JsonUtil {
 
 			JSONObject data = null;
 			try {
-				if(user.getFacebookData() != null)
+				if (user.getFacebookData() != null)
 					data = new JSONObject(user.getFacebookData());
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -54,7 +54,7 @@ public class JsonUtil {
 		userJson.put("user", userJsonObject);
 		return userJson;
 	}
-	
+
 	public static JSONObject getUserJsonWithoutBio(User user) throws JSONException {
 		JSONObject userJsonObject = new JSONObject();
 		JSONObject userJson = new JSONObject();
@@ -67,7 +67,7 @@ public class JsonUtil {
 		userJsonObject.put("profile_pic", user.getProfilePic());
 		userJsonObject.put("fbId", user.getFacebookId());
 		userJsonObject.put("contact", user.getPhone());
-		userJsonObject.put("rating",user.getRating());
+		userJsonObject.put("rating", user.getRating());
 		if (user.getUserName() == null || user.getUserName().equals("")) {
 
 			JSONObject data = null;
@@ -155,11 +155,11 @@ public class JsonUtil {
 	public static JSONObject getUserCompatJson(UserCompactMessage object) throws JSONException {
 		JSONObject userCompatJsonObject = new JSONObject();
 		JSONObject userCompatJson = new JSONObject();
-		
+
 		WishDAO wishDao = new WishDAO();
-		
+
 		JSONObject wishJson = JsonUtil.getWishJson(object.getWish());
-		
+
 		JSONArray userArr = new JSONArray();
 		List<User> acceptedUsers = wishDao.getWishedUsers(1, object.getWish().getWishId());
 		for (User acceptedUser : acceptedUsers) {
@@ -188,14 +188,13 @@ public class JsonUtil {
 		couponJson.put("coupon", couponJsonObject);
 		return couponJson;
 	}
-	
-	public static JSONObject getUserWishJson(User user,Wish wish) throws JSONException
-	{
-		JSONObject userWishJsonObject= new JSONObject();
-		JSONObject userWishJsonObject2= new JSONObject();
-		JSONObject usersJson= new JSONObject();
-		JSONObject userWishJson= new JSONObject();
-		
+
+	public static JSONObject getUserWishJson(User user, Wish wish) throws JSONException {
+		JSONObject userWishJsonObject = new JSONObject();
+		JSONObject userWishJsonObject2 = new JSONObject();
+		JSONObject usersJson = new JSONObject();
+		JSONObject userWishJson = new JSONObject();
+
 		userWishJsonObject.put("user_id", user.getUserId());
 		userWishJsonObject.put("email", user.getEmail());
 		userWishJsonObject.put("profile_pic", user.getProfilePic());
@@ -223,7 +222,7 @@ public class JsonUtil {
 		}
 		usersJson.put("user_details", userWishJsonObject);
 		userWishJson.put("wish_details", userWishJsonObject2);
-		userWishJson.put("user",usersJson);
+		userWishJson.put("user", usersJson);
 		return userWishJson;
 	}
 

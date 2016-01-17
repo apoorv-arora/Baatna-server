@@ -12,7 +12,6 @@ import javax.imageio.ImageIO;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -28,10 +27,8 @@ import org.codehaus.jettison.json.JSONObject;
 
 import com.application.baatna.bean.Institution;
 import com.application.baatna.bean.User;
-import com.application.baatna.bean.Wish;
 import com.application.baatna.dao.FeedDAO;
 import com.application.baatna.dao.UserDAO;
-import com.application.baatna.dao.WishDAO;
 import com.application.baatna.util.CommonLib;
 import com.application.baatna.util.CryptoHelper;
 import com.application.baatna.util.JsonUtil;
@@ -43,7 +40,7 @@ import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
 @Path("/user")
-public class BaatnaUser extends BaseResource{
+public class BaatnaUser extends BaseResource {
 
 	@Path("/signup")
 	@POST
@@ -104,43 +101,276 @@ public class BaatnaUser extends BaseResource{
 					fbToken, fb_permissions);
 
 			if (userCreated != null) {
-				/*EmailModel emailModel = new EmailModel();
-				emailModel.setTo(email);
-				emailModel.setFrom(CommonLib.BAPP_ID);
-				emailModel.setSubject("Welcome to your local Baatna Community!!");
-				/*emailModel.setContent(
-						"Hey," + "\n\nWelcome to Baatna! Thank you for becoming a member of the local Baatna community!"
-								+ "\n\nBaatna enables you to borrow the things you need from people in your neighborhood. Right here, right now, for free."
-								+ "\n\nHow does it work?"
-								+ "\n\nYou know those moments where you need to use something that you do not need to own? Tell Baatna what you are looking for and we'll find friendly neighbors willing to lend it to you. Looking for something right now? Just go to the app and post your need."
-								+ "\n\nIn return you can share your stuff when it's convenient. If one of your neighbors is looking for something, we will let you know. It's up to you if you want to lend out your stuff. Be an awesome neighbor and share the love!"
-								+ "\n\nWe're doing our best to make Baatna more efficient and useful for you everyday. Incase you have any feedback, please get back to us at -hello@baatna.com."
-								+ "\nWe would love to hear from you." + "\n\nCheers" + "\nBaatna Team");*/
-				//emailModel.setHtmlContent("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\">   <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" /> <style type=\"text/css\">body {margin: 0; padding: 0; min-width: 100%!important;}   .content {  width: 100%; max-width: 600px;  } .main{ font-weight:800;  text-align: center;  color: black; font-family: \"Helvetica Neue Bold\",\"Helvetica\", \"sans-serif\";  font-size: 20px;  font-weight: normal; line-height: 1.5;}   .text{ text-decoration:none; text-align: center; color: grey; font-family: \"Helvetica Neue Light\", \"Helvetica\",\"sans-serif\";  font-size: 14px;  font-weight: normal; line-height: 1.5;  margin-bottom: 50px;} .link{color: springGreen; text-align:center; font-weight: bold; text-decoration: underline; font-size: 20px; line-height: 1.5;} .button_class{ text-align: center; font-family: \"Helvetica Neue Light\", \"Helvetica\",\"sans-serif\"; background-clip: padding-box; /* this has been added */ border-radius: 8px; font-size: 14px; background-color: #0ED7A3; color: black;} </style> </head><body yahoo bgcolor=\"#f1f2f2\"> <table width=\"100%\" align=\"center\" bgcolor=\"#f1f2f2\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr> <td><table class=\"content\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr bgcolor=\"#f1f2f2\"><td style=\"padding: 50px 50px 0px 50px;\"></td></tr> <tr bgcolor=\"white\" ><td  style=\"padding: 0 50px 0px 50px;\" align=\"center\"><a href=\"http://www.baatna.com\"> <img src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/baatna.jpg\" align=\"middle\" height=\"100px\" width=\"100px\" border=\"0\" alt=\"www.baatna.com\" > </a>"+
-	//							"<p class=\"main\">Welcome To Baatna</p> <p class=\"text\"> We thank you for becoming a member of of our<br> local Baatna community!</p>  <img src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/baatna_email2.jpg\" alt=\"http://baatna.com\"  width=60%><p class=\"text\">Baatna helps you to borrow things you need from people around you.<br>                                Right here,right now,for free</p> </td></tr> </table> <table class=\"content\" align=\"center\" bgcolor=\"white\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><col width=\"25%\">                        <col width=\"37.5%\"><tr bgcolor=\"white\" height=\"60px\"><td ></td>  <td class=\"button_class\" ><a href=\"http://www.baatna.com\" style=\"text-decoration:none; color:white;\" ><b>Learn More</b></a></td><td ></td></tr> <tr  bgcolor=\"white\"> <td colspan=\"3\" style=\"padding: 0px 50px 50px 50px;\"></td></tr>  </table>  <table class=\"content\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">   <tr bgcolor=\"#f1f2f2\"> <td style=\"padding: 50px 50px 0px 50px;\"></td> </tr>  <tr bgcolor=\"white\"> <td style=\"padding: 50px 50px 0px 50px;\" align=\"center\"> <p class=\"main\">How does it works?</p> <p class=\"text\"> You know those moments when you need something that you do not own?<br>Tell Baatna what you are looking for and we'll find<br>friendly forlks willing to lend it to you.</p> <p class=\"text\"> Looking for something right now?</p></td>  </tr> </table>  <table class=\"content\" align=\"center\" bgcolor=\"white\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"> <col width=\"37.5%\">  <col width=\"25%\">                      <col width=\"37.5%\"> <tr bgcolor=\"white\" border-radius:\"8px\" height=\"60px\">                                 <td style=\"padding: 0px 50px 0px 50px;\"></td><td class=\"button_class\"><a href=\"https://play.google.com/store/apps/developer?id=Baatna\" style=\"text-decoration:none; color:white\"><b>Post your need</b></a></td><td style=\"padding: 0 50px 0px 50px;\">                            </tr> <tr  bgcolor=\"white\"><td colspan=\"3\" style=\"padding: 0px 50px 50px 50px;\"></td>                              </tr>  </table> <table class=\"content\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"> <tr bgcolor=\"#f1f2f2\"> <td style=\"padding: 50px 50px 0px 50px;\"></td>                             </tr>  <tr bgcolor=\"white\"><td style=\"padding: 50px 50px 0px 50px;\" align=\"center\"><p class=\"main\">Help others out</p>  <p class=\"text\">Share your stuff when it's convenient.If someone around you is looking<br>something, we will let you know. It's up to you if you want to lend out<br>your stuff. Be an awesome neighbour and share the love! <br> </td> </tr> </table>                     <table class=\"content\" align=\"center\" bgcolor=\"white\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"> <col width=\"37.5%\"> <col width=\"25%\">  <col width=\"37.5%\">                                 <tr bgcolor=\"white\" border-radius:\"8px\" height=\"60px\"> <td style=\"padding: 0px 50px 0 50px;\"></td> <td class=\"button_class\"><a href=\"https://play.google.com/store/apps/developer?id=Baatna\" style=\"text-decoration:none; color:white;\"><b>Fulfill your need</b></a></td><td style=\"padding: 0 50px 0 50px;\">                               </tr> <tr  bgcolor=\"white\">  <td colspan=\"3\" style=\"padding: 0px 50px 0px 50px;\"></td>                             </tr> </table><table class=\"content\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"> <tr bgcolor=\"white\"> <td style=\"padding: 50px 50px 50px 50px;\" align=\"center\">                                 <p class=\"text\">We're doing our best to make Baatna more efficient and useful for you everyday.<br>Incase you have any feedback or query, or would just like to buy us cofee,<br>please write to us at<br></p> <p class=\"link\"><a href=\"hello@baatna.com\" style=\"color:#0ED7A3;\">hello@baatna.com</a></p></td>  </tr> <tr bgcolor=\"#f1f2f2\"><td style=\"padding: 50px 50px 0 50px;\" align=\"center\"><a href=\"https://www.facebook.com/baatna/?fref=ts\"><img src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/facebook1.png\" alt=\"https://www.facebook.com/baatna/?fref=ts\" style=\"margin: 0px 5px\" width=5%></a>                                         <a href=\"https://twitter.com/BaatnaCommunity\"><img src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/twitter1.png\" alt=\"https://twitter.com/BaatnaCommunity\"  style=\"margin: 0px 5px\" width=5%></a> <p class=\"text\"> <a href=\"http://baatna.com\" style=\"text-decoration:none; color:black;\">www.<b>baatna</b>.com</a></p><p class=\"text\">Unsubscribe from emails</p> </td></tr></table></td></tr> </table></body> </html>","text/html");                                                              
+				/*
+				 * EmailModel emailModel = new EmailModel();
+				 * emailModel.setTo(email);
+				 * emailModel.setFrom(CommonLib.BAPP_ID); emailModel.setSubject(
+				 * "Welcome to your local Baatna Community!!");
+				 * /*emailModel.setContent( "Hey," +
+				 * "\n\nWelcome to Baatna! Thank you for becoming a member of the local Baatna community!"
+				 * +
+				 * "\n\nBaatna enables you to borrow the things you need from people in your neighborhood. Right here, right now, for free."
+				 * + "\n\nHow does it work?" +
+				 * "\n\nYou know those moments where you need to use something that you do not need to own? Tell Baatna what you are looking for and we'll find friendly neighbors willing to lend it to you. Looking for something right now? Just go to the app and post your need."
+				 * +
+				 * "\n\nIn return you can share your stuff when it's convenient. If one of your neighbors is looking for something, we will let you know. It's up to you if you want to lend out your stuff. Be an awesome neighbor and share the love!"
+				 * +
+				 * "\n\nWe're doing our best to make Baatna more efficient and useful for you everyday. Incase you have any feedback, please get back to us at -hello@baatna.com."
+				 * + "\nWe would love to hear from you." + "\n\nCheers" +
+				 * "\nBaatna Team");
+				 */
+				// emailModel.setHtmlContent("<!DOCTYPE html PUBLIC
+				// \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
+				// \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html
+				// xmlns=\"http://www.w3.org/1999/xhtml\"> <head> <meta
+				// http-equiv=\"Content-Type\" content=\"text/html;
+				// charset=utf-8\" /> <style type=\"text/css\">body {margin: 0;
+				// padding: 0; min-width: 100%!important;} .content { width:
+				// 100%; max-width: 600px; } .main{ font-weight:800; text-align:
+				// center; color: black; font-family: \"Helvetica Neue
+				// Bold\",\"Helvetica\", \"sans-serif\"; font-size: 20px;
+				// font-weight: normal; line-height: 1.5;} .text{
+				// text-decoration:none; text-align: center; color: grey;
+				// font-family: \"Helvetica Neue Light\",
+				// \"Helvetica\",\"sans-serif\"; font-size: 14px; font-weight:
+				// normal; line-height: 1.5; margin-bottom: 50px;} .link{color:
+				// springGreen; text-align:center; font-weight: bold;
+				// text-decoration: underline; font-size: 20px; line-height:
+				// 1.5;} .button_class{ text-align: center; font-family:
+				// \"Helvetica Neue Light\", \"Helvetica\",\"sans-serif\";
+				// background-clip: padding-box; /* this has been added */
+				// border-radius: 8px; font-size: 14px; background-color:
+				// #0ED7A3; color: black;} </style> </head><body yahoo
+				// bgcolor=\"#f1f2f2\"> <table width=\"100%\" align=\"center\"
+				// bgcolor=\"#f1f2f2\" border=\"0\" cellpadding=\"0\"
+				// cellspacing=\"0\"><tr> <td><table class=\"content\"
+				// align=\"center\" cellpadding=\"0\" cellspacing=\"0\"
+				// border=\"0\"><tr bgcolor=\"#f1f2f2\"><td style=\"padding:
+				// 50px 50px 0px 50px;\"></td></tr> <tr bgcolor=\"white\" ><td
+				// style=\"padding: 0 50px 0px 50px;\" align=\"center\"><a
+				// href=\"http://www.baatna.com\"> <img
+				// src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/baatna.jpg\"
+				// align=\"middle\" height=\"100px\" width=\"100px\"
+				// border=\"0\" alt=\"www.baatna.com\" > </a>"+
+				// "<p class=\"main\">Welcome To Baatna</p> <p class=\"text\">
+				// We thank you for becoming a member of of our<br> local Baatna
+				// community!</p> <img
+				// src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/baatna_email2.jpg\"
+				// alt=\"http://baatna.com\" width=60%><p class=\"text\">Baatna
+				// helps you to borrow things you need from people around
+				// you.<br> Right here,right now,for free</p> </td></tr>
+				// </table> <table class=\"content\" align=\"center\"
+				// bgcolor=\"white\" cellpadding=\"0\" cellspacing=\"0\"
+				// border=\"0\"><col width=\"25%\"> <col width=\"37.5%\"><tr
+				// bgcolor=\"white\" height=\"60px\"><td ></td> <td
+				// class=\"button_class\" ><a href=\"http://www.baatna.com\"
+				// style=\"text-decoration:none; color:white;\" ><b>Learn
+				// More</b></a></td><td ></td></tr> <tr bgcolor=\"white\"> <td
+				// colspan=\"3\" style=\"padding: 0px 50px 50px
+				// 50px;\"></td></tr> </table> <table class=\"content\"
+				// align=\"center\" cellpadding=\"0\" cellspacing=\"0\"
+				// border=\"0\"> <tr bgcolor=\"#f1f2f2\"> <td style=\"padding:
+				// 50px 50px 0px 50px;\"></td> </tr> <tr bgcolor=\"white\"> <td
+				// style=\"padding: 50px 50px 0px 50px;\" align=\"center\"> <p
+				// class=\"main\">How does it works?</p> <p class=\"text\"> You
+				// know those moments when you need something that you do not
+				// own?<br>Tell Baatna what you are looking for and we'll
+				// find<br>friendly forlks willing to lend it to you.</p> <p
+				// class=\"text\"> Looking for something right now?</p></td>
+				// </tr> </table> <table class=\"content\" align=\"center\"
+				// bgcolor=\"white\" cellpadding=\"0\" cellspacing=\"0\"
+				// border=\"0\"> <col width=\"37.5%\"> <col width=\"25%\"> <col
+				// width=\"37.5%\"> <tr bgcolor=\"white\" border-radius:\"8px\"
+				// height=\"60px\"> <td style=\"padding: 0px 50px 0px
+				// 50px;\"></td><td class=\"button_class\"><a
+				// href=\"https://play.google.com/store/apps/developer?id=Baatna\"
+				// style=\"text-decoration:none; color:white\"><b>Post your
+				// need</b></a></td><td style=\"padding: 0 50px 0px 50px;\">
+				// </tr> <tr bgcolor=\"white\"><td colspan=\"3\"
+				// style=\"padding: 0px 50px 50px 50px;\"></td> </tr> </table>
+				// <table class=\"content\" align=\"center\" cellpadding=\"0\"
+				// cellspacing=\"0\" border=\"0\"> <tr bgcolor=\"#f1f2f2\"> <td
+				// style=\"padding: 50px 50px 0px 50px;\"></td> </tr> <tr
+				// bgcolor=\"white\"><td style=\"padding: 50px 50px 0px 50px;\"
+				// align=\"center\"><p class=\"main\">Help others out</p> <p
+				// class=\"text\">Share your stuff when it's convenient.If
+				// someone around you is looking<br>something, we will let you
+				// know. It's up to you if you want to lend out<br>your stuff.
+				// Be an awesome neighbour and share the love! <br> </td> </tr>
+				// </table> <table class=\"content\" align=\"center\"
+				// bgcolor=\"white\" cellpadding=\"0\" cellspacing=\"0\"
+				// border=\"0\"> <col width=\"37.5%\"> <col width=\"25%\"> <col
+				// width=\"37.5%\"> <tr bgcolor=\"white\" border-radius:\"8px\"
+				// height=\"60px\"> <td style=\"padding: 0px 50px 0
+				// 50px;\"></td> <td class=\"button_class\"><a
+				// href=\"https://play.google.com/store/apps/developer?id=Baatna\"
+				// style=\"text-decoration:none; color:white;\"><b>Fulfill your
+				// need</b></a></td><td style=\"padding: 0 50px 0 50px;\"> </tr>
+				// <tr bgcolor=\"white\"> <td colspan=\"3\" style=\"padding: 0px
+				// 50px 0px 50px;\"></td> </tr> </table><table class=\"content\"
+				// align=\"center\" cellpadding=\"0\" cellspacing=\"0\"
+				// border=\"0\"> <tr bgcolor=\"white\"> <td style=\"padding:
+				// 50px 50px 50px 50px;\" align=\"center\"> <p
+				// class=\"text\">We're doing our best to make Baatna more
+				// efficient and useful for you everyday.<br>Incase you have any
+				// feedback or query, or would just like to buy us
+				// cofee,<br>please write to us at<br></p> <p class=\"link\"><a
+				// href=\"hello@baatna.com\"
+				// style=\"color:#0ED7A3;\">hello@baatna.com</a></p></td> </tr>
+				// <tr bgcolor=\"#f1f2f2\"><td style=\"padding: 50px 50px 0
+				// 50px;\" align=\"center\"><a
+				// href=\"https://www.facebook.com/baatna/?fref=ts\"><img
+				// src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/facebook1.png\"
+				// alt=\"https://www.facebook.com/baatna/?fref=ts\"
+				// style=\"margin: 0px 5px\" width=5%></a> <a
+				// href=\"https://twitter.com/BaatnaCommunity\"><img
+				// src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/twitter1.png\"
+				// alt=\"https://twitter.com/BaatnaCommunity\" style=\"margin:
+				// 0px 5px\" width=5%></a> <p class=\"text\"> <a
+				// href=\"http://baatna.com\" style=\"text-decoration:none;
+				// color:black;\">www.<b>baatna</b>.com</a></p><p
+				// class=\"text\">Unsubscribe from emails</p>
+				// </td></tr></table></td></tr> </table></body>
+				// </html>","text/html");
 
-				//EmailUtil.getInstance().sendEmail(emailModel);
+				// EmailUtil.getInstance().sendEmail(emailModel);
 				// TODO: send a push to nearby users.
 
-				try{
-				HtmlEmail newemail= new HtmlEmail();
-				newemail.setHostName("smtp.gmail.com");
-				newemail.setSmtpPort(465);
-				newemail.setAuthenticator(new DefaultAuthenticator(CommonLib.BAPP_ID, CommonLib.BAPP_PWD));
-				newemail.setSSLOnConnect(true);
-				newemail.setFrom("hello@baatna.com");
-				newemail.setSubject("Welcome to your local Baatna Community!!");
-				//newemail.setHtmlMsg("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\">   <head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" /> <style type=\"text/css\">body {margin: 0; padding: 0; min-width: 100%!important;}   .content {  width: 100%; max-width: 600px;  } .main{ font-weight:800;  text-align: center;  color: black; font-family: \"Helvetica Neue Bold\",\"Helvetica\", \"sans-serif\";  font-size: 20px;  font-weight: normal; line-height: 1.5;}   .text{ text-decoration:none; text-align: center; color: grey; font-family: \"Helvetica Neue Light\", \"Helvetica\",\"sans-serif\";  font-size: 14px;  font-weight: normal; line-height: 1.5;  margin-bottom: 50px;} .link{color: springGreen; text-align:center; font-weight: bold; text-decoration: underline; font-size: 20px; line-height: 1.5;} .button_class{ text-align: center; font-family: \"Helvetica Neue Light\", \"Helvetica\",\"sans-serif\"; background-clip: padding-box; /* this has been added */ border-radius: 8px; font-size: 14px; background-color: #0ED7A3; color: black;} </style> </head><body yahoo bgcolor=\"#f1f2f2\"> <table width=\"100%\" align=\"center\" bgcolor=\"#f1f2f2\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr> <td><table class=\"content\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr bgcolor=\"#f1f2f2\"><td style=\"padding: 50px 50px 0px 50px;\"></td></tr> <tr bgcolor=\"white\" ><td  style=\"padding: 0 50px 0px 50px;\" align=\"center\"><a href=\"http://www.baatna.com\"> <img src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/baatna.jpg\" align=\"middle\" height=\"100px\" width=\"100px\" border=\"0\" alt=\"www.baatna.com\" > </a>"+
-	//												"<p class=\"main\">Welcome To Baatna</p> <p class=\"text\"> We thank you for becoming a member of of our<br> local Baatna community!</p>  <img src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/baatna_email2.jpg\" alt=\"http://baatna.com\"  width=60%><p class=\"text\">Baatna helps you to borrow things you need from people around you.<br>Right here,right now,for free</p> </td></tr> </table> <table class=\"content\" align=\"center\" bgcolor=\"white\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><col width=\"25%\"><col width=\"37.5%\"><tr bgcolor=\"white\" height=\"60px\"><td ></td><td class=\"button_class\" ><a href=\"http://www.baatna.com\" style=\"text-decoration:none; color:white;\" ><b> Learn More </b></a></td><td ></td></tr> <tr  bgcolor=\"white\"> <td colspan=\"3\" style=\"padding: 0px 50px 50px 50px;\"></td></tr>  </table>  <table class=\"content\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">   <tr bgcolor=\"#f1f2f2\"> <td style=\"padding: 50px 50px 0px 50px;\"></td> </tr>  <tr bgcolor=\"white\"> <td style=\"padding: 50px 50px 0px 50px;\" align=\"center\"> <p class=\"main\">How does it works?</p> <p class=\"text\"> You know those moments when you need something that you do not own?<br>Tell Baatna what you are looking for and we'll find<br>friendly forlks willing to lend it to you.</p> <p class=\"text\"> Looking for something right now?</p></td>  </tr> </table>  <table class=\"content\" align=\"center\" bgcolor=\"white\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"> <col width=\"37.5%\">  <col width=\"25%\"> <col width=\"37.5%\"> <tr bgcolor=\"white\" border-radius:\"8px\" height=\"60px\"><td style=\"padding: 0px 50px 0px 50px;\"></td><td class=\"button_class\"><a href=\"https://play.google.com/store/apps/developer?id=Baatna\" style=\"text-decoration:none; color:white\"><b>Post your need</b></a></td><td style=\"padding: 0 50px 0px 50px;\"> </tr> <tr  bgcolor=\"white\"><td colspan=\"3\" style=\"padding: 0px 50px 50px 50px;\"></td></tr>  </table> <table class=\"content\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"> <tr bgcolor=\"#f1f2f2\"> <td style=\"padding: 50px 50px 0px 50px;\"></td></tr>  <tr bgcolor=\"white\"><td style=\"padding: 50px 50px 0px 50px;\" align=\"center\"><p class=\"main\">Help others out</p>  <p class=\"text\">Share your stuff when it's convenient.If someone around you is looking<br>something, we will let you know. It's up to you if you want to lend out<br>your stuff. Be an awesome neighbour and share the love! <br> </td> </tr> </table><table class=\"content\" align=\"center\" bgcolor=\"white\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"> <col width=\"37.5%\"> <col width=\"25%\">  <col width=\"37.5%\"><tr bgcolor=\"white\" border-radius:\"8px\" height=\"60px\"> <td style=\"padding: 0px 50px 0 50px;\"></td> <td class=\"button_class\"><a href=\"https://play.google.com/store/apps/developer?id=Baatna\" style=\"text-decoration:none; color:white;\"><b> Fulfill your need </b></a></td><td style=\"padding: 0 50px 0 50px;\"></tr> <tr  bgcolor=\"white\">  <td colspan=\"3\" style=\"padding: 0px 50px 0px 50px;\"></td></tr> </table><table class=\"content\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\"> <tr bgcolor=\"white\"> <td style=\"padding: 50px 50px 50px 50px;\" align=\"center\"><p class=\"text\">We're doing our best to make Baatna more efficient and useful for you everyday.<br>Incase you have any feedback or query, or would just like to buy us cofee,<br>please write to us at<br></p> <p class=\"link\"><a href=\"hello@baatna.com\" style=\"color:#0ED7A3;\">hello@baatna.com</a></p></td>  </tr> <tr bgcolor=\"#f1f2f2\"><td style=\"padding: 50px 50px 0 50px;\" align=\"center\"><a href=\"https://www.facebook.com/baatna/?fref=ts\"><img src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/facebook1.png\" alt=\"https://www.facebook.com/baatna/?fref=ts\" style=\"margin: 0px 5px\" width=5%></a><a href=\"https://twitter.com/BaatnaCommunity\"><img src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/twitter1.png\" alt=\"https://twitter.com/BaatnaCommunity\"  style=\"margin: 0px 5px\" width=5%></a> <p class=\"text\"> <a href=\"http://baatna.com\" style=\"text-decoration:none; color:black;\">www.<b>baatna</b>.com</a></p><p class=\"text\">Unsubscribe from emails</p> </td></tr></table></td></tr> </table></body> </html>");
-				newemail.setHtmlMsg("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">  <html xmlns=\"http://www.w3.org/1999/xhtml\">      <head>          <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />                  </head>      <body yahoo bgcolor=\"#f1f2f2\" style=\"margin: 0;           padding: 0;            min-width: 100%\">          <table width=\"100%\" align=\"center\" bgcolor=\"#f1f2f2\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">              <tr>                  <td>                       <table style=\" width: 100%; max-width: 600px;\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">                          <tr bgcolor=\"#f1f2f2\">                              <td style=\"padding: 50px 50px 0px 50px;\"></td>                          </tr>                                                   <tr bgcolor=\"white\" >                              <td  style=\"padding: 0 50px 0px 50px;\" align=\"center\">                                  <a href=\"http://www.baatna.com\">                                       <img src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/baatna.jpg\" align=\"middle\" height=\"100px\" width=\"100px\" border=\"0\" alt=\"www.baatna.com\" >                                   </a>                                  <p style=\"font-weight:800; text-align: center;color: black; font-family:Helvetica;font-size: 20px;font-weight: normal;line-height: 1.5\">Welcome To Baatna</p>                                  <p style=\"font-weight:800; text-align: center;color: grey; font-family:Helvetica;font-size: 14px;font-weight: normal;line-height: 1.5; margin-bottom:50px\"> We thank you for becoming a member of our<br>                                      local Baatna community!</p>                                  <img src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/baatna_email2.jpg\" alt=\"http://baatna.com\"  width=60%>                                  <p style=\"font-weight:800; text-align: center;color: grey; font-family:Helvetica;font-size: 14px;font-weight: normal;line-height: 1.5; margin-bottom:50px\">Baatna helps you to borrow things you need from people around you.<br>                                   Right here,right now,for free</p>                              </td>                                 </tr>                      </table>                      <table style=\" width: 100%; max-width: 600px;\" align=\"center\" bgcolor=\"white\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">                          <col width=\"37.5%\">                          <col width=\"25%\">                          <col width=\"37.5%\">                          <tr bgcolor=\"white\" height=\"60px\">                               <td ></td>                                          <td bgcolor=\"#0ED7A3\" align=\"center\" style=\"border-radius:8px; font-family:Helvetica;font-size: 14px;\" ><a href=\"http://www.baatna.com\" style=\"text-decoration:none; color:white;\" ><b>Learn More</b></a></td>                                  <td ></td>                          </tr>                          <tr  bgcolor=\"white\">                          <td colspan=\"3\" style=\"padding: 0px 50px 50px 50px;\"></td>                          </tr>                      </table>                      <table style=\" width: 100%; max-width: 600px;\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">                          <tr bgcolor=\"#f1f2f2\">                              <td style=\"padding: 50px 50px 0px 50px;\"></td>                          </tr>                          <tr bgcolor=\"white\">                              <td style=\"padding: 50px 50px 0px 50px;\" align=\"center\">                                  <p style=\"font-weight:800; text-align: center;color: black; font-family:Helvetica;font-size: 20px;font-weight: normal;line-height: 1.5\">How does it works?</p>                                  <p style=\"font-weight:800; text-align: center;color: grey; font-family:Helvetica;font-size: 14px;font-weight: normal;line-height: 1.5; margin-bottom:50px\"> You know those moments when you need something that you do not own?<br>Tell Baatna what you are looking for and we'll find<br>friendly forlks willing to lend it to you.</p>                                  <p style=\"font-weight:800; text-align: center;color: grey; font-family:Helvetica;font-size: 14px;font-weight: normal;line-height: 1.5; margin-bottom:50px\"> Looking for something right now?</p></td>                          </tr>                      </table>                      <table style=\" width: 100%; max-width: 600px;\" align=\"center\" bgcolor=\"white\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">                      <col width=\"37.5%\">                      <col width=\"25%\">                       <col width=\"37.5%\">                              <tr bgcolor=\"white\" border-radius:\"8px\" height=\"60px\">                                  <td style=\"padding: 0px 50px 0px 50px;\"></td>                                             <td bgcolor=\"#0ED7A3\" align=\"center\" style=\"border-radius:8px; font-family:Helvetica;font-size: 14px;\" ><a href=\"http://www.baatna.com\" style=\"text-decoration:none; color:white;\"><a href=\"https://play.google.com/store/apps/developer?id=Baatna\" style=\"text-decoration:none; color:white\"><b>Post your need</b></a></td>                                   <td style=\"padding: 0 50px 0px 50px;\">                             </tr>                               <tr  bgcolor=\"white\">                                    <td colspan=\"3\" style=\"padding: 0px 50px 50px 50px;\"></td>                               </tr>                      </table>                      <table style=\" width: 100%; max-width: 600px;\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">                              <tr bgcolor=\"#f1f2f2\">                                   <td style=\"padding: 50px 50px 0px 50px;\"></td>                              </tr>                              <tr bgcolor=\"white\">                                  <td style=\"padding: 50px 50px 0px 50px;\" align=\"center\">                                  <p style=\"font-weight:800; text-align: center;color: black; font-family:Helvetica;font-size: 20px;font-weight: normal;line-height: 1.5\">Help others out</p>                                   <p style=\"font-weight:800; text-align: center;color: grey; font-family:Helvetica;font-size: 14px;font-weight: normal;line-height: 1.5; margin-bottom:50px\">Share your stuff when it's convenient.If someone around you is looking<br>something, we will let you know. It's up to you if you want to lend out<br>your stuff. Be an awesome neighbour and share the love! <br>                                  </td>                              </tr>                      </table>                      <table style=\" width: 100%; max-width: 600px;\" align=\"center\" bgcolor=\"white\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">                              <col width=\"37.5%\">                               <col width=\"25%\">                                <col width=\"37.5%\">                                  <tr bgcolor=\"white\" border-radius:\"8px\" height=\"60px\">                                       <td style=\"padding: 0px 50px 0 50px;\"></td>                                                 <td bgcolor=\"#0ED7A3\" align=\"center\" style=\"border-radius:8px; font-family:Helvetica;font-size: 14px;\" ><a href=\"http://www.baatna.com\" style=\"text-decoration:none; color:white;\"><a href=\"https://play.google.com/store/apps/developer?id=Baatna\" style=\"text-decoration:none; color:white;\"><b>Fulfill your need</b></a></td>                                      <td style=\"padding: 0 50px 0 50px;\">                                </tr>                              <tr  bgcolor=\"white\">                                      <td colspan=\"3\" style=\"padding: 0px 50px 0px 50px;\"></td>                              </tr>                      </table>                        <table style=\" width: 100%; max-width: 600px;\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">                      <tr bgcolor=\"white\">                              <td style=\"padding: 50px 50px 50px 50px;\" align=\"center\">                                  <p style=\"font-weight:800; text-align: center;color: grey; font-family:Helvetica;font-size: 14px;font-weight: normal;line-height: 1.5; margin-bottom:50px\">We're doing our best to make Baatna more efficient and useful for you everyday.Incase you have any feedback or query, or would just like to buy us cofee,please write to us at<br></p>                                   <p style=\"color: springGreen;text-align:center;font-weight: bold;text-decoration: underline;font-size: 20px;line-height: 1.5\"><a href=\"hello@baatna.com\" style=\"color:#0ED7A3;\">hello@baatna.com</a></p></td>                               </tr>                              <tr bgcolor=\"#f1f2f2\">                                      <td style=\"padding: 50px 50px 0 50px;\" align=\"center\">                                          <a href=\"https://www.facebook.com/baatna/?fref=ts\">                                              <img src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/facebook1.png\" alt=\"https://www.facebook.com/baatna/?fref=ts\" style=\"margin: 0px 5px\" width=5%></a>                                          <a href=\"https://twitter.com/BaatnaCommunity\"><img src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/twitter1.png\" alt=\"https://twitter.com/BaatnaCommunity\"  style=\"margin: 0px 5px\" width=5%></a>                                          <p style=\"font-weight:800; text-align: center;color: grey; font-family:Helvetica;font-size: 14px;font-weight: normal;line-height: 1.5; margin-bottom:50px\"> <a href=\"http://baatna.com\" style=\"text-decoration:none; color:black;\">www.<b>baatna</b>.com</a></p>                                          <p style=\"font-weight:800; text-align: center;color: grey; font-family:Helvetica;font-size: 14px;font-weight: normal;line-height: 1.5; margin-bottom:50px\">Unsubscribe from emails</p>                                      </td>                               </tr>                      </table>                  </td>              </tr>          </table>      </body>  </html>");
-				newemail.addTo(email);
-				newemail.send();
-				}catch(EmailException e)
-				{
+				try {
+					HtmlEmail newemail = new HtmlEmail();
+					newemail.setHostName("smtp.gmail.com");
+					newemail.setSmtpPort(465);
+					newemail.setAuthenticator(new DefaultAuthenticator(CommonLib.BAPP_ID, CommonLib.BAPP_PWD));
+					newemail.setSSLOnConnect(true);
+					newemail.setFrom("hello@baatna.com");
+					newemail.setSubject("Welcome to your local Baatna Community!!");
+					// newemail.setHtmlMsg("<!DOCTYPE html PUBLIC \"-//W3C//DTD
+					// XHTML 1.0 Transitional//EN\"
+					// \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html
+					// xmlns=\"http://www.w3.org/1999/xhtml\"> <head> <meta
+					// http-equiv=\"Content-Type\" content=\"text/html;
+					// charset=utf-8\" /> <style type=\"text/css\">body {margin:
+					// 0; padding: 0; min-width: 100%!important;} .content {
+					// width: 100%; max-width: 600px; } .main{ font-weight:800;
+					// text-align: center; color: black; font-family:
+					// \"Helvetica Neue Bold\",\"Helvetica\", \"sans-serif\";
+					// font-size: 20px; font-weight: normal; line-height: 1.5;}
+					// .text{ text-decoration:none; text-align: center; color:
+					// grey; font-family: \"Helvetica Neue Light\",
+					// \"Helvetica\",\"sans-serif\"; font-size: 14px;
+					// font-weight: normal; line-height: 1.5; margin-bottom:
+					// 50px;} .link{color: springGreen; text-align:center;
+					// font-weight: bold; text-decoration: underline; font-size:
+					// 20px; line-height: 1.5;} .button_class{ text-align:
+					// center; font-family: \"Helvetica Neue Light\",
+					// \"Helvetica\",\"sans-serif\"; background-clip:
+					// padding-box; /* this has been added */ border-radius:
+					// 8px; font-size: 14px; background-color: #0ED7A3; color:
+					// black;} </style> </head><body yahoo bgcolor=\"#f1f2f2\">
+					// <table width=\"100%\" align=\"center\"
+					// bgcolor=\"#f1f2f2\" border=\"0\" cellpadding=\"0\"
+					// cellspacing=\"0\"><tr> <td><table class=\"content\"
+					// align=\"center\" cellpadding=\"0\" cellspacing=\"0\"
+					// border=\"0\"><tr bgcolor=\"#f1f2f2\"><td style=\"padding:
+					// 50px 50px 0px 50px;\"></td></tr> <tr bgcolor=\"white\"
+					// ><td style=\"padding: 0 50px 0px 50px;\"
+					// align=\"center\"><a href=\"http://www.baatna.com\"> <img
+					// src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/baatna.jpg\"
+					// align=\"middle\" height=\"100px\" width=\"100px\"
+					// border=\"0\" alt=\"www.baatna.com\" > </a>"+
+					// "<p class=\"main\">Welcome To Baatna</p> <p
+					// class=\"text\"> We thank you for becoming a member of of
+					// our<br> local Baatna community!</p> <img
+					// src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/baatna_email2.jpg\"
+					// alt=\"http://baatna.com\" width=60%><p
+					// class=\"text\">Baatna helps you to borrow things you need
+					// from people around you.<br>Right here,right now,for
+					// free</p> </td></tr> </table> <table class=\"content\"
+					// align=\"center\" bgcolor=\"white\" cellpadding=\"0\"
+					// cellspacing=\"0\" border=\"0\"><col width=\"25%\"><col
+					// width=\"37.5%\"><tr bgcolor=\"white\" height=\"60px\"><td
+					// ></td><td class=\"button_class\" ><a
+					// href=\"http://www.baatna.com\"
+					// style=\"text-decoration:none; color:white;\" ><b> Learn
+					// More </b></a></td><td ></td></tr> <tr bgcolor=\"white\">
+					// <td colspan=\"3\" style=\"padding: 0px 50px 50px
+					// 50px;\"></td></tr> </table> <table class=\"content\"
+					// align=\"center\" cellpadding=\"0\" cellspacing=\"0\"
+					// border=\"0\"> <tr bgcolor=\"#f1f2f2\"> <td
+					// style=\"padding: 50px 50px 0px 50px;\"></td> </tr> <tr
+					// bgcolor=\"white\"> <td style=\"padding: 50px 50px 0px
+					// 50px;\" align=\"center\"> <p class=\"main\">How does it
+					// works?</p> <p class=\"text\"> You know those moments when
+					// you need something that you do not own?<br>Tell Baatna
+					// what you are looking for and we'll find<br>friendly
+					// forlks willing to lend it to you.</p> <p class=\"text\">
+					// Looking for something right now?</p></td> </tr> </table>
+					// <table class=\"content\" align=\"center\"
+					// bgcolor=\"white\" cellpadding=\"0\" cellspacing=\"0\"
+					// border=\"0\"> <col width=\"37.5%\"> <col width=\"25%\">
+					// <col width=\"37.5%\"> <tr bgcolor=\"white\"
+					// border-radius:\"8px\" height=\"60px\"><td
+					// style=\"padding: 0px 50px 0px 50px;\"></td><td
+					// class=\"button_class\"><a
+					// href=\"https://play.google.com/store/apps/developer?id=Baatna\"
+					// style=\"text-decoration:none; color:white\"><b>Post your
+					// need</b></a></td><td style=\"padding: 0 50px 0px 50px;\">
+					// </tr> <tr bgcolor=\"white\"><td colspan=\"3\"
+					// style=\"padding: 0px 50px 50px 50px;\"></td></tr>
+					// </table> <table class=\"content\" align=\"center\"
+					// cellpadding=\"0\" cellspacing=\"0\" border=\"0\"> <tr
+					// bgcolor=\"#f1f2f2\"> <td style=\"padding: 50px 50px 0px
+					// 50px;\"></td></tr> <tr bgcolor=\"white\"><td
+					// style=\"padding: 50px 50px 0px 50px;\"
+					// align=\"center\"><p class=\"main\">Help others out</p> <p
+					// class=\"text\">Share your stuff when it's convenient.If
+					// someone around you is looking<br>something, we will let
+					// you know. It's up to you if you want to lend out<br>your
+					// stuff. Be an awesome neighbour and share the love! <br>
+					// </td> </tr> </table><table class=\"content\"
+					// align=\"center\" bgcolor=\"white\" cellpadding=\"0\"
+					// cellspacing=\"0\" border=\"0\"> <col width=\"37.5%\">
+					// <col width=\"25%\"> <col width=\"37.5%\"><tr
+					// bgcolor=\"white\" border-radius:\"8px\" height=\"60px\">
+					// <td style=\"padding: 0px 50px 0 50px;\"></td> <td
+					// class=\"button_class\"><a
+					// href=\"https://play.google.com/store/apps/developer?id=Baatna\"
+					// style=\"text-decoration:none; color:white;\"><b> Fulfill
+					// your need </b></a></td><td style=\"padding: 0 50px 0
+					// 50px;\"></tr> <tr bgcolor=\"white\"> <td colspan=\"3\"
+					// style=\"padding: 0px 50px 0px 50px;\"></td></tr>
+					// </table><table class=\"content\" align=\"center\"
+					// cellpadding=\"0\" cellspacing=\"0\" border=\"0\"> <tr
+					// bgcolor=\"white\"> <td style=\"padding: 50px 50px 50px
+					// 50px;\" align=\"center\"><p class=\"text\">We're doing
+					// our best to make Baatna more efficient and useful for you
+					// everyday.<br>Incase you have any feedback or query, or
+					// would just like to buy us cofee,<br>please write to us
+					// at<br></p> <p class=\"link\"><a href=\"hello@baatna.com\"
+					// style=\"color:#0ED7A3;\">hello@baatna.com</a></p></td>
+					// </tr> <tr bgcolor=\"#f1f2f2\"><td style=\"padding: 50px
+					// 50px 0 50px;\" align=\"center\"><a
+					// href=\"https://www.facebook.com/baatna/?fref=ts\"><img
+					// src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/facebook1.png\"
+					// alt=\"https://www.facebook.com/baatna/?fref=ts\"
+					// style=\"margin: 0px 5px\" width=5%></a><a
+					// href=\"https://twitter.com/BaatnaCommunity\"><img
+					// src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/twitter1.png\"
+					// alt=\"https://twitter.com/BaatnaCommunity\"
+					// style=\"margin: 0px 5px\" width=5%></a> <p
+					// class=\"text\"> <a href=\"http://baatna.com\"
+					// style=\"text-decoration:none;
+					// color:black;\">www.<b>baatna</b>.com</a></p><p
+					// class=\"text\">Unsubscribe from emails</p>
+					// </td></tr></table></td></tr> </table></body> </html>");
+					newemail.setHtmlMsg(
+							"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">  <html xmlns=\"http://www.w3.org/1999/xhtml\">      <head>          <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />                  </head>      <body yahoo bgcolor=\"#f1f2f2\" style=\"margin: 0;           padding: 0;            min-width: 100%\">          <table width=\"100%\" align=\"center\" bgcolor=\"#f1f2f2\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">              <tr>                  <td>                       <table style=\" width: 100%; max-width: 600px;\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">                          <tr bgcolor=\"#f1f2f2\">                              <td style=\"padding: 50px 50px 0px 50px;\"></td>                          </tr>                                                   <tr bgcolor=\"white\" >                              <td  style=\"padding: 0 50px 0px 50px;\" align=\"center\">                                  <a href=\"http://www.baatna.com\">                                       <img src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/baatna.jpg\" align=\"middle\" height=\"100px\" width=\"100px\" border=\"0\" alt=\"www.baatna.com\" >                                   </a>                                  <p style=\"font-weight:800; text-align: center;color: black; font-family:Helvetica;font-size: 20px;font-weight: normal;line-height: 1.5\">Welcome To Baatna</p>                                  <p style=\"font-weight:800; text-align: center;color: grey; font-family:Helvetica;font-size: 14px;font-weight: normal;line-height: 1.5; margin-bottom:50px\"> We thank you for becoming a member of our<br>                                      local Baatna community!</p>                                  <img src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/baatna_email2.jpg\" alt=\"http://baatna.com\"  width=60%>                                  <p style=\"font-weight:800; text-align: center;color: grey; font-family:Helvetica;font-size: 14px;font-weight: normal;line-height: 1.5; margin-bottom:50px\">Baatna helps you to borrow things you need from people around you.<br>                                   Right here,right now,for free</p>                              </td>                                 </tr>                      </table>                      <table style=\" width: 100%; max-width: 600px;\" align=\"center\" bgcolor=\"white\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">                          <col width=\"37.5%\">                          <col width=\"25%\">                          <col width=\"37.5%\">                          <tr bgcolor=\"white\" height=\"60px\">                               <td ></td>                                          <td bgcolor=\"#0ED7A3\" align=\"center\" style=\"border-radius:8px; font-family:Helvetica;font-size: 14px;\" ><a href=\"http://www.baatna.com\" style=\"text-decoration:none; color:white;\" ><b>Learn More</b></a></td>                                  <td ></td>                          </tr>                          <tr  bgcolor=\"white\">                          <td colspan=\"3\" style=\"padding: 0px 50px 50px 50px;\"></td>                          </tr>                      </table>                      <table style=\" width: 100%; max-width: 600px;\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">                          <tr bgcolor=\"#f1f2f2\">                              <td style=\"padding: 50px 50px 0px 50px;\"></td>                          </tr>                          <tr bgcolor=\"white\">                              <td style=\"padding: 50px 50px 0px 50px;\" align=\"center\">                                  <p style=\"font-weight:800; text-align: center;color: black; font-family:Helvetica;font-size: 20px;font-weight: normal;line-height: 1.5\">How does it works?</p>                                  <p style=\"font-weight:800; text-align: center;color: grey; font-family:Helvetica;font-size: 14px;font-weight: normal;line-height: 1.5; margin-bottom:50px\"> You know those moments when you need something that you do not own?<br>Tell Baatna what you are looking for and we'll find<br>friendly forlks willing to lend it to you.</p>                                  <p style=\"font-weight:800; text-align: center;color: grey; font-family:Helvetica;font-size: 14px;font-weight: normal;line-height: 1.5; margin-bottom:50px\"> Looking for something right now?</p></td>                          </tr>                      </table>                      <table style=\" width: 100%; max-width: 600px;\" align=\"center\" bgcolor=\"white\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">                      <col width=\"37.5%\">                      <col width=\"25%\">                       <col width=\"37.5%\">                              <tr bgcolor=\"white\" border-radius:\"8px\" height=\"60px\">                                  <td style=\"padding: 0px 50px 0px 50px;\"></td>                                             <td bgcolor=\"#0ED7A3\" align=\"center\" style=\"border-radius:8px; font-family:Helvetica;font-size: 14px;\" ><a href=\"http://www.baatna.com\" style=\"text-decoration:none; color:white;\"><a href=\"https://play.google.com/store/apps/developer?id=Baatna\" style=\"text-decoration:none; color:white\"><b>Post your need</b></a></td>                                   <td style=\"padding: 0 50px 0px 50px;\">                             </tr>                               <tr  bgcolor=\"white\">                                    <td colspan=\"3\" style=\"padding: 0px 50px 50px 50px;\"></td>                               </tr>                      </table>                      <table style=\" width: 100%; max-width: 600px;\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">                              <tr bgcolor=\"#f1f2f2\">                                   <td style=\"padding: 50px 50px 0px 50px;\"></td>                              </tr>                              <tr bgcolor=\"white\">                                  <td style=\"padding: 50px 50px 0px 50px;\" align=\"center\">                                  <p style=\"font-weight:800; text-align: center;color: black; font-family:Helvetica;font-size: 20px;font-weight: normal;line-height: 1.5\">Help others out</p>                                   <p style=\"font-weight:800; text-align: center;color: grey; font-family:Helvetica;font-size: 14px;font-weight: normal;line-height: 1.5; margin-bottom:50px\">Share your stuff when it's convenient.If someone around you is looking<br>something, we will let you know. It's up to you if you want to lend out<br>your stuff. Be an awesome neighbour and share the love! <br>                                  </td>                              </tr>                      </table>                      <table style=\" width: 100%; max-width: 600px;\" align=\"center\" bgcolor=\"white\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">                              <col width=\"37.5%\">                               <col width=\"25%\">                                <col width=\"37.5%\">                                  <tr bgcolor=\"white\" border-radius:\"8px\" height=\"60px\">                                       <td style=\"padding: 0px 50px 0 50px;\"></td>                                                 <td bgcolor=\"#0ED7A3\" align=\"center\" style=\"border-radius:8px; font-family:Helvetica;font-size: 14px;\" ><a href=\"http://www.baatna.com\" style=\"text-decoration:none; color:white;\"><a href=\"https://play.google.com/store/apps/developer?id=Baatna\" style=\"text-decoration:none; color:white;\"><b>Fulfill your need</b></a></td>                                      <td style=\"padding: 0 50px 0 50px;\">                                </tr>                              <tr  bgcolor=\"white\">                                      <td colspan=\"3\" style=\"padding: 0px 50px 0px 50px;\"></td>                              </tr>                      </table>                        <table style=\" width: 100%; max-width: 600px;\" align=\"center\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">                      <tr bgcolor=\"white\">                              <td style=\"padding: 50px 50px 50px 50px;\" align=\"center\">                                  <p style=\"font-weight:800; text-align: center;color: grey; font-family:Helvetica;font-size: 14px;font-weight: normal;line-height: 1.5; margin-bottom:50px\">We're doing our best to make Baatna more efficient and useful for you everyday.Incase you have any feedback or query, or would just like to buy us cofee,please write to us at<br></p>                                   <p style=\"color: springGreen;text-align:center;font-weight: bold;text-decoration: underline;font-size: 20px;line-height: 1.5\"><a href=\"hello@baatna.com\" style=\"color:#0ED7A3;\">hello@baatna.com</a></p></td>                               </tr>                              <tr bgcolor=\"#f1f2f2\">                                      <td style=\"padding: 50px 50px 0 50px;\" align=\"center\">                                          <a href=\"https://www.facebook.com/baatna/?fref=ts\">                                              <img src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/facebook1.png\" alt=\"https://www.facebook.com/baatna/?fref=ts\" style=\"margin: 0px 5px\" width=5%></a>                                          <a href=\"https://twitter.com/BaatnaCommunity\"><img src=\"https://s3-ap-southeast-1.amazonaws.com/www.baatna.com/twitter1.png\" alt=\"https://twitter.com/BaatnaCommunity\"  style=\"margin: 0px 5px\" width=5%></a>                                          <p style=\"font-weight:800; text-align: center;color: grey; font-family:Helvetica;font-size: 14px;font-weight: normal;line-height: 1.5; margin-bottom:50px\"> <a href=\"http://baatna.com\" style=\"text-decoration:none; color:black;\">www.<b>baatna</b>.com</a></p>                                          <p style=\"font-weight:800; text-align: center;color: grey; font-family:Helvetica;font-size: 14px;font-weight: normal;line-height: 1.5; margin-bottom:50px\">Unsubscribe from emails</p>                                      </td>                               </tr>                      </table>                  </td>              </tr>          </table>      </body>  </html>");
+					newemail.addTo(email);
+					newemail.send();
+				} catch (EmailException e) {
 					e.printStackTrace();
 				}
-				
-				
+
 				FeedDAO feedDao = new FeedDAO();
 				boolean returnFeedResult = feedDao.addFeedItem(FeedDAO.USER_JOINED, System.currentTimeMillis(),
 						userCreated.getUserId(), -1, -1);
@@ -287,9 +517,9 @@ public class BaatnaUser extends BaseResource{
 	@POST
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
-	public JSONObject getNearbyUsers(@FormParam("client_id") String clientId, 
-			@FormParam("app_type") String appType, @FormParam("access_token") String accessToken, 
-			@FormParam("latitude") double latitude, @FormParam("longitude") double longitude) {
+	public JSONObject getNearbyUsers(@FormParam("client_id") String clientId, @FormParam("app_type") String appType,
+			@FormParam("access_token") String accessToken, @FormParam("latitude") double latitude,
+			@FormParam("longitude") double longitude) {
 
 		// check for client_id
 		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
@@ -476,7 +706,8 @@ public class BaatnaUser extends BaseResource{
 	@Consumes("application/x-www-form-urlencoded")
 	public JSONObject updateRating(@FormParam("client_id") String clientId, @FormParam("app_type") String appType,
 			@FormParam("access_token") String accessToken, @FormParam("userId") int userId,
-			@FormParam("rating") double rating, @FormParam("wish_id") int wishId, @FormParam("user_wish_id") int userWishId) {
+			@FormParam("rating") double rating, @FormParam("wish_id") int wishId,
+			@FormParam("user_wish_id") int userWishId) {
 
 		// null checks, invalid request
 		if (clientId == null || appType == null)
@@ -494,17 +725,18 @@ public class BaatnaUser extends BaseResource{
 		int currentUserId = dao.userActive(accessToken);
 		if (currentUserId > 0 && userId > 0) {
 			boolean retValue = false;
-			//boolean userCanRate = false;
-			//userCanRate = dao.usersEverInteracted(currentUserId, userId);
-			//if (userCanRate) {
-				retValue = dao.setRatingForUser(currentUserId, userId,rating,wishId,userWishId);
-				if (retValue)
-					return CommonLib.getResponseString("success", "success", CommonLib.RESPONSE_SUCCESS);
-				else
-					return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_RATED_FAILURE);
-		//	} else {
-				//return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_RATED_FAILURE);
-			//}
+			// boolean userCanRate = false;
+			// userCanRate = dao.usersEverInteracted(currentUserId, userId);
+			// if (userCanRate) {
+			retValue = dao.setRatingForUser(currentUserId, userId, rating, wishId, userWishId);
+			if (retValue)
+				return CommonLib.getResponseString("success", "success", CommonLib.RESPONSE_SUCCESS);
+			else
+				return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_RATED_FAILURE);
+			// } else {
+			// return CommonLib.getResponseString("failure", "",
+			// CommonLib.RESPONSE_RATED_FAILURE);
+			// }
 		}
 
 		return CommonLib.getResponseString("failure", "", CommonLib.RESPONSE_RATED_FAILURE);
@@ -551,57 +783,48 @@ public class BaatnaUser extends BaseResource{
 				CommonLib.RESPONSE_RATED_FAILURE);
 
 	}
-	
 
 	@Path("/block")
 	@POST
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
-	public JSONObject blockUser(@FormParam("client_id") String clientId,
-			@FormParam("app_type") String appType,
-			@FormParam("access_token") String accessToken,
-			@QueryParam("userId") int userId) {
+	public JSONObject blockUser(@FormParam("client_id") String clientId, @FormParam("app_type") String appType,
+			@FormParam("access_token") String accessToken, @QueryParam("userId") int userId) {
 
 		// null checks, invalid request
 		if (clientId == null || appType == null)
-			return CommonLib.getResponseString("Invalid params", "",
-					CommonLib.RESPONSE_INVALID_PARAMS);
+			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_PARAMS);
 
 		// check for client_id
 		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
-			return CommonLib.getResponseString("Invalid client id", "",
-					CommonLib.RESPONSE_INVALID_CLIENT_ID);
+			return CommonLib.getResponseString("Invalid client id", "", CommonLib.RESPONSE_INVALID_CLIENT_ID);
 
 		// check for app type
 		if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
-			return CommonLib.getResponseString("Invalid params", "",
-					CommonLib.RESPONSE_INVALID_APP_TYPE);
+			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_APP_TYPE);
 
-		
-		UserDAO dao= new UserDAO();
-		boolean retVal=false;
+		UserDAO dao = new UserDAO();
+		boolean retVal = false;
 		// check if user exists
-		//User userExists = dao.getUserDetails(userId);
-		int blockingUserId=dao.userActive(accessToken);
-		if(blockingUserId>0 && userId>0)
-		{
-			retVal=dao.addUserToBlockedList(blockingUserId,userId);
+		// User userExists = dao.getUserDetails(userId);
+		int blockingUserId = dao.userActive(accessToken);
+		if (blockingUserId > 0 && userId > 0) {
+			retVal = dao.addUserToBlockedList(blockingUserId, userId);
 		}
-		if(retVal)
+		if (retVal)
 			return CommonLib.getResponseString("success", "success", CommonLib.RESPONSE_SUCCESS);
 		else
-		return CommonLib.getResponseString("failure", "user does not exist", CommonLib.RESPONSE_FAILURE);
-}
+			return CommonLib.getResponseString("failure", "user does not exist", CommonLib.RESPONSE_FAILURE);
+	}
 
-	
-	//temporary test path
-		@Path("/exception")
-		@POST
-		@Produces("application/json")
-		@Consumes("application/x-www-form-urlencoded")
-		public JSONObject genException(@FormParam("abc") int abc) {
-			
-			throw new NullPointerException(); 
-		}
-	
+	// temporary test path
+	@Path("/exception")
+	@POST
+	@Produces("application/json")
+	@Consumes("application/x-www-form-urlencoded")
+	public JSONObject genException(@FormParam("abc") int abc) {
+
+		throw new NullPointerException();
+	}
+
 }

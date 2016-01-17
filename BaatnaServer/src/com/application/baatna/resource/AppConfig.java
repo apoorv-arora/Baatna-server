@@ -38,11 +38,12 @@ public class AppConfig extends BaseResource {
 			JSONObject appJsonObject = new JSONObject();
 
 			if (clientTypeAndroid) {
-				if (CommonLib.ANDROID_APP_VERSION.equals(version)) {
-					appJsonObject.put("update", true);
-				} else
-					appJsonObject.put("update", false);
-
+				// remove force update checker.
+				// if (CommonLib.ANDROID_APP_VERSION.equals(version)) {
+				// appJsonObject.put("update", true);
+				// } else
+				// appJsonObject.put("update", false);
+				appJsonObject.put("update", true);
 				UserDAO dao = new UserDAO();
 				int userId = dao.userActive(accessToken);
 

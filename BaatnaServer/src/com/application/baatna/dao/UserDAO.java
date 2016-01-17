@@ -335,7 +335,6 @@ public class UserDAO {
 			query.setParameter("access_token", accessToken);
 			query.setParameter("user_id", userId);
 			int result = query.executeUpdate();
-			CommonLib.BLog(result + "");
 			transaction.commit();
 			session.close();
 			return true;
