@@ -789,7 +789,7 @@ public class BaatnaUser extends BaseResource {
 	@Produces("application/json")
 	@Consumes("application/x-www-form-urlencoded")
 	public JSONObject blockUser(@FormParam("client_id") String clientId, @FormParam("app_type") String appType,
-			@FormParam("access_token") String accessToken, @QueryParam("userId") int userId) {
+			@FormParam("access_token") String accessToken, @FormParam("userId") int userId) {
 
 		// null checks, invalid request
 		if (clientId == null || appType == null)
