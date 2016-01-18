@@ -47,8 +47,8 @@ public class CommonLib {
 	/**
 	 * Android API constants
 	 */
-	public static String projectId = "531855430941";// "792616879007";
-	public static String apiKey = "AIzaSyC1Zbn_ROSWO-l4IJYTDaeyBTEit3fn9FI";// "AIzaSyAJBGj_8aaNykTNaPxdayggDMyxzArE7gM";
+	public static String projectId = "122380389686";//531855430941";// "792616879007";
+	public static String apiKey = "AIzaSyD6BP-UVGQZ_YO-wtKFGiNmPk3e8k6qbbQ";//AIzaSyC1Zbn_ROSWO-l4IJYTDaeyBTEit3fn9FI";// "AIzaSyAJBGj_8aaNykTNaPxdayggDMyxzArE7gM";
 	public static final String GCM_SERVER = "gcm.googleapis.com";
 	public static final int GCM_PORT = 5235;
 	public static final String GCM_ELEMENT_NAME = "gcm";
