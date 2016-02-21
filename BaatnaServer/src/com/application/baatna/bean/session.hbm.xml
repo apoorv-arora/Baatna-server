@@ -26,6 +26,9 @@
 		<property name="modified" type="java.lang.Long">
 			<column name="Modified" not-null="true" default="0" />
 		</property>
+		<property name="deviceId" type="java.lang.String">
+			<column name="DeviceId" not-null="true"> </column>
+		</property>
 
 
 	</class>

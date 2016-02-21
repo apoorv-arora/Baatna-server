@@ -11,6 +11,7 @@ public class Session implements Serializable{
 	private int userId;
 	private long created;
 	private long modified;
+	private String deviceId;
 	
 	public Session() {
 	}
@@ -71,4 +72,12 @@ public class Session implements Serializable{
 		this.modified = modified;
 	}
 
+	public String getDeviceId() {
+		return deviceId;
+	}
+
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
+	}
+	
 }

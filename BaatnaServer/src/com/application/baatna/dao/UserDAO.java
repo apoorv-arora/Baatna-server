@@ -273,32 +273,44 @@ public class UserDAO {
 	/**
 	 * Utility method to generate an accessToken.
 	 */
-	public String generateAccessToken(int userId) {
+	public Object[] generateAccessToken(int userId, String deviceId) {
 
+		Object[] tokens = new Object[2];
 		String accessToken = "";
 		Transaction transaction = null;
 		Session session = null;
+		boolean retType = false; 
 		try {
 
 			session = DBUtil.getSessionFactory().openSession();
 			transaction = session.beginTransaction();
 
-			Random rand = new Random();
-
-			long aT = 0;
-
-			for (int i = 0; i < 6; i++) {
-
-				aT = aT * 10 + rand.nextInt(10);
-
-			}
-			accessToken = aT + "" + (System.currentTimeMillis() / 100);
-			// setting access token for the user
-
-			String sql = "UPDATE SESSION SET ACCESS_TOKEN = " + accessToken + "  WHERE USERID = " + userId;
+			String sql = "SELECT * FROM SESSION WHERE USERID = :user_id and DeviceId = :device_id";
 			SQLQuery query = session.createSQLQuery(sql);
-			query.addEntity(User.class);
-			int result = query.executeUpdate();
+			query.addEntity(com.application.baatna.bean.Session.class);
+			query.setParameter("user_id", userId);
+			query.setParameter("device_id", deviceId);
+			java.util.List results = (java.util.List) query.list();
+
+			if (results != null && results.size() > 0) {
+				for (Iterator iterator = ((java.util.List) results).iterator(); iterator.hasNext();) {
+					retType = true;
+					com.application.baatna.bean.Session sessionToken = (com.application.baatna.bean.Session) iterator
+							.next();
+					accessToken = sessionToken.getAccessToken();
+					break;
+				}
+			} else {
+				Random rand = new Random();
+				long aT = 0;
+				for (int i = 0; i < 6; i++) {
+
+					aT = aT * 10 + rand.nextInt(10);
+
+				}
+				retType = false;
+				accessToken = aT + "" + (System.currentTimeMillis() / 100);
+			}
 
 			transaction.commit();
 			session.close();
@@ -312,8 +324,9 @@ public class UserDAO {
 			if (session != null && session.isOpen())
 				session.close();
 		}
-
-		return accessToken;
+		tokens[0] = accessToken;
+		tokens[1] = retType;
+		return tokens;
 	}
 
 	/**
@@ -495,7 +508,7 @@ public class UserDAO {
 			query.setParameter("access_token", accessToken);
 			java.util.List results = (java.util.List) query.list();
 			com.application.baatna.bean.Session currentSession = (com.application.baatna.bean.Session) results.get(0);
-			if(pushId != null && !pushId.equals("")) {
+			if (pushId != null && !pushId.equals("")) {
 				currentSession.setPushId(pushId);
 				currentSession.setModified(System.currentTimeMillis());
 				session.update(currentSession);
@@ -533,7 +546,7 @@ public class UserDAO {
 			query.setParameter("access_token", accessToken);
 			java.util.List results = (java.util.List) query.list();
 			com.application.baatna.bean.Session currentSession = (com.application.baatna.bean.Session) results.get(0);
-			if(lat != 0 && lon != 0) {
+			if (lat != 0 && lon != 0) {
 				Location location = new Location(lat, lon);
 				currentSession.setLocation(location);
 				currentSession.setModified(System.currentTimeMillis());
@@ -657,7 +670,8 @@ public class UserDAO {
 
 	}
 
-	public boolean addSession(int userId, String accessToken, String registrationId, Location location) {
+	public boolean addSession(int userId, String accessToken, String registrationId, Location location,
+			String deviceId) {
 		Session session = null;
 		try {
 			session = DBUtil.getSessionFactory().openSession();
@@ -671,6 +685,7 @@ public class UserDAO {
 			loginSession.setPushId(registrationId);
 			loginSession.setCreated(System.currentTimeMillis());
 			loginSession.setModified(0);
+			loginSession.setDeviceId(deviceId);
 
 			session.save(loginSession);
 
