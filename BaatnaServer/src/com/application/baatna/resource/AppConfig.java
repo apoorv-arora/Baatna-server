@@ -64,4 +64,37 @@ public class AppConfig extends BaseResource {
 		return null;
 	}
 
+	@Path("/token")
+	@POST
+	@Produces("application/json")
+	@Consumes("application/x-www-form-urlencoded")
+	public JSONObject checkToken(@FormParam("client_id") String clientId, @FormParam("app_type") String appType,
+			@FormParam("access_token") String accessToken) {
+		// check for client_id
+		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
+			return CommonLib.getResponseString("Invalid client id", "", CommonLib.RESPONSE_INVALID_CLIENT_ID);
+
+		// check for app type
+		if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
+			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_APP_TYPE);
+
+		// check for client_id
+		if (!clientId.equals(CommonLib.ANDROID_CLIENT_ID))
+			return CommonLib.getResponseString("Invalid client id", "", CommonLib.RESPONSE_INVALID_CLIENT_ID);
+
+		// check for app type
+		if (!appType.equals(CommonLib.ANDROID_APP_TYPE))
+			return CommonLib.getResponseString("Invalid params", "", CommonLib.RESPONSE_INVALID_APP_TYPE);
+
+		UserDAO userDao = new UserDAO();
+
+		// access token validity
+		int userId = userDao.userActive(accessToken);
+
+		if (userId > 0) {
+			return CommonLib.getResponseString("1", "", CommonLib.RESPONSE_SUCCESS);
+		} else
+			return CommonLib.getResponseString("2", "", CommonLib.RESPONSE_SUCCESS);
+	}
+
 }
