@@ -352,8 +352,8 @@ public class WishDAO {
 			// send push notif to all
 			if (!userDao.isUserBlocked(nearbyUser.getUserId(), userId)
 					&& !userDao.isUserBlocked(userId, nearbyUser.getUserId())) {
-//				ccsClient.send(GCM.createJsonMessage(nearbyUser.getPushId(), messageId, payload, null, timeToLive,
-//						delayWhileIdle));
+				ccsClient.send(GCM.createJsonMessage(nearbyUser.getPushId(), messageId, payload, null, timeToLive,
+						delayWhileIdle));
 			}
 		}
 		ccsClient.disconnect();

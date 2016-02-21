@@ -495,9 +495,11 @@ public class UserDAO {
 			query.setParameter("access_token", accessToken);
 			java.util.List results = (java.util.List) query.list();
 			com.application.baatna.bean.Session currentSession = (com.application.baatna.bean.Session) results.get(0);
-			currentSession.setPushId(pushId);
-			currentSession.setModified(System.currentTimeMillis());
-			session.update(currentSession);
+			if(pushId != null && !pushId.equals("")) {
+				currentSession.setPushId(pushId);
+				currentSession.setModified(System.currentTimeMillis());
+				session.update(currentSession);
+			}
 
 			transaction.commit();
 			session.close();
@@ -531,10 +533,12 @@ public class UserDAO {
 			query.setParameter("access_token", accessToken);
 			java.util.List results = (java.util.List) query.list();
 			com.application.baatna.bean.Session currentSession = (com.application.baatna.bean.Session) results.get(0);
-			Location location = new Location(lat, lon);
-			currentSession.setLocation(location);
-			currentSession.setModified(System.currentTimeMillis());
-			session.update(currentSession);
+			if(lat != 0 && lon != 0) {
+				Location location = new Location(lat, lon);
+				currentSession.setLocation(location);
+				currentSession.setModified(System.currentTimeMillis());
+				session.update(currentSession);
+			}
 
 			transaction.commit();
 			session.close();
@@ -815,7 +819,7 @@ public class UserDAO {
 			Transaction transaction = session.beginTransaction();
 			users = new ArrayList<com.application.baatna.bean.Session>();
 
-			String sql = "SELECT * FROM SESSION WHERE USERID = :user_id LIMIT 50";
+			String sql = "SELECT * FROM SESSION WHERE USERID = :user_id";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(com.application.baatna.bean.Session.class);
 			query.setParameter("user_id", userId);
@@ -1088,7 +1092,7 @@ public class UserDAO {
 			Transaction transaction = session.beginTransaction();
 			users = new ArrayList<com.application.baatna.bean.Session>();
 
-			String sql = "SELECT * FROM SESSION WHERE USERID = :user_id ;";
+			String sql = "SELECT * FROM SESSION WHERE USERID = :user_id";
 			SQLQuery query = session.createSQLQuery(sql);
 			query.addEntity(com.application.baatna.bean.Session.class);
 			query.setParameter("user_id", userId);
