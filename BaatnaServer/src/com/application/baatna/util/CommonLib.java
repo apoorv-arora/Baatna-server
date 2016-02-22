@@ -68,6 +68,10 @@ public class CommonLib {
 
 	public static final int CURRENT_USER_WISH_ACCEPTED = 1;
 	public static final int WISH_ACCEPTED_CURRENT_USER = 2;
+	
+	public static int SEX_MALE = 1;
+	public static int SEX_FEMALE = 2;
+	public static int SEX_IDONTKNOW = 3;
 
 	public static JSONObject getResponseString(Object responseJson, String errorMessage, int status) {
 		JSONObject responseObject = new JSONObject();

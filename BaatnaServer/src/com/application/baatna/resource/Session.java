@@ -129,7 +129,8 @@ public class Session extends BaseResource {
 		boolean sessionAdded = false;
 		if (!exists) {
 			sessionAdded = userDao.addSession(user.getUserId(), accessToken, regId, location, deviceId);
-		}
+		} else 
+			sessionAdded = true;
 		if (sessionAdded) {
 			JSONObject responseObject = new JSONObject();
 			try {

@@ -31,6 +31,26 @@ public class JsonUtil {
 		userJsonObject.put("bio", user.getBio());
 		userJsonObject.put("rating", user.getRating());
 		userJsonObject.put("contact", user.getPhone());
+		
+		if(user.getFacebookData() != null) {
+			try {
+				int genderInt = CommonLib.SEX_MALE;
+				JSONObject dataJson = new JSONObject(user.getFacebookData());
+				if(dataJson.has("gender")) {
+					String gender = String.valueOf(dataJson.get("gender"));
+					if(gender != null && gender.equalsIgnoreCase("male")) {
+						genderInt = CommonLib.SEX_MALE;
+					} else if(gender != null && gender.equalsIgnoreCase("male")) {
+						genderInt = CommonLib.SEX_MALE;
+					} else {
+						genderInt = CommonLib.SEX_IDONTKNOW;
+					}
+					userJsonObject.put("sex", genderInt);
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
 		if (user.getUserName() == null || user.getUserName().equals("")) {
 
 			JSONObject data = null;
